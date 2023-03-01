@@ -1,2 +1,3 @@
 print("testing fagprojekt")
-x = 7
+x = 2
+test = "test"
