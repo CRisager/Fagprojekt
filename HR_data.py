@@ -8,25 +8,21 @@ import scipy
 import datetime
 import pytz
 
-# Working Directory
+### Working Directory for physical ###
+# Path for Chelina = "C:/Users/cheli/OneDrive/Skrivebord/Fagprojekt/Fagprojekt_data/physical"
+# Path for Andrea = "/Users/andreabolvig/Desktop/4.semester/Project work/Fagprojekt_data/physical"
 path = "/Users/jesperberglund/Downloads/HR_Data/physical"
 os.chdir(path)
 
 # Using list comprehension to loop over all files in folder
 csv_files = [f for f in os.listdir(path) if f.endswith('.csv')]
 
-# Load all CSV files into a dictionary of DataFrames
+# Load all CSV files from physical lecture into a dictionary of DataFrames
 data_frames_physical = []
 for file in csv_files:
     file_path = os.path.join(path, file)
     df = pd.read_csv(file_path, skiprows=2, sep=";")
     data_frames_physical.append(df)
-
-# Access a specific DataFrame by filename
-print(data_frames_physical[0].iloc[0])
-
-for file in data_frames_physical:
-    print(file.iloc[0])
 
 start_times_physical = []
 for file in csv_files:
@@ -36,8 +32,31 @@ for file in csv_files:
     st_str = st.item().split(': ')[1]
     st_datetime = pd.to_datetime(st_str, dayfirst=True)
     start_times_physical.append(st_datetime)
-for i in range(len(start_times)):
+for i in range(len(start_times_physical)):
     print(start_times_physical[i])
+
+### ------------------------------------------------------------------------------------ ###
+
+### Working Directory for virtual ###
+path = "/Users/jesperberglund/Downloads/HR_Data/virtual"
+os.chdir(path)
+# Using list comprehension to loop over all files in folder
+csv_files = [f for f in os.listdir(path) if f.endswith('.csv')]
+
+# Load all CSV files from physical lecture into a dictionary of DataFrames
+data_frames_virtual = []
+for file in csv_files:
+    file_path = os.path.join(path, file)
+    df = pd.read_csv(file_path, skiprows=2, sep=";")
+    data_frames_virtual.append(df)
+
+# Access a specific DataFrame by filename
+print(data_frames_virtual[0].iloc[0])
+
+for file in data_frames_physical:
+    print(file.iloc[0])
+
+
 
 
 Ch_start = pd.to_datetime(["21-03-2023 10:48:21"], dayfirst=True)
