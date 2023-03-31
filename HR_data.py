@@ -38,6 +38,8 @@ for i in range(len(start_times_physical)):
 ### ------------------------------------------------------------------------------------ ###
 
 ### Working Directory for virtual ###
+# Path for Chelina = "C:/Users/cheli/OneDrive/Skrivebord/Fagprojekt/Fagprojekt_data/virtual"
+# Path for Andrea = "/Users/andreabolvig/Desktop/4.semester/Project work/Fagprojekt_data/virtual"
 path = "/Users/jesperberglund/Downloads/HR_Data/virtual"
 os.chdir(path)
 # Using list comprehension to loop over all files in folder
@@ -55,7 +57,6 @@ print(data_frames_virtual[0].iloc[0])
 
 for file in data_frames_physical:
     print(file.iloc[0])
-
 
 
 
