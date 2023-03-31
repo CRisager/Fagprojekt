@@ -16,28 +16,28 @@ os.chdir(path)
 csv_files = [f for f in os.listdir(path) if f.endswith('.csv')]
 
 # Load all CSV files into a dictionary of DataFrames
-data_frames = []
+data_frames_physical = []
 for file in csv_files:
     file_path = os.path.join(path, file)
     df = pd.read_csv(file_path, skiprows=2, sep=";")
-    data_frames.append(df)
+    data_frames_physical.append(df)
 
 # Access a specific DataFrame by filename
-print(data_frames[0].iloc[0])
+print(data_frames_physical[0].iloc[0])
 
-for file in data_frames:
+for file in data_frames_physical:
     print(file.iloc[0])
 
-start_times = []
+start_times_physical = []
 for file in csv_files:
     file_path = os.path.join(path, file)
     st = pd.read_csv(file_path, skiprows=1, nrows=0, sep=";").columns.values
     st_str = st.item()
     st_str = st.item().split(': ')[1]
     st_datetime = pd.to_datetime(st_str, dayfirst=True)
-    start_times.append(st_datetime)
+    start_times_physical.append(st_datetime)
 for i in range(len(start_times)):
-    print(start_times[i])
+    print(start_times_physical[i])
 
 
 Ch_start = pd.to_datetime(["21-03-2023 10:48:21"], dayfirst=True)
