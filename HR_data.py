@@ -17,7 +17,7 @@ os.chdir(path)
 # Using list comprehension to loop over all files in folder
 csv_files = [f for f in os.listdir(path) if f.endswith('.csv')]
 
-# Load all CSV files from physical lecture into a dictionary of DataFrames
+# Load all CSV files from physical lecture into list of data frames
 data_frames_physical = []
 for file in csv_files:
     file_path = os.path.join(path, file)
@@ -45,26 +45,26 @@ os.chdir(path)
 # Using list comprehension to loop over all files in folder
 csv_files = [f for f in os.listdir(path) if f.endswith('.csv')]
 
-# Load all CSV files from physical lecture into a dictionary of DataFrames
+# Load all CSV files from physical lecture into a list of data frames
 data_frames_virtual = []
 for file in csv_files:
     file_path = os.path.join(path, file)
     df = pd.read_csv(file_path, skiprows=2, sep=";")
     data_frames_virtual.append(df)
 
-# Access a specific DataFrame by filename
-print(data_frames_virtual[0].iloc[0])
+start_times_virtual = []
+for file in csv_files:
+    file_path = os.path.join(path, file)
+    st = pd.read_csv(file_path, skiprows=1, nrows=0, sep=";").columns.values
+    st_str = st.item()
+    st_str = st.item().split(': ')[1]
+    st_datetime = pd.to_datetime(st_str, dayfirst=True)
+    start_times_virtual.append(st_datetime)
+for i in range(len(start_times_virtual)):
+    print(start_times_virtual[i])
 
-for file in data_frames_physical:
-    print(file.iloc[0])
-
-
-
-Ch_start = pd.to_datetime(["21-03-2023 10:48:21"], dayfirst=True)
-Tch_start = pd.to_datetime(["21-03-2023 10:48:38"], dayfirst=True)
-
-d = [Ch_data, Tch_data]
-starts = [Ch_start, Tch_start]
+d = data_frames_physical
+starts = start_times_physical
 for i in range(len(d)):
     d0 = d[i]
     d0 = d0.drop("Unnamed: 3", axis=1)
