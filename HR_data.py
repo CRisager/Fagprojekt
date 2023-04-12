@@ -1,7 +1,6 @@
 import os
 import pandas as pd
 import numpy as np
-import datetime
 import matplotlib.pyplot as plt
 import seaborn as sns
 import scipy
@@ -23,6 +22,9 @@ for file in csv_files:
     file_path = os.path.join(path, file)
     df = pd.read_csv(file_path, skiprows=2, sep=";")
     data_frames_physical.append(df)
+print(csv_files[0])
+Start_time = pd.read_csv("6.csv", skiprows=1, nrows=0, sep=";").columns
+print(Start_time)
 
 start_times_physical = []
 for file in csv_files:
@@ -34,6 +36,18 @@ for file in csv_files:
     start_times_physical.append(st_datetime)
 for i in range(len(start_times_physical)):
     print(start_times_physical[i])
+
+
+# test #
+start_times_physical = []
+for file in csv_files:
+    file_path = os.path.join(path, file)
+    start_time = pd.read_csv(file_path, skiprows=1, nrows=0, sep=";").columns[0].split(": ")[1]
+    start_time = datetime.datetime.strptime(start_time, "%d.%m.%Y %H:%M:%S")
+    start_times_physical.append(start_time)
+for i in range(len(start_times_physical)):
+    print(start_times_physical[i])
+# test end #
 
 ### ------------------------------------------------------------------------------------ ###
 
@@ -79,7 +93,8 @@ for i in range(len(d)):
     # Compute new cRR without NaN
     cRR = np.cumsum(d0["Artifact corrected RR"])
     s0 = starts[i]
-    Time = [pd.to_datetime(s0.to_pydatetime() + datetime.timedelta(seconds=i/1000))[0] for i in cRR]
+    #Time = [pd.to_datetime(s0.to_pydatetime() + datetime.timedelta(seconds=i/1000))[0] for i in cRR]
+    Time = [pd.Timestamp(s0) + pd.Timedelta(seconds=i/1000) for i in cRR]
     d0["Time"] = Time
     # Calculate Heart Rate pr. min (bpm) from the R-R intervals
     bpm = 60/(d0["Artifact corrected RR"]/1000)
@@ -91,6 +106,7 @@ fig, ax = plt.subplots(1,1)
 sns.lineplot(data = d[0], x="Time", y="Artifact corrected RR", color = "red")
 sns.lineplot(data = d[1], x="Time", y="Artifact corrected RR", color = "blue")
 plt.title("Artifact Corrected RR")
+plt.show()
 
 # With the actual dots
 fig, ax = plt.subplots(1,1)
