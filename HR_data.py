@@ -22,32 +22,14 @@ for file in csv_files:
     file_path = os.path.join(path, file)
     df = pd.read_csv(file_path, skiprows=2, sep=";")
     data_frames_physical.append(df)
-print(csv_files[0])
-Start_time = pd.read_csv("6.csv", skiprows=1, nrows=0, sep=";").columns
-print(Start_time)
 
-start_times_physical = []
-for file in csv_files:
-    file_path = os.path.join(path, file)
-    st = pd.read_csv(file_path, skiprows=1, nrows=0, sep=";").columns.values
-    st_str = st.item()
-    st_str = st.item().split(': ')[1]
-    st_datetime = pd.to_datetime(st_str, dayfirst=True)
-    start_times_physical.append(st_datetime)
-for i in range(len(start_times_physical)):
-    print(start_times_physical[i])
-
-
-# test #
 start_times_physical = []
 for file in csv_files:
     file_path = os.path.join(path, file)
     start_time = pd.read_csv(file_path, skiprows=1, nrows=0, sep=";").columns[0].split(": ")[1]
     start_time = datetime.datetime.strptime(start_time, "%d.%m.%Y %H:%M:%S")
     start_times_physical.append(start_time)
-for i in range(len(start_times_physical)):
-    print(start_times_physical[i])
-# test end #
+
 
 ### ------------------------------------------------------------------------------------ ###
 
@@ -59,7 +41,7 @@ os.chdir(path)
 # Using list comprehension to loop over all files in folder
 csv_files = [f for f in os.listdir(path) if f.endswith('.csv')]
 
-# Load all CSV files from physical lecture into a list of data frames
+# Load all CSV files from virtual lecture into a list of data frames
 data_frames_virtual = []
 for file in csv_files:
     file_path = os.path.join(path, file)
@@ -145,6 +127,39 @@ sfreq = 10
 max_diff = int(common_timestamps[-1]-common_timestamps[0])
 upsampled_timestamps = np.linspace(common_timestamps[0],common_timestamps[-1],(sfreq*max_diff)+1)
 ### Li's code end ###
+
+
+# Instead of finding common timestamp, use manual starting point (lecture start) and lecture end
+# Check each subject/file for common timestamps to ensure the data is avaiable the entire lecture
+# Loop through all files and interpolate
+# THEN cut up the files into smaller bits for
+
+for i in range(len(d)-1):
+    d0_timestamps = d[i]
+    d1_timestamps = d[i+1]
+    # Convert times to float timestamps
+    d0_timestamps = [pd.Timestamp(ele).timestamp() for ele in d[i]["Time"]]
+    d1_timestamps = [pd.Timestamp(ele).timestamp() for ele in d[i+1]["Time"]]
+    # Round to nearest second and get the common timepoints between the two timeseries
+    common_timestamps = np.intersect1d(np.round(d0_timestamps,0),np.round(d1_timestamps,0))
+    # Remove the first and last timepoint in case of rounding up or down
+    common_timestamps = common_timestamps[1:-1]
+    # Upsample to sfreq of interest
+    sfreq = 10
+    max_diff = int(common_timestamps[-1]-common_timestamps[0])
+    upsampled_timestamps = np.linspace(common_timestamps[0],common_timestamps[-1],(sfreq*max_diff)+1)
+    # Take into account Daylight Saving time and the timezone from UTC
+    upsampled_datetimes = [datetime.datetime.fromtimestamp(ele-60*60) for ele in upsampled_timestamps]
+    # Fit function for linear interpolation
+    d0f = scipy.interpolate.interp1d(d0_timestamps,d[0]["Artifact corrected RR"], kind="linear")
+    d1f = scipy.interpolate.interp1d(d1_timestamps,d[1]["Artifact corrected RR"], kind="linear")
+    # Interpolate to common timestamps
+    d0_interp = d0f(upsampled_timestamps)
+    d1_interp = d1f(upsampled_timestamps)
+
+    d[i] = d0_timestamps
+    d[i+1] = d1_timestamps
+
 
 # Take into account Daylight Saving time and the timezone from UTC
 upsampled_datetimes = [datetime.datetime.fromtimestamp(ele-60*60) for ele in upsampled_timestamps]
