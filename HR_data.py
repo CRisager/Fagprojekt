@@ -103,8 +103,8 @@ for i in range(len(d)):
 
 # Plot with the actual times
 fig, ax = plt.subplots(1,1)
-sns.lineplot(data = d[0], x="Time", y="Artifact corrected RR", color = "red")
-sns.lineplot(data = d[1], x="Time", y="Artifact corrected RR", color = "blue")
+sns.lineplot(data = d[1], x="Time", y="Artifact corrected RR", color = "red")
+sns.lineplot(data = d[2], x="Time", y="Artifact corrected RR", color = "blue")
 plt.title("Artifact Corrected RR")
 plt.show()
 
@@ -127,12 +127,15 @@ fig, ax = plt.subplots(1,1)
 sns.lineplot(data = d[0], x="Time", y="Heart Rate", color = "red")
 sns.lineplot(data = d[1], x="Time", y="Heart Rate", color = "blue")
 plt.title("BPM based on corrected RR")
+plt.show()
 
+### Li's code ###
 # They are misaligned
 # Interpolation and resampling at common time points
 # Convert times to float timestamps
 Ch_timestamps = [pd.Timestamp(ele).timestamp() for ele in d[0]["Time"]]
 Tch_timestamps = [pd.Timestamp(ele).timestamp() for ele in d[1]["Time"]]
+
 # Round to nearest second and get the common timepoints between the two timeseries
 common_timestamps = np.intersect1d(np.round(Ch_timestamps,0),np.round(Tch_timestamps,0))
 # Remove the first and last timepoint in case of rounding up or down
@@ -141,6 +144,7 @@ common_timestamps = common_timestamps[1:-1]
 sfreq = 10
 max_diff = int(common_timestamps[-1]-common_timestamps[0])
 upsampled_timestamps = np.linspace(common_timestamps[0],common_timestamps[-1],(sfreq*max_diff)+1)
+### Li's code end ###
 
 # Take into account Daylight Saving time and the timezone from UTC
 upsampled_datetimes = [datetime.datetime.fromtimestamp(ele-60*60) for ele in upsampled_timestamps]
@@ -160,12 +164,14 @@ fig, ax = plt.subplots(1,1)
 sns.lineplot(data = resampled_df, x="Time", y="Chelina_cRR", color = "red")
 sns.lineplot(data = resampled_df, x="Time", y="Tch_cRR", color = "blue")
 plt.title("Resampled aligned Artifact Corrected RR")
+plt.show()
 
 # With dots
 fig, ax = plt.subplots(1,1)
 sns.scatterplot(data = resampled_df, x="Time", y="Chelina_cRR", color = "red")
 sns.scatterplot(data = resampled_df, x="Time", y="Tch_cRR", color = "blue")
 plt.title("Resampled aligned Artifact Corrected RR")
+plt.show()
 
 
 
