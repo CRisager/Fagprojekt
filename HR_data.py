@@ -7,7 +7,8 @@ import scipy
 import datetime
 import pytz
 
-### Working Directory for physical ###
+### -------------------------------------Code for physical------------------------------------- ###
+
 # Path for Chelina = "C:/Users/cheli/OneDrive/Skrivebord/Fagprojekt/Fagprojekt_data/physical"
 # Path for Andrea = "/Users/andreabolvig/Desktop/4.semester/Project work/Fagprojekt_data/physical"
 path = "/Users/jesperberglund/Downloads/HR_Data/physical"
@@ -30,10 +31,34 @@ for file in csv_files:
     start_time = datetime.datetime.strptime(start_time, "%d.%m.%Y %H:%M:%S")
     start_times_physical.append(start_time)
 
+d = data_frames_physical
+starts = start_times_physical
+for i in range(len(d)):
+    d0 = d[i]
+    d0 = d0.drop("Unnamed: 3", axis=1)
+    # Ensure the corrected and non-corrected accounts for all data
+    RR = np.cumsum(d0["RR"])
+    cRR = np.cumsum(d0["Artifact corrected RR"])
+    if np.nanmax(RR) != np.nanmax(cRR):
+        print("The cumulative times are not the same for corrected and uncorrected")
+        print(f"For subject {i}, there is a difference of {np.nanmax(RR)-np.nanmax(cRR)}")
+    # Drop rows with NaN, due to dissimilar number of "R-R" recordings due to artifacts
+    d0 = d0.dropna()
+    # Compute new cRR without NaN
+    cRR = np.cumsum(d0["Artifact corrected RR"])
+    s0 = starts[i]
+    #Time = [pd.to_datetime(s0.to_pydatetime() + datetime.timedelta(seconds=i/1000))[0] for i in cRR]
+    Time = [pd.Timestamp(s0) + pd.Timedelta(seconds=i/1000) for i in cRR]
+    d0["Time"] = Time
+    # Calculate Heart Rate pr. min (bpm) from the R-R intervals
+    bpm = 60/(d0["Artifact corrected RR"]/1000)
+    d0["Heart Rate"] = bpm
+    d[i] = d0
 
-### ------------------------------------------------------------------------------------ ###
+### ------------------------------------------------------------------------------------------- ###
 
-### Working Directory for virtual ###
+### ------------------------------------Code for virtual--------------------------------------- ###
+
 # Path for Chelina = "C:/Users/cheli/OneDrive/Skrivebord/Fagprojekt/Fagprojekt_data/virtual"
 # Path for Andrea = "/Users/andreabolvig/Desktop/4.semester/Project work/Fagprojekt_data/virtual"
 path = "/Users/jesperberglund/Downloads/HR_Data/virtual"
@@ -51,13 +76,9 @@ for file in csv_files:
 start_times_virtual = []
 for file in csv_files:
     file_path = os.path.join(path, file)
-    st = pd.read_csv(file_path, skiprows=1, nrows=0, sep=";").columns.values
-    st_str = st.item()
-    st_str = st.item().split(': ')[1]
-    st_datetime = pd.to_datetime(st_str, dayfirst=True)
-    start_times_virtual.append(st_datetime)
-for i in range(len(start_times_virtual)):
-    print(start_times_virtual[i])
+    start_time = pd.read_csv(file_path, skiprows=1, nrows=0, sep=";").columns[0].split(": ")[1]
+    start_time = datetime.datetime.strptime(start_time, "%d.%m.%Y %H:%M:%S")
+    start_times_virtual.append(start_time)
 
 d = data_frames_physical
 starts = start_times_physical
