@@ -202,3 +202,5 @@ fig, ax = plt.subplots(1,1)
 plt.plot(delays, cross_corr)
 
 print(delays[np.argmax(cross_corr)])
+
+# Er dette Jespers?
