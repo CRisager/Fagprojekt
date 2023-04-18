@@ -95,6 +95,16 @@ plt.title("BPM based on corrected RR (data points 100-120)")
 plt.show()
 
 
+# Artifact detection plot of a random student
+fig, ax = plt.subplots(1,1)
+sns.lineplot(data = d[12].iloc[10:], x="Time", y="RR", color = "red")
+sns.lineplot(data = d[12].iloc[10:], x="Time", y="Artifact corrected RR", color = "blue")
+plt.title("Raw RR")
+plt.show()
+
+
+## Li's plots ##
+
 # Plot with the actual times
 fig, ax = plt.subplots(1,1)
 sns.lineplot(data = d[1], x="Time", y="Artifact corrected RR", color = "red")
