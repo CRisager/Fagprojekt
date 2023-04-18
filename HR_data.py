@@ -82,9 +82,17 @@ for i in range(len(d)):
     bpm = 60/(d0["Artifact corrected RR"]/1000)
     d0["Heart Rate"] = bpm # Add column of HR (beats per minute) to the data frame
     d[i] = d0
-    
+
 ### ------------------------------------------------------------------------------------ ###
 ### Plots
+
+# Instantaneus heart rate (BPM) of a random student (only 40 data points)
+fig, ax = plt.subplots(1, 1)
+sns.lineplot(data=d[12].iloc[110:151], x="Time", y="Heart Rate", color="blue")
+sns.scatterplot(data=d[12].iloc[110:151], x="Time", y="Heart Rate", color = "red",
+                alpha=0.5)
+plt.title("BPM based on corrected RR (data points 100-120)")
+plt.show()
 
 
 # Plot with the actual times
@@ -101,19 +109,22 @@ sns.scatterplot(data = d[0], x="Time", y="Artifact corrected RR", color = "red",
 sns.scatterplot(data = d[1], x="Time", y="Artifact corrected RR", color = "blue",
                 alpha=0.5)
 plt.title("Artifact Corrected RR")
+plt.show()
 
 # Non-corrected raw data
 fig, ax = plt.subplots(1,1)
 sns.lineplot(data = d[0], x="Time", y="RR", color = "red")
 sns.lineplot(data = d[1], x="Time", y="RR", color = "blue")
 plt.title("Raw RR")
+plt.show()
 
-# Heart rate
+# Instantaneus heart rate (BPM)
 fig, ax = plt.subplots(1,1)
 sns.lineplot(data = d[0], x="Time", y="Heart Rate", color = "red")
 sns.lineplot(data = d[1], x="Time", y="Heart Rate", color = "blue")
 plt.title("BPM based on corrected RR")
 plt.show()
+
 
 ### ------------------------------------------------------------------------------------ ###
 ### Li's code ###
