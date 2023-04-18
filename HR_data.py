@@ -30,8 +30,7 @@ for file in csv_files_physical:
     start_time = pd.read_csv(file_path, skiprows=1, nrows=0, sep=";").columns[0].split(": ")[1]
     start_time = datetime.datetime.strptime(start_time, "%d.%m.%Y %H:%M:%S")
     start_times_physical.append(start_time)
-
-
+    
 ### ------------------------------------------------------------------------------------ ###
 ### Working Directory for virtual ###
 
@@ -57,12 +56,12 @@ for file in csv_files_virtual:
     start_times_virtual.append(start_time)
     
 ### ------------------------------------------------------------------------------------ ###
-### Update data frame with time stamps and beats per minute
+### Update "physical" data frame with time stamps and beats per minute
 
-d = data_frames_physical 
+dphy = data_frames_physical 
 starts = start_times_physical
-for i in range(len(d)):
-    d0 = d[i]
+for i in range(len(dphy)):
+    d0 = dphy[i]
     d0 = d0.drop("Unnamed: 3", axis=1) # Drop empty column
     # Ensure the corrected and non-corrected accounts for all data
     RR = np.cumsum(d0["RR"])
@@ -81,15 +80,66 @@ for i in range(len(d)):
     # Calculate Heart Rate pr. min (bpm) from the R-R intervals
     bpm = 60/(d0["Artifact corrected RR"]/1000)
     d0["Heart Rate"] = bpm # Add column of HR (beats per minute) to the data frame
-    d[i] = d0
+    dphy[i] = d0
+    
+
+
+    
+### ------------------------------------------------------------------------------------ ###
+### Update "virtual" data frame with time stamps and beats per minute
+
+dvir = data_frames_virtual
+starts = start_times_virtual
+for i in range(len(dvir)):
+    d0 = dvir[i]
+    d0 = d0.drop("Unnamed: 3", axis=1) # Drop empty column
+    # Ensure the corrected and non-corrected accounts for all data
+    RR = np.cumsum(d0["RR"])
+    cRR = np.cumsum(d0["Artifact corrected RR"])
+    if np.nanmax(RR) != np.nanmax(cRR):
+        print("The cumulative times are not the same for corrected and uncorrected")
+        print(f"For subject {i}, there is a difference of {np.nanmax(RR)-np.nanmax(cRR)}")
+    # Drop rows with NaN, due to dissimilar number of "R-R" recordings due to artifacts
+    d0 = d0.dropna() # Drop empty rows
+    # Compute new cRR without NaN (empty rows and colums)
+    cRR = np.cumsum(d0["Artifact corrected RR"])
+    s0 = starts[i]
+    # Create a list of time stamps for each data point
+    Time = [pd.Timestamp(s0) + pd.Timedelta(seconds=i/1000) for i in cRR] 
+    d0["Time"] = Time # Add the time stamp column to the data frame
+    # Calculate Heart Rate pr. min (bpm) from the R-R intervals
+    bpm = 60/(d0["Artifact corrected RR"]/1000)
+    d0["Heart Rate"] = bpm # Add column of HR (beats per minute) to the data frame
+    dvir[i] = d0
+
+### ------------------------------------------------------------------------------------ ###
+### Cutting the signals to only contain the lecture
+
+# Define lecture start and end time 
+phy_lecture_start_time = datetime.datetime.strptime("21.03.2023 11:10:00", "%d.%m.%Y %H:%M:%S")
+phy_lecture_end_time = datetime.datetime.strptime("21.03.2023 13:10:11", "%d.%m.%Y %H:%M:%S")
+
+# Loop through each data frame and select the rows with time stamps between the lecture start and end time
+for i in range(len(dphy)):
+    df = dphy[i]
+    mask = (df["Time"] >= phy_lecture_start_time) & (df["Time"] <= phy_lecture_end_time)
+    df = df.loc[mask]
+    dphy[i] = df
+    
+for i in range(len(data_frames_virtual)):
+    df = data_frames_virtual[i]
+    mask = (df["Time"] >= phy_lecture_start_time) & (df["Time"] <= phy_lecture_end_time)
+    df = df.loc[mask]
+    data_frames_virtual[i] = df
+    
 
 ### ------------------------------------------------------------------------------------ ###
 ### Plots
 
-# Instantaneus heart rate (BPM) of a random student (only 40 data points)
+# Instantaneus heart rate (BPM) of a random student (only first 50 data points)
 fig, ax = plt.subplots(1, 1)
-sns.lineplot(data=d[12].iloc[110:151], x="Time", y="Heart Rate", color="blue")
-sns.scatterplot(data=d[12].iloc[110:151], x="Time", y="Heart Rate", color = "red",
+sns.lineplot(data=dphy[12].iloc[:51], x="Time", y="Heart Rate", color="blue")
+sns.scatterplot(data=dphy[12].iloc[:51], x="Time", y="Heart Rate", color = "red",
                 alpha=0.5)
 plt.title("BPM based on corrected RR (data points 100-120)")
 plt.show()
@@ -97,8 +147,8 @@ plt.show()
 
 # Artifact detection plot of a random student
 fig, ax = plt.subplots(1,1)
-sns.lineplot(data = d[12].iloc[10:], x="Time", y="RR", color = "red")
-sns.lineplot(data = d[12].iloc[10:], x="Time", y="Artifact corrected RR", color = "blue")
+sns.lineplot(data = dphy[12].iloc[10:], x="Time", y="RR", color = "red")
+sns.lineplot(data = dphy[12].iloc[10:], x="Time", y="Artifact corrected RR", color = "blue")
 plt.title("Raw RR")
 plt.show()
 
@@ -107,31 +157,31 @@ plt.show()
 
 # Plot with the actual times
 fig, ax = plt.subplots(1,1)
-sns.lineplot(data = d[1], x="Time", y="Artifact corrected RR", color = "red")
-sns.lineplot(data = d[2], x="Time", y="Artifact corrected RR", color = "blue")
+sns.lineplot(data = dphy[1], x="Time", y="Artifact corrected RR", color = "red")
+sns.lineplot(data = dphy[2], x="Time", y="Artifact corrected RR", color = "blue")
 plt.title("Artifact Corrected RR")
 plt.show()
 
 # With the actual dots
 fig, ax = plt.subplots(1,1)
-sns.scatterplot(data = d[0], x="Time", y="Artifact corrected RR", color = "red",
+sns.scatterplot(data = dphy[0], x="Time", y="Artifact corrected RR", color = "red",
                 alpha=0.5)
-sns.scatterplot(data = d[1], x="Time", y="Artifact corrected RR", color = "blue",
+sns.scatterplot(data = dphy[1], x="Time", y="Artifact corrected RR", color = "blue",
                 alpha=0.5)
 plt.title("Artifact Corrected RR")
 plt.show()
 
 # Non-corrected raw data
 fig, ax = plt.subplots(1,1)
-sns.lineplot(data = d[0], x="Time", y="RR", color = "red")
-sns.lineplot(data = d[1], x="Time", y="RR", color = "blue")
+sns.lineplot(data = dphy[0], x="Time", y="RR", color = "red")
+sns.lineplot(data = dphy[1], x="Time", y="RR", color = "blue")
 plt.title("Raw RR")
 plt.show()
 
 # Instantaneus heart rate (BPM)
 fig, ax = plt.subplots(1,1)
-sns.lineplot(data = d[0], x="Time", y="Heart Rate", color = "red")
-sns.lineplot(data = d[1], x="Time", y="Heart Rate", color = "blue")
+sns.lineplot(data = dphy[0], x="Time", y="Heart Rate", color = "red")
+sns.lineplot(data = dphy[1], x="Time", y="Heart Rate", color = "blue")
 plt.title("BPM based on corrected RR")
 plt.show()
 
@@ -141,8 +191,8 @@ plt.show()
 # They are misaligned
 # Interpolation and resampling at common time points
 # Convert times to float timestamps
-Ch_timestamps = [pd.Timestamp(ele).timestamp() for ele in d[0]["Time"]]
-Tch_timestamps = [pd.Timestamp(ele).timestamp() for ele in d[1]["Time"]]
+Ch_timestamps = [pd.Timestamp(ele).timestamp() for ele in dphy[0]["Time"]]
+Tch_timestamps = [pd.Timestamp(ele).timestamp() for ele in dphy[1]["Time"]]
 
 # Round to nearest second and get the common timepoints between the two timeseries
 common_timestamps = np.intersect1d(np.round(Ch_timestamps,0),np.round(Tch_timestamps,0))
@@ -160,12 +210,12 @@ upsampled_timestamps = np.linspace(common_timestamps[0],common_timestamps[-1],(s
 # Loop through all files and interpolate
 # THEN cut up the files into smaller bits for
 
-for i in range(len(d)-1):
-    d0_timestamps = d[i]
-    d1_timestamps = d[i+1]
+for i in range(len(dphy)-1):
+    d0_timestamps = dphy[i]
+    d1_timestamps = dphy[i+1]
     # Convert times to float timestamps
-    d0_timestamps = [pd.Timestamp(ele).timestamp() for ele in d[i]["Time"]]
-    d1_timestamps = [pd.Timestamp(ele).timestamp() for ele in d[i+1]["Time"]]
+    d0_timestamps = [pd.Timestamp(ele).timestamp() for ele in dphy[i]["Time"]]
+    d1_timestamps = [pd.Timestamp(ele).timestamp() for ele in dphy[i+1]["Time"]]
     # Round to nearest second and get the common timepoints between the two timeseries
     common_timestamps = np.intersect1d(np.round(d0_timestamps,0),np.round(d1_timestamps,0))
     # Remove the first and last timepoint in case of rounding up or down
@@ -177,22 +227,22 @@ for i in range(len(d)-1):
     # Take into account Daylight Saving time and the timezone from UTC
     upsampled_datetimes = [datetime.datetime.fromtimestamp(ele-60*60) for ele in upsampled_timestamps]
     # Fit function for linear interpolation
-    d0f = scipy.interpolate.interp1d(d0_timestamps,d[0]["Artifact corrected RR"], kind="linear")
-    d1f = scipy.interpolate.interp1d(d1_timestamps,d[1]["Artifact corrected RR"], kind="linear")
+    d0f = scipy.interpolate.interp1d(d0_timestamps,dphy[0]["Artifact corrected RR"], kind="linear")
+    d1f = scipy.interpolate.interp1d(d1_timestamps,dphy[1]["Artifact corrected RR"], kind="linear")
     # Interpolate to common timestamps
     d0_interp = d0f(upsampled_timestamps)
     d1_interp = d1f(upsampled_timestamps)
 
-    d[i] = d0_timestamps
-    d[i+1] = d1_timestamps
+    dphy[i] = d0_timestamps
+    dphy[i+1] = d1_timestamps
 
 
 # Take into account Daylight Saving time and the timezone from UTC
 upsampled_datetimes = [datetime.datetime.fromtimestamp(ele-60*60) for ele in upsampled_timestamps]
 
 # Fit function for linear interpolation
-Chf = scipy.interpolate.interp1d(Ch_timestamps,d[0]["Artifact corrected RR"], kind="linear")
-Tchf = scipy.interpolate.interp1d(Tch_timestamps,d[1]["Artifact corrected RR"], kind="linear")
+Chf = scipy.interpolate.interp1d(Ch_timestamps,dphy[0]["Artifact corrected RR"], kind="linear")
+Tchf = scipy.interpolate.interp1d(Tch_timestamps,dphy[1]["Artifact corrected RR"], kind="linear")
 # Interpolate to common timestamps
 Ch_interp = Chf(upsampled_timestamps)
 Tch_interp = Tchf(upsampled_timestamps)
