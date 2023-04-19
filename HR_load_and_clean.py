@@ -113,8 +113,69 @@ for i in range(len(dvir)):
     bpm = 60/(d0["Artifact corrected RR"]/1000)
     d0["Heart Rate"] = bpm # Add column of HR (beats per minute) to the data frame
     dvir[i] = d0
+    
+
+### ------------------------------------------------------------------------------------ ###
+### Resampling to a higher frequency 
 
 
+# Instantaneus heart rate (BPM) of a random physical student (only first 50 data points)
+fig, ax = plt.subplots(1, 1)
+sns.lineplot(data=dphy[0].iloc[:51], x="Time", y="Heart Rate", color="blue")
+sns.scatterplot(data=dphy[0].iloc[:51], x="Time", y="Heart Rate", color = "red",
+                alpha=0.5)
+plt.title("BPM based on corrected RR (data points 100-120)")
+plt.xticks(rotation=45) # rotate the x-tick labels by 45 degrees
+plt.show()
+
+print(dphy[1]["Time"][1])
+
+
+import pandas as pd
+import numpy as np
+from scipy.interpolate import interp1d
+
+
+def upsample_dataframe(df):
+    # Calculate the time intervals between each RR interval
+    time_intervals = df['Time'].diff().dt.total_seconds().values
+
+    # Calculate the new time intervals for the upsampled signal. We want to upsample the signal to 10 Hz, so the new time intervals will be 0.1 seconds.
+    new_time_intervals = np.arange(0, len(df)-1, 0.1)
+
+    # Create a function to interpolate the signal. We will use linear interpolation for simplicity.
+    f = interp1d(time_intervals, df['Artifact corrected RR'].iloc[:-1], kind='linear')
+
+    # Interpolate the signal using the new time intervals.
+    upsampled_rr_intervals = f(new_time_intervals)
+
+    # Calculate the new BPM values
+    upsampled_bpm = 60 / upsampled_rr_intervals
+
+    # Create a new dataframe with the upsampled data
+    upsampled_df = pd.DataFrame({'Time': pd.date_range(start=df['Time'].iloc[0], periods=len(upsampled_rr_intervals), freq='0.1S'),
+                                 'Artifact corrected RR': upsampled_rr_intervals,
+                                 'Heart Rate': upsampled_bpm})
+
+    return upsampled_df
+
+for i in range(len(dphy)):
+    dphy[i]=upsample_dataframe(dphy[i])
+
+    
+    
+
+# Instantaneus heart rate (BPM) of a random physical student (only first 50 data points)
+fig, ax = plt.subplots(1, 1)
+sns.lineplot(data=dphy[0].iloc[:51], x="Time", y="Heart Rate", color="blue")
+sns.scatterplot(data=dphy[0].iloc[:51], x="Time", y="Heart Rate", color = "red",
+                alpha=0.5)
+plt.title("BPM based on corrected RR (data points 100-120)")
+plt.xticks(rotation=45) # rotate the x-tick labels by 45 degrees
+plt.show()
+
+print(dphy[1]["Time"][1])
+ 
 
 ### ------------------------------------------------------------------------------------ ###
 ### Cutting the signals to only contain the lecture
@@ -138,8 +199,4 @@ for i in range(len(dvir)): # Virtual lecture
     df = df.loc[mask]
     data_frames_virtual[i] = df
     
-
-
-### ------------------------------------------------------------------------------------ ###
-### Resampling to a higher frequency 
-
+print(phy_lecture_end_time)

@@ -83,7 +83,7 @@ common_timestamps = np.intersect1d(np.round(Ch_timestamps,0),np.round(Tch_timest
 # Remove the first and last timepoint in case of rounding up or down
 common_timestamps = common_timestamps[1:-1]
 # Upsample to sfreq of interest
-sfreq = 10
+sfreq = 10 
 max_diff = int(common_timestamps[-1]-common_timestamps[0])
 upsampled_timestamps = np.linspace(common_timestamps[0],common_timestamps[-1],(sfreq*max_diff)+1)
 
@@ -94,7 +94,7 @@ upsampled_datetimes = [datetime.datetime.fromtimestamp(ele-60*60) for ele in ups
 Chf = scipy.interpolate.interp1d(Ch_timestamps,d[0]["Artifact corrected RR"], kind="linear")
 Tchf = scipy.interpolate.interp1d(Tch_timestamps,d[1]["Artifact corrected RR"], kind="linear")
 # Interpolate to common timestamps
-Ch_interp = Chf(upsampled_timestamps)
+Ch_interp = Chf(upsampled_timestamps) 
 Tch_interp = Tchf(upsampled_timestamps)
 
 # Plot the resampled data at the common timestamps
@@ -114,10 +114,7 @@ sns.scatterplot(data = resampled_df, x="Time", y="Tch_cRR", color = "blue")
 plt.title("Resampled aligned Artifact Corrected RR")
 plt.show()
 
-
-
-
-
+print(Ch_interp)
 
 ### Cross-correlation with scipy
 norm_Ch_interp = (Ch_interp-np.mean(Ch_interp))/np.std(Ch_interp)

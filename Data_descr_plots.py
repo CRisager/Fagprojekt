@@ -53,7 +53,7 @@ plt.title("All normalized BPM (Physical)")
 plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
 plt.xticks(rotation=45) # rotate the x-tick labels by 45 degrees
 plt.text(0.53, 0.9, "Break", color="black", transform=ax.transAxes) 
-plt.show()
+plt.show() 
 
 # Virtual
 fig, ax = plt.subplots(1,1) 
