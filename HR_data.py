@@ -142,17 +142,46 @@ sns.lineplot(data=dphy[12].iloc[:51], x="Time", y="Heart Rate", color="blue")
 sns.scatterplot(data=dphy[12].iloc[:51], x="Time", y="Heart Rate", color = "red",
                 alpha=0.5)
 plt.title("BPM based on corrected RR (data points 100-120)")
+plt.xticks(rotation=45) # rotate the x-tick labels by 45 degrees
 plt.show()
 
 
-# Artifact detection plot of a random student
+# RR before and after Artifact detection (a random student)
 fig, ax = plt.subplots(1,1)
-sns.lineplot(data = dphy[12].iloc[10:], x="Time", y="RR", color = "red")
-sns.lineplot(data = dphy[12].iloc[10:], x="Time", y="Artifact corrected RR", color = "blue")
-plt.title("Raw RR")
+sns.lineplot(data = dphy[12].iloc[10:], x="Time", y="RR", color = "red", label="Raw RR-data")
+sns.lineplot(data = dphy[12].iloc[10:], x="Time", y="Artifact corrected RR", color = "blue", label="Cleaned RR-data")
+plt.title("Artifact detection on RR")
+plt.legend()
+plt.xticks(rotation=45) # rotate the x-tick labels by 45 degrees
 plt.show()
 
 
+# Normalize all signals (BPM only)
+for i in range(len(dphy)):
+    df = dphy[i]
+    norm_data = (df["Heart Rate"]-np.mean(df["Heart Rate"]))/np.std(df["Heart Rate"])
+    df["Normalized BPM"] = norm_data 
+    dphy[i] = df
+    
+# Define break start and end time 
+phy_break_start_time = datetime.datetime.strptime("21.03.2023 12:11:47", "%d.%m.%Y %H:%M:%S")
+phy_break_end_time = datetime.datetime.strptime("21.03.2023 12:27:02", "%d.%m.%Y %H:%M:%S")
+
+    
+# Plot all normalized signals on top of eachother 
+fig, ax = plt.subplots(1,1)
+for i in range(len(start_times_physical)):
+    sns.lineplot(data = dphy[i], x="Time", y="Normalized BPM", color = "blue")
+# add a shaded rectangle to indicate the lecture break interval
+ax.axvspan(phy_break_start_time, phy_break_end_time, color='grey', alpha=0.2)
+plt.title("All normalized BPM")
+plt.xticks(rotation=45) # rotate the x-tick labels by 45 degrees
+plt.text(0.53, 0.9, "Break", color="black", transform=ax.transAxes) 
+plt.show()
+
+
+
+# ------------------------------------------------------------------------------------
 ## Li's plots ##
 
 # Plot with the actual times
@@ -160,6 +189,7 @@ fig, ax = plt.subplots(1,1)
 sns.lineplot(data = dphy[1], x="Time", y="Artifact corrected RR", color = "red")
 sns.lineplot(data = dphy[2], x="Time", y="Artifact corrected RR", color = "blue")
 plt.title("Artifact Corrected RR")
+plt.xticks(rotation=45) # rotate the x-tick labels by 45 degrees
 plt.show()
 
 # With the actual dots
@@ -169,6 +199,7 @@ sns.scatterplot(data = dphy[0], x="Time", y="Artifact corrected RR", color = "re
 sns.scatterplot(data = dphy[1], x="Time", y="Artifact corrected RR", color = "blue",
                 alpha=0.5)
 plt.title("Artifact Corrected RR")
+plt.xticks(rotation=45) # rotate the x-tick labels by 45 degrees
 plt.show()
 
 # Non-corrected raw data
@@ -176,6 +207,7 @@ fig, ax = plt.subplots(1,1)
 sns.lineplot(data = dphy[0], x="Time", y="RR", color = "red")
 sns.lineplot(data = dphy[1], x="Time", y="RR", color = "blue")
 plt.title("Raw RR")
+plt.xticks(rotation=45) # rotate the x-tick labels by 45 degrees
 plt.show()
 
 # Instantaneus heart rate (BPM)
@@ -183,6 +215,7 @@ fig, ax = plt.subplots(1,1)
 sns.lineplot(data = dphy[0], x="Time", y="Heart Rate", color = "red")
 sns.lineplot(data = dphy[1], x="Time", y="Heart Rate", color = "blue")
 plt.title("BPM based on corrected RR")
+plt.xticks(rotation=45) # rotate the x-tick labels by 45 degrees
 plt.show()
 
 
