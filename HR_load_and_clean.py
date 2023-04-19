@@ -113,7 +113,7 @@ for i in range(len(dvir)):
     bpm = 60/(d0["Artifact corrected RR"]/1000)
     d0["Heart Rate"] = bpm # Add column of HR (beats per minute) to the data frame
     dvir[i] = d0
-    
+
 
 
 ### ------------------------------------------------------------------------------------ ###
@@ -138,3 +138,8 @@ for i in range(len(dvir)): # Virtual lecture
     df = df.loc[mask]
     data_frames_virtual[i] = df
     
+
+
+### ------------------------------------------------------------------------------------ ###
+### Resampling to a higher frequency 
+
