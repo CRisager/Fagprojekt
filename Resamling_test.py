@@ -30,15 +30,29 @@ for i in range(len(dvir)): # Virtual lecture
 ### ------------------------------------------------------------------------------------ ###
 ### Resampling to a higher frequency 
 
+#for i in range(len(dphy)): # Physical lecture
+df = dphy[0].copy()
+print(df["Time"][0:5])
+# Round to nearest second in order to gain common timestamps
+rounded_timestamps = df["Time"].round("1s")
+# Create a list of unique timestamps
+unique_timestamps = np.unique(rounded_timestamps)
+# Upsample to 10 Hz
+freq_new = 10
+max_diff = int(unique_timestamps[-1] - unique_timestamps[0])
+upsampled_timestamps = np.linspace(unique_timestamps[0], unique_timestamps[-1], (freq_new * max_diff) + 1)
+print(df["Time"][0:5])
 
-# Instantaneus heart rate (BPM) of a random physical student (only first 50 data points)
-fig, ax = plt.subplots(1, 1)
-sns.lineplot(data=dphy[0].iloc[:51], x="Time", y="Heart Rate", color="blue")
-sns.scatterplot(data=dphy[0].iloc[:51], x="Time", y="Heart Rate", color = "red",
-                alpha=0.5)
-plt.title("BPM based on corrected RR (data points 100-120)")
-plt.xticks(rotation=45) # rotate the x-tick labels by 45 degrees
-plt.show()
+
+dphy[i] = df.copy()
+
+
+for i in range(len(dvir)): # Virtual lecture
+    df = dvir[i].copy()
+    df.loc[:, ("Time")] = df["Time"].round("1s")
+    dvir[i] = df.copy()
+
+
 
 print(dphy[1]["Time"][1:5])
 
