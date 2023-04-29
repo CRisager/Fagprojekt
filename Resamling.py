@@ -21,10 +21,7 @@ def Resamling(start, end, df_list):
         df = df_list[i]
         
         # Keep track of which dataframe is being resampled
-        print(i, "/", len(df_list))
-        
-        print(df["Time"].iloc[0])
-        print(df["Time"].iloc[-1])
+        print(i+1, "/", len(df_list))
 
         # Convert time stamps to float
         timestamps = [pd.Timestamp(ele).timestamp() for ele in df["Time"]]
@@ -45,6 +42,13 @@ def Resamling(start, end, df_list):
 
         # Convert time stamps back to pandas datetime objects 
         timestamps_resampled = [pd.Timestamp.fromtimestamp(ele) for ele in upsampled_timestamps]
+        # Change time stamps to danish timezone
+        if df_list == dphy:
+            timestamps_resampled = [t - pd.Timedelta(hours=1) for t in timestamps_resampled]
+        elif df_list == dvir:
+            timestamps_resampled = [t - pd.Timedelta(hours=2) for t in timestamps_resampled] # Take summer-time into account
+        else:
+            print("What timezone are you dealing with here??")
 
         # Calculate new BPM based on the resampled RR-intervals
         BPM_resampled = 60/(RR_resampled/1000)
@@ -68,13 +72,3 @@ Resamling(phy_lecture_start_time, phy_lecture_end_time, dphy) # Physical lecture
 Resamling(vir_lecture_start_time, vir_lecture_end_time, dvir) # Virtual lecture
 
 print("Re-sampling done")
-
-
-print(dphy[12]["Time"].iloc[0])
-print(dphy_resampled[12]["Time"].iloc[0])
-
-import pandas as pd
-
-print(pd.Timestamp.fromtimestamp(1679404140.278))
-print(pd.Timestamp.fromtimestamp(1679408169.778))
-
