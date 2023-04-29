@@ -23,6 +23,9 @@ def Resamling(start, end, df_list):
         # Keep track of which dataframe is being resampled
         print(i, "/", len(df_list))
         
+        print(df["Time"].iloc[0])
+        print(df["Time"].iloc[-1])
+
         # Convert time stamps to float
         timestamps = [pd.Timestamp(ele).timestamp() for ele in df["Time"]]
         lecture_start = pd.Timestamp(start).timestamp()
@@ -69,3 +72,9 @@ print("Re-sampling done")
 
 print(dphy[12]["Time"].iloc[0])
 print(dphy_resampled[12]["Time"].iloc[0])
+
+import pandas as pd
+
+print(pd.Timestamp.fromtimestamp(1679404140.278))
+print(pd.Timestamp.fromtimestamp(1679408169.778))
+

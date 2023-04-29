@@ -9,7 +9,6 @@ import pytz
 import matplotlib.dates as mdates
 
 
-
 ### ------------------------------------------------------------------------------------ ### 
 ### Load Data ###
 
@@ -48,6 +47,8 @@ def Load_data(csv_files, data_frames, start_times, path):
         start_time = datetime.datetime.strptime(start_time, "%d.%m.%Y %H:%M:%S")
         start_times.append(start_time) # add to the start times list
 
+print("...")
+
 Load_data(csv_files_physical, data_frames_physical, start_times_physical, path1)
 Load_data(csv_files_virtual, data_frames_virtual, start_times_virtual, path2)
 
@@ -85,9 +86,9 @@ def Update_df(df_list, starts_list):
         
         # Change time stamps to danish timezone
         if df_list == dphy:
-            Time = [t + pd.Timedelta(hours=1) for t in Time]
+            Time = [t + pd.Timedelta(hours=2) for t in Time]
         elif df_list == dvir:
-            Time = [t + pd.Timedelta(hours=2) for t in Time] # Take summer-time into account
+            Time = [t + pd.Timedelta(hours=3) for t in Time] # Take summer-time into account
         else:
             print("What timezone are you dealing with here??")
 
