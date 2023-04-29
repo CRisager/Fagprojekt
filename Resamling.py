@@ -62,3 +62,5 @@ def Resamling(start, end, df_list):
 # Resample         
 Resamling(phy_lecture_start_time, phy_lecture_end_time, dphy) # Physical lecture
 Resamling(vir_lecture_start_time, vir_lecture_end_time, dvir) # Virtual lecture
+
+print("Re-sampling done")

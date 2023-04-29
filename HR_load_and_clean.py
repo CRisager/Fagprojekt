@@ -51,6 +51,7 @@ def Load_data(csv_files, data_frames, start_times, path):
 Load_data(csv_files_physical, data_frames_physical, start_times_physical, path1)
 Load_data(csv_files_virtual, data_frames_virtual, start_times_virtual, path2)
 
+print("Loading done")
     
 ### ------------------------------------------------------------------------------------ ###
 ### Update dataframes with time stamps and heart rate (beats per minute)
@@ -94,15 +95,16 @@ def Update_df(df_list, starts_list):
 Update_df(dphy, starts_phy)
 Update_df(dvir, starts_vir)
 
+print("Dataframe updates done")
 
 ### ------------------------------------------------------------------------------------ ###
 ### Cutting the signals to only contain the lecture (+ a little padding for resampling)
 
-# Define lecture start and end time (+ a padding on 1 minute)
-phy_lecture_start_plus = datetime.datetime.strptime("21.03.2023 11:09:00", "%d.%m.%Y %H:%M:%S")
-phy_lecture_end_plus = datetime.datetime.strptime("21.03.2023 13:11:11", "%d.%m.%Y %H:%M:%S")
-vir_lecture_start_plus = datetime.datetime.strptime("28.03.2023 10:20:25", "%d.%m.%Y %H:%M:%S")
-vir_lecture_end_plus = datetime.datetime.strptime("28.03.2023 12:14:37", "%d.%m.%Y %H:%M:%S")
+# Define lecture start and end time (+ a padding on 1 minute) in UTC timezone
+phy_lecture_start_plus = datetime.datetime.strptime("21.03.2023 12:09:00", "%d.%m.%Y %H:%M:%S")
+phy_lecture_end_plus = datetime.datetime.strptime("21.03.2023 14:11:11", "%d.%m.%Y %H:%M:%S")
+vir_lecture_start_plus = datetime.datetime.strptime("28.03.2023 12:20:25", "%d.%m.%Y %H:%M:%S")
+vir_lecture_end_plus = datetime.datetime.strptime("28.03.2023 14:14:37", "%d.%m.%Y %H:%M:%S")
 
 # Function for cutting the data 
 def Cutting(start, end, df_list):    
@@ -118,3 +120,4 @@ def Cutting(start, end, df_list):
 Cutting(phy_lecture_start_plus, phy_lecture_end_plus, dphy) # Physical lecture
 Cutting(vir_lecture_start_plus, vir_lecture_end_plus, dvir) # Virtual lecture
 
+print("Cutting signal done")
