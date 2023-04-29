@@ -1,4 +1,4 @@
-from HR_load_and_clean import sns, scipy, plt, dphy, dvir, datetime, np, pd, Cutting
+from HR_load_and_clean import sns, scipy, plt, dphy, dvir, datetime, np, pd, Cutting, start_times_physical, start_times_virtual, mdates
 
 
 # Define lecture start and end time 
