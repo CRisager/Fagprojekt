@@ -11,125 +11,100 @@ import matplotlib.dates as mdates
 
 
 ### ------------------------------------------------------------------------------------ ### 
-### Working Directory for physical ###
-path = "C:/Users/cheli/OneDrive/Skrivebord/Fagprojekt/Fagprojekt_data/physical"
-# path = = "/Users/andreabolvig/Desktop/4.semester/Project work/Fagprojekt_data/physical"
+### Load Data ###
+
+# Physical
+path1 = "C:/Users/cheli/OneDrive/Skrivebord/Fagprojekt/Fagprojekt_data/physical"
+#path = "/Users/andreabolvig/Desktop/4.semester/Project work/Fagprojekt_data/physical"
 #path = "/Users/jesperberglund/Downloads/HR_Data/physical"
-os.chdir(path)
-
+os.chdir(path1)
 # Using list comprehension to loop over all files in folder (minus the teacher and Chelina)
-csv_files_physical = [f for f in os.listdir(path) if f.endswith('.csv')][:len(os.listdir(path))-2]
+csv_files_physical = [f for f in os.listdir(path1) if f.endswith('.csv')][:len(os.listdir(path1))-2]
 
-# Load all CSV files from physical lecture into list of data frames
-data_frames_physical = []
-for file in csv_files_physical:
-    file_path = os.path.join(path, file)
-    df = pd.read_csv(file_path, skiprows=2, sep=";")
-    data_frames_physical.append(df)
-
-start_times_physical = []
-for file in csv_files_physical:
-    file_path = os.path.join(path, file)
-    start_time = pd.read_csv(file_path, skiprows=1, nrows=0, sep=";").columns[0].split(": ")[1]
-    start_time = datetime.datetime.strptime(start_time, "%d.%m.%Y %H:%M:%S")
-    start_times_physical.append(start_time)
-    
-### ------------------------------------------------------------------------------------ ###
-### Working Directory for virtual ###
-
-path = "C:/Users/cheli/OneDrive/Skrivebord/Fagprojekt/Fagprojekt_data/virtual"
-# path = "/Users/andreabolvig/Desktop/4.semester/Project work/Fagprojekt_data/virtual"
-# path = "/Users/jesperberglund/Downloads/HR_Data/virtual"
-os.chdir(path)
+# Virtual
+path2 = "C:/Users/cheli/OneDrive/Skrivebord/Fagprojekt/Fagprojekt_data/virtual"
+#path = "/Users/andreabolvig/Desktop/4.semester/Project work/Fagprojekt_data/virtual"
+#path = "/Users/jesperberglund/Downloads/HR_Data/virtual"
+os.chdir(path2)
 # Using list comprehension to loop over all files in folder
-csv_files_virtual = [f for f in os.listdir(path) if f.endswith('.csv')][:len(os.listdir(path))-2]
+csv_files_virtual = [f for f in os.listdir(path2) if f.endswith('.csv')][:len(os.listdir(path2))-2]
 
-# Load all CSV files from physical lecture into list of data frames
+
+# Create lists for dataframes and starting times
+data_frames_physical = []
 data_frames_virtual = []
-for file in csv_files_virtual:
-    file_path = os.path.join(path, file)
-    df = pd.read_csv(file_path, skiprows=2, sep=";")
-    data_frames_virtual.append(df)
-
+start_times_physical = []
 start_times_virtual = []
-for file in csv_files_virtual:
-    file_path = os.path.join(path, file)
-    start_time = pd.read_csv(file_path, skiprows=1, nrows=0, sep=";").columns[0].split(": ")[1]
-    start_time = datetime.datetime.strptime(start_time, "%d.%m.%Y %H:%M:%S")
-    start_times_virtual.append(start_time)
+
+# Function for loading data
+def Load_data(csv_files, data_frames, start_times, path):
+    for file in csv_files:
+        file_path = os.path.join(path, file)
+        # Read the data as a pandas dataframe
+        df = pd.read_csv(file_path, skiprows=2, sep=";")
+        data_frames.append(df) # Add dataframe to list of dataframes
+        # Read the starting time stamps from all readings
+        start_time = pd.read_csv(file_path, skiprows=1, nrows=0, sep=";").columns[0].split(": ")[1]
+        start_time = datetime.datetime.strptime(start_time, "%d.%m.%Y %H:%M:%S")
+        start_times.append(start_time) # add to the start times list
+
+Load_data(csv_files_physical, data_frames_physical, start_times_physical, path1)
+Load_data(csv_files_virtual, data_frames_virtual, start_times_virtual, path2)
+
     
 ### ------------------------------------------------------------------------------------ ###
-### Update "physical" data frame with time stamps and beats per minute
+### Update dataframes with time stamps and heart rate (beats per minute)
 
+# Shorten the names to make it easier to work with
 dphy = data_frames_physical 
 starts_phy = start_times_physical
-for i in range(len(dphy)):
-    d0 = dphy[i]
-    d0 = d0.drop("Unnamed: 3", axis=1) # Drop empty column
-    # Ensure the corrected and non-corrected accounts for all data
-    RR = np.cumsum(d0["RR"])
-    cRR = np.cumsum(d0["Artifact corrected RR"])
-    
-    #if np.nanmax(RR) != np.nanmax(cRR):
-    #    print("The cumulative times are not the same for corrected and uncorrected")
-    #    print(f"For subject {i}, there is a difference of {np.nanmax(RR)-np.nanmax(cRR)}")
-    
-    # Drop rows with NaN, due to dissimilar number of "R-R" recordings due to artifacts
-    d0 = d0.dropna() # Drop empty rows
-    # Compute new cRR without NaN (empty rows and colums)
-    cRR = np.cumsum(d0["Artifact corrected RR"])
-    s0 = starts_phy[i]
-    # Create a list of time stamps for each data point
-    Time = [pd.Timestamp(s0) + pd.Timedelta(seconds=i/1000) for i in cRR] 
-    d0["Time"] = Time # Add the time stamp column to the data frame
-    # Calculate Heart Rate pr. min (bpm) from the R-R intervals
-    bpm = 60/(d0["Artifact corrected RR"]/1000)
-    d0["Heart Rate"] = bpm # Add column of HR (beats per minute) to the data frame
-    dphy[i] = d0
-    
-
-
-    
-### ------------------------------------------------------------------------------------ ###
-### Update "virtual" data frame with time stamps and beats per minute
-
 dvir = data_frames_virtual
 starts_vir = start_times_virtual
-for i in range(len(dvir)):
-    d0 = dvir[i]
-    d0 = d0.drop("Unnamed: 3", axis=1) # Drop empty column
-    # Ensure the corrected and non-corrected accounts for all data
-    RR = np.cumsum(d0["RR"])
-    cRR = np.cumsum(d0["Artifact corrected RR"])
-    
-    #if np.nanmax(RR) != np.nanmax(cRR):
-    #    print("The cumulative times are not the same for corrected and uncorrected")
-    #    print(f"For subject {i}, there is a difference of {np.nanmax(RR)-np.nanmax(cRR)}")
-    
-    # Drop rows with NaN, due to dissimilar number of "R-R" recordings due to artifacts
-    d0 = d0.dropna() # Drop empty rows
-    # Compute new cRR without NaN (empty rows and colums)
-    cRR = np.cumsum(d0["Artifact corrected RR"])
-    s0 = starts_vir[i]
-    # Create a list of time stamps for each data point
-    Time = [pd.Timestamp(s0) + pd.Timedelta(seconds=i/1000) for i in cRR] 
-    d0["Time"] = Time # Add the time stamp column to the data frame
-    # Calculate Heart Rate pr. min (bpm) from the R-R intervals
-    bpm = 60/(d0["Artifact corrected RR"]/1000)
-    d0["Heart Rate"] = bpm # Add column of HR (beats per minute) to the data frame
-    dvir[i] = d0
-    
+
+# Function for updating the dataframes
+def Update_df(df_list, starts_list):
+    for i in range(len(df_list)):
+        df = df_list[i]
+        df = df.drop("Unnamed: 3", axis=1) # Drop empty column
+        # Ensure the non-corrected and corrected RR accounts for all data
+        RR = np.cumsum(df["RR"])
+        cRR = np.cumsum(df["Artifact corrected RR"])
+        
+        #if np.nanmax(RR) != np.nanmax(cRR):
+        #    print("The cumulative times are not the same for corrected and uncorrected")
+        #    print(f"For subject {i}, there is a difference of {np.nanmax(RR)-np.nanmax(cRR)}")
+        
+        # Drop rows with NaN, due to dissimilar number of "R-R" recordings due to artifacts
+        df = df.dropna() # Drop empty rows
+        # Compute new cRR without NaN (empty rows and colums)
+        cRR = np.cumsum(df["Artifact corrected RR"])
+        s0 = starts_list[i]
+        # Create a list of time stamps for each data point
+        Time = [pd.Timestamp(s0) + pd.Timedelta(seconds=i/1000) for i in cRR] 
+        # Change time stamps to UTC timezone
+        Time = [pd.Timestamp(ele).timestamp() for ele in Time]
+        Time = [pd.Timestamp.fromtimestamp(ele) for ele in Time]
+
+        df["Time"] = Time # Add the time stamp column to the data frame
+        # Calculate Heart Rate pr. min (bpm) from the R-R intervals
+        bpm = 60/(df["Artifact corrected RR"]/1000)
+        df["Heart Rate"] = bpm # Add column of HR (beats per minute) to the data frame
+        df_list[i] = df
+
+Update_df(dphy, starts_phy)
+Update_df(dvir, starts_vir)
 
 
 ### ------------------------------------------------------------------------------------ ###
-### Cutting the signals to only contain the lecture (+ a little padding)
+### Cutting the signals to only contain the lecture (+ a little padding for resampling)
 
-# Define lecture start and end time (+ a little padding)
+# Define lecture start and end time (+ a padding on 1 minute)
 phy_lecture_start_plus = datetime.datetime.strptime("21.03.2023 11:09:00", "%d.%m.%Y %H:%M:%S")
 phy_lecture_end_plus = datetime.datetime.strptime("21.03.2023 13:11:11", "%d.%m.%Y %H:%M:%S")
 vir_lecture_start_plus = datetime.datetime.strptime("28.03.2023 10:20:25", "%d.%m.%Y %H:%M:%S")
 vir_lecture_end_plus = datetime.datetime.strptime("28.03.2023 12:14:37", "%d.%m.%Y %H:%M:%S")
 
+# Function for cutting the data 
 def Cutting(start, end, df_list):    
     # Loop through each data frame and select the rows with time stamps between the lecture start and end time
     for i in range(len(df_list)): 

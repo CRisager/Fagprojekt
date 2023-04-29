@@ -3,6 +3,15 @@ from Resamling import sns, plt, dphy, dvir, datetime, np, start_times_physical, 
 ### ------------------------------------------------------------------------------------ ###
 ### Plots
 
+# Instantaneus heart rate (BPM) of a random physical student (All points)
+fig, ax = plt.subplots(1, 1)
+sns.lineplot(data=dphy[12], x="Time", y="Heart Rate", color="royalblue")
+sns.scatterplot(data=dphy_resampled[12], x="Time", y="Heart Rate", color = "crimson",
+                alpha=0.5)
+plt.title("BPM original curve with resampled points")
+plt.xticks(rotation=45) # rotate the x-tick labels by 45 degrees
+plt.show()
+
 # Instantaneus heart rate (BPM) of a random physical student (only first 50 data points)
 fig, ax = plt.subplots(1, 1)
 sns.lineplot(data=dphy[12].iloc[:51], x="Time", y="Heart Rate", color="royalblue")
