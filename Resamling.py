@@ -1,11 +1,11 @@
 from HR_load_and_clean import sns, scipy, plt, dphy, dvir, datetime, np, pd, Cutting, start_times_physical, start_times_virtual, mdates
 
 
-# Define lecture start and end time 
-phy_lecture_start_time = datetime.datetime.strptime("21.03.2023 11:10:00", "%d.%m.%Y %H:%M:%S")
-phy_lecture_end_time = datetime.datetime.strptime("21.03.2023 13:10:11", "%d.%m.%Y %H:%M:%S")
-vir_lecture_start_time = datetime.datetime.strptime("28.03.2023 10:21:25", "%d.%m.%Y %H:%M:%S")
-vir_lecture_end_time = datetime.datetime.strptime("28.03.2023 12:13:37", "%d.%m.%Y %H:%M:%S")
+# Define lecture start and end time in UTC timezone
+phy_lecture_start_time = datetime.datetime.strptime("21.03.2023 12:10:00", "%d.%m.%Y %H:%M:%S")
+phy_lecture_end_time = datetime.datetime.strptime("21.03.2023 14:10:11", "%d.%m.%Y %H:%M:%S")
+vir_lecture_start_time = datetime.datetime.strptime("28.03.2023 12:21:25", "%d.%m.%Y %H:%M:%S")
+vir_lecture_end_time = datetime.datetime.strptime("28.03.2023 14:13:37", "%d.%m.%Y %H:%M:%S")
 
 
 ### ------------------------------------------------------------------------------------ ###
