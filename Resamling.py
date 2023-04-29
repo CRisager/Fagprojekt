@@ -43,20 +43,21 @@ def Resamling(start, end, df_list):
         # Convert time stamps back to pandas datetime objects
         timestamps_resampled = [pd.Timestamp.fromtimestamp(ele) for ele in upsampled_timestamps]
 
+        # Calculate new BPM based on the resampled RR-intervals
+        BPM_resampled = 60/(RR_resampled/1000)
 
-        for i in range(len(df_list)):
-            # create a new DataFrame with a unique name based on the loop index
-            df_name = 'df{}_resampled'.format(0)
-            df = pd.DataFrame({'RR_resampled': RR_resampled, 'Time_resampled': timestamps_resampled})
+        # create a new DataFrame with a unique name based on the loop index
+        df_name = 'df{}_resampled'.format(0)
+        df = pd.DataFrame({'RR': RR_resampled, 'Time': timestamps_resampled, 'BPM': BPM_resampled})
 
-            # assign the new DataFrame to a variable with the unique name
-            globals()[df_name] = df
-            if df_list == dphy:
-                dphy_resampled.append(globals()[df_name]) 
-            elif df_list == dvir:       
-                dvir_resampled.append(globals()[df_name]) 
-            else:
-                print("What is df_list??")
+        # assign the new DataFrame to a variable with the unique name
+        globals()[df_name] = df
+        if df_list == dphy:
+            dphy_resampled.append(globals()[df_name]) 
+        elif df_list == dvir:       
+            dvir_resampled.append(globals()[df_name]) 
+        else:
+            print("What is df_list??")
 
 # Resample         
 Resamling(phy_lecture_start_time, phy_lecture_end_time, dphy) # Physical lecture
