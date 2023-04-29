@@ -51,7 +51,7 @@ def Load_data(csv_files, data_frames, start_times, path):
 Load_data(csv_files_physical, data_frames_physical, start_times_physical, path1)
 Load_data(csv_files_virtual, data_frames_virtual, start_times_virtual, path2)
 
-print("Loading done")
+print("Loading done \n ...")
     
 ### ------------------------------------------------------------------------------------ ###
 ### Update dataframes with time stamps and heart rate (beats per minute)
@@ -82,9 +82,14 @@ def Update_df(df_list, starts_list):
         s0 = starts_list[i]
         # Create a list of time stamps for each data point
         Time = [pd.Timestamp(s0) + pd.Timedelta(seconds=i/1000) for i in cRR] 
-        # Change time stamps to UTC timezone
-        Time = [pd.Timestamp(ele).timestamp() for ele in Time]
-        Time = [pd.Timestamp.fromtimestamp(ele) for ele in Time]
+        
+        # Change time stamps to danish timezone
+        if df_list == dphy:
+            Time = [t + pd.Timedelta(hours=1) for t in Time]
+        elif df_list == dvir:
+            Time = [t + pd.Timedelta(hours=2) for t in Time] # Take summer-time into account
+        else:
+            print("What timezone are you dealing with here??")
 
         df["Time"] = Time # Add the time stamp column to the data frame
         # Calculate Heart Rate pr. min (bpm) from the R-R intervals
@@ -102,10 +107,10 @@ print("Dataframe updates done")
 ### Cutting the signals to only contain the lecture (+ a little padding for resampling)
 
 # Define lecture start and end time (+ a padding on 1 minute) in UTC timezone
-phy_lecture_start_plus = datetime.datetime.strptime("21.03.2023 12:09:00", "%d.%m.%Y %H:%M:%S")
-phy_lecture_end_plus = datetime.datetime.strptime("21.03.2023 14:11:11", "%d.%m.%Y %H:%M:%S")
-vir_lecture_start_plus = datetime.datetime.strptime("28.03.2023 12:20:25", "%d.%m.%Y %H:%M:%S")
-vir_lecture_end_plus = datetime.datetime.strptime("28.03.2023 14:14:37", "%d.%m.%Y %H:%M:%S")
+phy_lecture_start_plus = datetime.datetime.strptime("21.03.2023 13:09:00", "%d.%m.%Y %H:%M:%S")
+phy_lecture_end_plus = datetime.datetime.strptime("21.03.2023 15:11:11", "%d.%m.%Y %H:%M:%S")
+vir_lecture_start_plus = datetime.datetime.strptime("28.03.2023 13:20:25", "%d.%m.%Y %H:%M:%S")
+vir_lecture_end_plus = datetime.datetime.strptime("28.03.2023 15:14:37", "%d.%m.%Y %H:%M:%S")
 
 # Function for cutting the data 
 def Cutting(start, end, df_list):    

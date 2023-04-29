@@ -1,11 +1,11 @@
 from HR_load_and_clean import sns, scipy, plt, dphy, dvir, datetime, np, pd, Cutting, start_times_physical, start_times_virtual, mdates
 
 
-# Define lecture start and end time in UTC timezone
-phy_lecture_start_time = datetime.datetime.strptime("21.03.2023 12:10:00", "%d.%m.%Y %H:%M:%S")
-phy_lecture_end_time = datetime.datetime.strptime("21.03.2023 14:10:11", "%d.%m.%Y %H:%M:%S")
-vir_lecture_start_time = datetime.datetime.strptime("28.03.2023 12:21:25", "%d.%m.%Y %H:%M:%S")
-vir_lecture_end_time = datetime.datetime.strptime("28.03.2023 14:13:37", "%d.%m.%Y %H:%M:%S")
+# Define lecture start and end time in danish timezone
+phy_lecture_start_time = datetime.datetime.strptime("21.03.2023 13:10:00", "%d.%m.%Y %H:%M:%S")
+phy_lecture_end_time = datetime.datetime.strptime("21.03.2023 15:10:11", "%d.%m.%Y %H:%M:%S")
+vir_lecture_start_time = datetime.datetime.strptime("28.03.2023 13:21:25", "%d.%m.%Y %H:%M:%S")
+vir_lecture_end_time = datetime.datetime.strptime("28.03.2023 15:13:37", "%d.%m.%Y %H:%M:%S")
 
 
 ### ------------------------------------------------------------------------------------ ###
@@ -22,7 +22,7 @@ def Resamling(start, end, df_list):
         
         # Keep track of which dataframe is being resampled
         print(i, "/", len(df_list))
-
+        
         # Convert time stamps to float
         timestamps = [pd.Timestamp(ele).timestamp() for ele in df["Time"]]
         lecture_start = pd.Timestamp(start).timestamp()
@@ -40,7 +40,7 @@ def Resamling(start, end, df_list):
         # Interpolate the signal creating new RR-intervals based on the upsampled timestamps
         RR_resampled = f(upsampled_timestamps) 
 
-        # Convert time stamps back to pandas datetime objects
+        # Convert time stamps back to pandas datetime objects 
         timestamps_resampled = [pd.Timestamp.fromtimestamp(ele) for ele in upsampled_timestamps]
 
         # Calculate new BPM based on the resampled RR-intervals
@@ -59,8 +59,13 @@ def Resamling(start, end, df_list):
         else:
             print("What is df_list??")
 
+print("Resamling:")
 # Resample         
 Resamling(phy_lecture_start_time, phy_lecture_end_time, dphy) # Physical lecture
 Resamling(vir_lecture_start_time, vir_lecture_end_time, dvir) # Virtual lecture
 
 print("Re-sampling done")
+
+
+print(dphy[12]["Time"].iloc[0])
+print(dphy_resampled[12]["Time"].iloc[0])
