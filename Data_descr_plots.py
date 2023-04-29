@@ -1,24 +1,18 @@
-from Resamling import sns, plt, dphy, dvir, datetime, np, start_times_physical, start_times_virtual, mdates, dphy_resampled, dvir_resampled
+from Resamling import pd, sns, plt, dphy, dvir, datetime, np, start_times_physical, start_times_virtual, mdates, dphy_resampled, dvir_resampled
 
 ### ------------------------------------------------------------------------------------ ###
 ### Plots
 
-# Instantaneus heart rate (BPM) of a random physical student (All points)
+# Instantaneus heart rate (BPM) of a random physical student (only first 15 data points)
 fig, ax = plt.subplots(1, 1)
-sns.lineplot(data=dphy[12], x="Time", y="Heart Rate", color="royalblue")
-sns.scatterplot(data=dphy_resampled[12], x="Time", y="Heart Rate", color = "crimson",
-                alpha=0.5)
-plt.title("BPM original curve with resampled points")
+sns.lineplot(data=dphy[12].iloc[1:16], x="Time", y="Heart Rate", color="royalblue", label = "Heart rate signal")
+sns.scatterplot(data=dphy_resampled[12].iloc[17:170], x="Time", y="Heart Rate", color = "crimson",
+                alpha=0.5, label = "Resampled data points")
+sns.scatterplot(data=dphy[12].iloc[1:16], x="Time", y="Heart Rate", color = "royalblue",
+                alpha=0.5, label = "Original data points")
+plt.title("BPM based on corrected RR (example snippet)")
 plt.xticks(rotation=45) # rotate the x-tick labels by 45 degrees
-plt.show()
-
-# Instantaneus heart rate (BPM) of a random physical student (only first 50 data points)
-fig, ax = plt.subplots(1, 1)
-sns.lineplot(data=dphy[12].iloc[:51], x="Time", y="Heart Rate", color="royalblue")
-sns.scatterplot(data=dphy[12].iloc[:51], x="Time", y="Heart Rate", color = "crimson",
-                alpha=0.5)
-plt.title("BPM based on corrected RR (data points 100-120)")
-plt.xticks(rotation=45) # rotate the x-tick labels by 45 degrees
+plt.legend()
 plt.show()
 
 
@@ -45,10 +39,10 @@ for i in range(len(dvir)): # Virtual lecture
     dvir[i] = df
 
 # Define break start and end time 
-phy_break_start_time = datetime.datetime.strptime("21.03.2023 12:11:47", "%d.%m.%Y %H:%M:%S")
-phy_break_end_time = datetime.datetime.strptime("21.03.2023 12:27:02", "%d.%m.%Y %H:%M:%S")
-vir_break_start_time = datetime.datetime.strptime("28.03.2023 10:55:42", "%d.%m.%Y %H:%M:%S")
-vir_break_end_time = datetime.datetime.strptime("28.03.2023 11:14:40", "%d.%m.%Y %H:%M:%S")
+phy_break_start_time = datetime.datetime.strptime("21.03.2023 14:11:47", "%d.%m.%Y %H:%M:%S")
+phy_break_end_time = datetime.datetime.strptime("21.03.2023 14:27:02", "%d.%m.%Y %H:%M:%S")
+vir_break_start_time = datetime.datetime.strptime("28.03.2023 13:55:42", "%d.%m.%Y %H:%M:%S")
+vir_break_end_time = datetime.datetime.strptime("28.03.2023 14:14:40", "%d.%m.%Y %H:%M:%S")
     
 # Plot all normalized signals on top of eachother 
 # Physical
