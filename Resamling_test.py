@@ -1,7 +1,5 @@
-from HR_load_and_clean import sns, plt, dphy, dvir, data_frames_virtual, datetime, np, pd
+from HR_load_and_clean import sns, scipy, plt, dphy, dvir, datetime, np, pd
 
-### ------------------------------------------------------------------------------------ ###
-### Cutting the signals to only contain the lecture
 
 # Define lecture start and end time 
 phy_lecture_start_time = datetime.datetime.strptime("21.03.2023 11:10:00", "%d.%m.%Y %H:%M:%S")
@@ -9,114 +7,89 @@ phy_lecture_end_time = datetime.datetime.strptime("21.03.2023 13:10:11", "%d.%m.
 vir_lecture_start_time = datetime.datetime.strptime("28.03.2023 10:21:25", "%d.%m.%Y %H:%M:%S")
 vir_lecture_end_time = datetime.datetime.strptime("28.03.2023 12:13:37", "%d.%m.%Y %H:%M:%S")
 
-
-# Loop through each data frame and select the rows with time stamps between the lecture start and end time
-# Round the first time stamp down to the nearest second aka the lecture start
-for i in range(len(dphy)): # Physical lecture
-    df = dphy[i]
-    mask = (df["Time"] >= phy_lecture_start_time) & (df["Time"] <= phy_lecture_end_time)
-    df = df.loc[mask]
-    df.iloc[0, df.columns.get_loc('Time')] = pd.to_datetime('2023-03-21 11:10:00.00000').floor('s')
-    dphy[i] = df
-    
-for i in range(len(dvir)): # Virtual lecture
-    df = dvir[i]
-    mask = (df["Time"] >= vir_lecture_start_time) & (df["Time"] <= vir_lecture_end_time)
-    df = df.loc[mask]
-    df.iloc[0, df.columns.get_loc('Time')] = pd.to_datetime('2023-03-21 11:10:00.00000').floor('s')
-    data_frames_virtual[i] = df
 
 
 ### ------------------------------------------------------------------------------------ ###
 ### Resampling to a higher frequency 
 
-#for i in range(len(dphy)): # Physical lecture
-df = dphy[0].copy()
-print(df["Time"][0:5])
-# Round to nearest second in order to gain common timestamps
-rounded_timestamps = df["Time"].round("1s")
-# Create a list of unique timestamps
-unique_timestamps = np.unique(rounded_timestamps)
-# Upsample to 10 Hz
-freq_new = 10
-max_diff = int(unique_timestamps[-1] - unique_timestamps[0])
-upsampled_timestamps = np.linspace(unique_timestamps[0], unique_timestamps[-1], (freq_new * max_diff) + 1)
-print(df["Time"][0:5])
+# Create a list for all the resampled dataframes
+dphy_resampled = []
+dvir_resampled = []
 
 
-dphy[i] = df.copy()
-
-
-for i in range(len(dvir)): # Virtual lecture
-    df = dvir[i].copy()
-    df.loc[:, ("Time")] = df["Time"].round("1s")
-    dvir[i] = df.copy()
-
-
-
-print(dphy[1]["Time"][1:5])
-
-
-
-
-
-
-import pandas as pd
-
-def resample_signal(df, sampling_rate):
-    df['Time'] = pd.to_datetime(df['Time'], unit='s')
-    df = df.set_index('Time')
-    df_resampled = df.resample(str(int(1/sampling_rate*1000)) + 'ms').mean()
-    df_resampled = df_resampled.reset_index()
-    df_resampled.columns = ['Time_resampled', 'RR_resampled']
-    return df_resampled
-
-
-# Resample all signals to 10 Hz
-dphy_resampled = [resample_signal(df, 10) for df in dphy]
-
-
-
-
-
-
-
-
-
-print(dphy[1]["Time"][1:5])
-
-
-
-fig, ax = plt.subplots(1, 1)
-sns.lineplot(data=dphy[0].iloc[:51], x="Time", y="Heart Rate", color="blue")
-sns.scatterplot(data=dphy[0].iloc[:51], x="Time", y="Heart Rate", color = "red",
-                alpha=0.5)
-plt.title("BPM based on corrected RR (data points 100-120)")
-plt.xticks(rotation=45) # rotate the x-tick labels by 45 degrees
-plt.show()
-
- 
-
-### ------------------------------------------------------------------------------------ ###
-### Cutting the signals to only contain the lecture
-
-# Define lecture start and end time 
-phy_lecture_start_time = datetime.datetime.strptime("21.03.2023 11:10:00", "%d.%m.%Y %H:%M:%S")
-phy_lecture_end_time = datetime.datetime.strptime("21.03.2023 13:10:11", "%d.%m.%Y %H:%M:%S")
-vir_lecture_start_time = datetime.datetime.strptime("28.03.2023 10:21:25", "%d.%m.%Y %H:%M:%S")
-vir_lecture_end_time = datetime.datetime.strptime("28.03.2023 12:13:37", "%d.%m.%Y %H:%M:%S")
-
-# Loop through each data frame and select the rows with time stamps between the lecture start and end time
-for i in range(len(dphy)): # Physical lecture
+# Reampling the signals from the physical lecture
+print("Resampling of physical lecture")
+for i in range(len(dphy)):
     df = dphy[i]
-    mask = (df["Time"] >= phy_lecture_start_time) & (df["Time"] <= phy_lecture_end_time)
-    df = df.loc[mask]
-    dphy[i] = df
     
-for i in range(len(dvir)): # Virtual lecture
+    # Keep track of which dataframe is reached
+    print(i, "/", len(dphy))
+
+    # Convert time stamps to float
+    timestamps = [pd.Timestamp(ele).timestamp() for ele in df["Time"]]
+    lecture_start = pd.Timestamp(phy_lecture_start_time).timestamp()
+    lecture_end = pd.Timestamp(phy_lecture_end_time).timestamp()
+
+    # Determine the new sampling frequency
+    freq_new = 10 # Hz
+    # Determine the length of the lecture
+    lecture_length = int(lecture_end - lecture_start)
+    # Create a list of the upsampled time stamps
+    upsampled_timestamps = np.linspace(lecture_start,lecture_end,(freq_new*lecture_length)+1)
+
+    # Fit a linear interpolation function to the existing time stamps and RR-values
+    f = scipy.interpolate.interp1d(timestamps,df["Artifact corrected RR"], kind="linear")
+    # Interpolate the signals
+    RR_resampled = f(upsampled_timestamps) 
+
+    # Convert time stamps back to pandas datetime objects
+    timestamps_resampled = [pd.Timestamp.fromtimestamp(ele) for ele in upsampled_timestamps]
+
+
+    for i in range(len(dphy)):
+        # create a new DataFrame with a unique name based on the loop index
+        df_name = 'df{}_resampled'.format(0)
+        df = pd.DataFrame({'RR_resampled': RR_resampled, 'Time_resampled': timestamps_resampled})
+
+        # assign the new DataFrame to a variable with the unique name
+        globals()[df_name] = df
+        dphy_resampled.append(globals()[df_name])        
+        
+        
+# Reampling the signals from the virtual lecture
+print("Resampling of physical lecture")
+for i in range(len(dvir)):
     df = dvir[i]
-    mask = (df["Time"] >= vir_lecture_start_time) & (df["Time"] <= vir_lecture_end_time)
-    df = df.loc[mask]
-    data_frames_virtual[i] = df
     
-print(phy_lecture_end_time)
+    # Keep track of which dataframe is reached
+    print(i, "/", len(dvir))
+
+    # Convert time stamps to float
+    timestamps = [pd.Timestamp(ele).timestamp() for ele in df["Time"]]
+    lecture_start = pd.Timestamp(vir_lecture_start_time).timestamp()
+    lecture_end = pd.Timestamp(vir_lecture_end_time).timestamp()
+
+    # Determine the new sampling frequency
+    freq_new = 10 # Hz
+    # Determine the length of the lecture
+    lecture_length = int(lecture_end - lecture_start)
+    # Create a list of the upsampled time stamps
+    upsampled_timestamps = np.linspace(lecture_start,lecture_end,(freq_new*lecture_length)+1)
+
+    # Fit a linear interpolation function to the existing time stamps and RR-values
+    f = scipy.interpolate.interp1d(timestamps,df["Artifact corrected RR"], kind="linear")
+    # Interpolate the signals
+    RR_resampled = f(upsampled_timestamps) 
+
+    # Convert time stamps back to pandas datetime objects
+    timestamps_resampled = [pd.Timestamp.fromtimestamp(ele) for ele in upsampled_timestamps]
+
+
+    for i in range(len(dvir)):
+        # create a new DataFrame with a unique name based on the loop index
+        df_name = 'df{}_resampled'.format(0)
+        df = pd.DataFrame({'RR_resampled': RR_resampled, 'Time_resampled': timestamps_resampled})
+
+        # assign the new DataFrame to a variable with the unique name
+        globals()[df_name] = df
+        dvir_resampled.append(globals()[df_name])

@@ -9,6 +9,7 @@ import pytz
 import matplotlib.dates as mdates
 
 
+
 ### ------------------------------------------------------------------------------------ ### 
 ### Working Directory for physical ###
 path = "C:/Users/cheli/OneDrive/Skrivebord/Fagprojekt/Fagprojekt_data/physical"
@@ -118,3 +119,33 @@ for i in range(len(dvir)):
     d0["Heart Rate"] = bpm # Add column of HR (beats per minute) to the data frame
     dvir[i] = d0
     
+
+
+### ------------------------------------------------------------------------------------ ###
+### Cutting the signals to only contain the lecture
+
+# Define lecture start and end time 
+phy_lecture_start_time = datetime.datetime.strptime("21.03.2023 11:10:00", "%d.%m.%Y %H:%M:%S")
+phy_lecture_end_time = datetime.datetime.strptime("21.03.2023 13:10:11", "%d.%m.%Y %H:%M:%S")
+vir_lecture_start_time = datetime.datetime.strptime("28.03.2023 10:21:25", "%d.%m.%Y %H:%M:%S")
+vir_lecture_end_time = datetime.datetime.strptime("28.03.2023 12:13:37", "%d.%m.%Y %H:%M:%S")
+
+
+# Loop through each data frame and select the rows with time stamps between the lecture start and end time
+# Round the first time stamp down to the nearest second aka the lecture start
+for i in range(len(dphy)): # Physical lecture
+    df = dphy[i]
+    mask = (df["Time"] >= phy_lecture_start_time) & (df["Time"] <= phy_lecture_end_time)
+    df = df.loc[mask]
+    #df.iloc[0, df.columns.get_loc('Time')] = pd.to_datetime('2023-03-21 11:10:00.00000').floor('s')
+    dphy[i] = df
+    
+for i in range(len(dvir)): # Virtual lecture
+    df = dvir[i]
+    mask = (df["Time"] >= vir_lecture_start_time) & (df["Time"] <= vir_lecture_end_time)
+    df = df.loc[mask]
+    #df.iloc[0, df.columns.get_loc('Time')] = pd.to_datetime('2023-03-21 11:10:00.00000').floor('s')
+    data_frames_virtual[i] = df
+
+
+
