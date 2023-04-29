@@ -122,30 +122,24 @@ for i in range(len(dvir)):
 
 
 ### ------------------------------------------------------------------------------------ ###
-### Cutting the signals to only contain the lecture
+### Cutting the signals to only contain the lecture (+ a little padding)
 
-# Define lecture start and end time 
-phy_lecture_start_time = datetime.datetime.strptime("21.03.2023 11:10:00", "%d.%m.%Y %H:%M:%S")
-phy_lecture_end_time = datetime.datetime.strptime("21.03.2023 13:10:11", "%d.%m.%Y %H:%M:%S")
-vir_lecture_start_time = datetime.datetime.strptime("28.03.2023 10:21:25", "%d.%m.%Y %H:%M:%S")
-vir_lecture_end_time = datetime.datetime.strptime("28.03.2023 12:13:37", "%d.%m.%Y %H:%M:%S")
+# Define lecture start and end time (+ a little padding)
+phy_lecture_start_plus = datetime.datetime.strptime("21.03.2023 11:09:00", "%d.%m.%Y %H:%M:%S")
+phy_lecture_end_plus = datetime.datetime.strptime("21.03.2023 13:11:11", "%d.%m.%Y %H:%M:%S")
+vir_lecture_start_plus = datetime.datetime.strptime("28.03.2023 10:20:25", "%d.%m.%Y %H:%M:%S")
+vir_lecture_end_plus = datetime.datetime.strptime("28.03.2023 12:14:37", "%d.%m.%Y %H:%M:%S")
 
+def Cutting(start, end, df_list):    
+    # Loop through each data frame and select the rows with time stamps between the lecture start and end time
+    for i in range(len(df_list)): 
+        df = df_list[i]
+        mask = (df["Time"] >= start) & (df["Time"] <= end)
+        df = df.loc[mask]
+        # Round the first time stamp down to the nearest second aka the lecture start
+        #df.iloc[0, df.columns.get_loc('Time')] = pd.to_datetime('2023-03-21 11:10:00.00000').floor('s')
+        df_list[i] = df
 
-# Loop through each data frame and select the rows with time stamps between the lecture start and end time
-# Round the first time stamp down to the nearest second aka the lecture start
-for i in range(len(dphy)): # Physical lecture
-    df = dphy[i]
-    mask = (df["Time"] >= phy_lecture_start_time) & (df["Time"] <= phy_lecture_end_time)
-    df = df.loc[mask]
-    #df.iloc[0, df.columns.get_loc('Time')] = pd.to_datetime('2023-03-21 11:10:00.00000').floor('s')
-    dphy[i] = df
-    
-for i in range(len(dvir)): # Virtual lecture
-    df = dvir[i]
-    mask = (df["Time"] >= vir_lecture_start_time) & (df["Time"] <= vir_lecture_end_time)
-    df = df.loc[mask]
-    #df.iloc[0, df.columns.get_loc('Time')] = pd.to_datetime('2023-03-21 11:10:00.00000').floor('s')
-    data_frames_virtual[i] = df
-
-
+Cutting(phy_lecture_start_plus, phy_lecture_end_plus, dphy) # Physical lecture
+Cutting(vir_lecture_start_plus, vir_lecture_end_plus, dvir) # Virtual lecture
 

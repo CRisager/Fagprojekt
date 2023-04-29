@@ -1,4 +1,4 @@
-from HR_load_and_clean import sns, plt, dphy, dvir, datetime, np, start_times_physical, start_times_virtual, mdates, dphy_resampled, dvir_resampled
+from Resampling import sns, plt, dphy, dvir, datetime, np, start_times_physical, start_times_virtual, mdates, dphy_resampled, dvir_resampled
 
 ### ------------------------------------------------------------------------------------ ###
 ### Plots
