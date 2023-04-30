@@ -1,4 +1,4 @@
-from Resamling import pd, sns, plt, dphy, dvir, datetime, np, start_times_physical, start_times_virtual, mdates, dphy_resampled, dvir_resampled, all_files_virtual, all_files_physical
+from Resamling import pd, sns, plt, dphy, dvir, datetime, np, start_times_physical, start_times_virtual, mdates, dphy_resampled, dvir_resampled
 
 ### ------------------------------------------------------------------------------------ ###
 ### Plots

@@ -1,4 +1,4 @@
-from HR_load_and_clean import sns, scipy, plt, dphy, dvir, datetime, np, pd, Cutting, start_times_physical, start_times_virtual, mdates, all_files_virtual, all_files_physical
+from HR_load_and_clean import sns, scipy, plt, dphy, dvir, datetime, np, pd, Cutting, start_times_physical, start_times_virtual, mdates
 
 
 # Define lecture start and end time in danish timezone
@@ -76,3 +76,12 @@ print("Re-sampling done")
 # Cutting the non-resampled data to only contain the lecture (without padding) for plots
 Cutting(phy_lecture_start_time, phy_lecture_end_time, dphy) # Physical lecture
 Cutting(vir_lecture_start_time, vir_lecture_end_time, dvir) # Virtual lecture
+
+# Parting the data into two versions: with/without the teacher
+# Physical students only (without teacher)
+dphy_students = dphy.copy()
+dphy_students.pop()
+# Virtual students only (without teacher)
+dvir_students = dvir.copy()
+dvir_students.pop()
+
