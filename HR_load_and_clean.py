@@ -14,9 +14,9 @@ import matplotlib.dates as mdates
 
 # Loading the data files
 # Physical
-#path = "C:/Users/cheli/OneDrive/Skrivebord/Fagprojekt/Fagprojekt_data/physical"
-#path = "/Users/andreabolvig/Desktop/4.semester/Project work/Fagprojekt_data/physical"
-path1 = "/Users/jesperberglund/Downloads/HR_Data/physical"
+path1 = "C:/Users/cheli/OneDrive/Skrivebord/Fagprojekt/Fagprojekt_data/physical"
+#path1 = "/Users/andreabolvig/Desktop/4.semester/Project work/Fagprojekt_data/physical"
+#path1 = "/Users/jesperberglund/Downloads/HR_Data/physical"
 os.chdir(path1)
 # Using list comprehension to loop over all files in folder minus the teacher
 csv_files_physical = [f for f in os.listdir(path1) if f.endswith('.csv')][:-1]
@@ -28,9 +28,9 @@ Teacher_phy = os.listdir(path1)[-1]
 csv_files_physical = csv_files_physical + [Teacher_phy]
 
 # Virtual
-#path = "C:/Users/cheli/OneDrive/Skrivebord/Fagprojekt/Fagprojekt_data/virtual"
-#path = "/Users/andreabolvig/Desktop/4.semester/Project work/Fagprojekt_data/virtual"
-path2 = "/Users/jesperberglund/Downloads/HR_Data/virtual"
+path2 = "C:/Users/cheli/OneDrive/Skrivebord/Fagprojekt/Fagprojekt_data/virtual"
+#path2 = "/Users/andreabolvig/Desktop/4.semester/Project work/Fagprojekt_data/virtual"
+#path2 = "/Users/jesperberglund/Downloads/HR_Data/virtual"
 os.chdir(path2)
 # Using list comprehension to loop over all files in folder minus the teacher
 csv_files_virtual = [f for f in os.listdir(path2) if f.endswith('.csv')][:-1]
