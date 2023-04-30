@@ -35,7 +35,7 @@ def Resamling(start, end, df_list):
         # Create a list of the upsampled time stamps
         upsampled_timestamps = np.linspace(lecture_start,lecture_end,(freq_new*lecture_length)+1)
 
-        # Fit a linear interpolation function to the measured time stamps and RR-values
+        # Fit a cubid interpolation function to the measured time stamps and RR-values
         f = scipy.interpolate.interp1d(timestamps,df["Artifact corrected RR"], kind="cubic")
         # Interpolate the signal creating new RR-intervals based on the upsampled timestamps
         RR_resampled = f(upsampled_timestamps) 
@@ -76,3 +76,12 @@ print("Re-sampling done")
 # Cutting the non-resampled data to only contain the lecture (without padding) for plots
 Cutting(phy_lecture_start_time, phy_lecture_end_time, dphy) # Physical lecture
 Cutting(vir_lecture_start_time, vir_lecture_end_time, dvir) # Virtual lecture
+
+# Parting the data into two versions: with/without the teacher
+# Physical students only (without teacher)
+dphy_students = dphy.copy()
+dphy_students.pop()
+# Virtual students only (without teacher)
+dvir_students = dvir.copy()
+dvir_students.pop()
+
