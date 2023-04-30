@@ -18,12 +18,14 @@ path1 = "C:/Users/cheli/OneDrive/Skrivebord/Fagprojekt/Fagprojekt_data/physical"
 #path1 = "/Users/andreabolvig/Desktop/4.semester/Project work/Fagprojekt_data/physical"
 #path1 = "/Users/jesperberglund/Downloads/HR_Data/physical"
 os.chdir(path1)
-# Using list comprehension to loop over all files in folder minus the teacher
-csv_files_physical = [f for f in os.listdir(path1) if f.endswith('.csv')][:-1]
+# Using list comprehension to loop over all files in folder
+csv_files_physical = [f for f in os.listdir(path1) if f.endswith('.csv')]
+# Save the teacher file name 
+Teacher_phy = "Teacher.csv"
+# Remov ethe teacher form the file list in order to sort it
+csv_files_physical.remove(Teacher_phy)
 # Sort the files from smallest to largest device number
 csv_files_physical = sorted(csv_files_physical, key=lambda x: int(x.split('.')[0]))
-# Read the teacher file independently
-Teacher_phy = os.listdir(path1)[-1]
 # Add the teacher to the end of the list
 csv_files_physical = csv_files_physical + [Teacher_phy]
 
@@ -33,11 +35,13 @@ path2 = "C:/Users/cheli/OneDrive/Skrivebord/Fagprojekt/Fagprojekt_data/virtual"
 #path2 = "/Users/jesperberglund/Downloads/HR_Data/virtual"
 os.chdir(path2)
 # Using list comprehension to loop over all files in folder minus the teacher
-csv_files_virtual = [f for f in os.listdir(path2) if f.endswith('.csv')][:-1]
+csv_files_virtual = [f for f in os.listdir(path2) if f.endswith('.csv')]
+# Save the teacher file name 
+Teacher_vir = "Teacher.csv"
+# Remov ethe teacher form the file list in order to sort it
+csv_files_virtual.remove(Teacher_vir)
 # Sort the files from smallest to largest device number
 csv_files_virtual = sorted(csv_files_virtual, key=lambda x: int(x.split('.')[0]))
-# Read the teacher file independently
-Teacher_vir = os.listdir(path2)[-1]
 # Add the teacher to the end of the list
 csv_files_virtual = csv_files_virtual + [Teacher_vir]
 
