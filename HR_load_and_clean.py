@@ -22,6 +22,7 @@ os.chdir(path1)
 csv_files_physical = [f for f in os.listdir(path1) if f.endswith('.csv')][:-1]
 # Sort the files from smallest to largest device number
 csv_files_physical = sorted(csv_files_physical, key=lambda x: int(x.split('.')[0]))
+print(csv_files_physical)
 # Read the teacher file independently
 Teacher_phy = os.listdir(path1)[-1]
 # Add the teacher to the end of the list
