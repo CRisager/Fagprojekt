@@ -14,8 +14,8 @@ import matplotlib.dates as mdates
 
 # Loading the data files
 # Physical
-path1 = "C:/Users/cheli/OneDrive/Skrivebord/Fagprojekt/Fagprojekt_data/physical"
-#path1 = "/Users/andreabolvig/Desktop/4.semester/Project work/Fagprojekt_data/physical"
+#path1 = "C:/Users/cheli/OneDrive/Skrivebord/Fagprojekt/Fagprojekt_data/physical"
+path1 = "/Users/andreabolvig/Desktop/4.semester/Project work/Fagprojekt_data/physical"
 #path1 = "/Users/jesperberglund/Downloads/HR_Data/physical"
 os.chdir(path1)
 # Using list comprehension to loop over all files in folder
@@ -30,8 +30,8 @@ csv_files_physical = sorted(csv_files_physical, key=lambda x: int(x.split('.')[0
 csv_files_physical = csv_files_physical + [Teacher_phy]
 
 # Virtual
-path2 = "C:/Users/cheli/OneDrive/Skrivebord/Fagprojekt/Fagprojekt_data/virtual"
-#path2 = "/Users/andreabolvig/Desktop/4.semester/Project work/Fagprojekt_data/virtual"
+#path2 = "C:/Users/cheli/OneDrive/Skrivebord/Fagprojekt/Fagprojekt_data/virtual"
+path2 = "/Users/andreabolvig/Desktop/4.semester/Project work/Fagprojekt_data/virtual"
 #path2 = "/Users/jesperberglund/Downloads/HR_Data/virtual"
 os.chdir(path2)
 # Using list comprehension to loop over all files in folder minus the teacher
