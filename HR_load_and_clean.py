@@ -14,20 +14,32 @@ import matplotlib.dates as mdates
 
 # Loading the data files
 # Physical
-#path = "C:/Users/cheli/OneDrive/Skrivebord/Fagprojekt/Fagprojekt_data/physical"
+path1 = "C:/Users/cheli/OneDrive/Skrivebord/Fagprojekt/Fagprojekt_data/physical"
 #path = "/Users/andreabolvig/Desktop/4.semester/Project work/Fagprojekt_data/physical"
-path1 = "/Users/jesperberglund/Downloads/HR_Data/physical"
+#path = "/Users/jesperberglund/Downloads/HR_Data/physical"
 os.chdir(path1)
-# Using list comprehension to loop over all files in folder (minus the teacher and Chelina)
-csv_files_physical = [f for f in os.listdir(path1) if f.endswith('.csv')][:len(os.listdir(path1))-2]
+# Using list comprehension to loop over all files in folder minus the teacher
+csv_files_physical = [f for f in os.listdir(path1) if f.endswith('.csv')][:-1]
+# Sort the files from smallest to largest device number
+csv_files_physical = sorted(csv_files_physical, key=lambda x: int(x.split('.')[0]))
+# Read the teacher file independently
+Teacher_phy = os.listdir(path1)[-1]
+# Add the teacher to the end of the list
+csv_files_physical = csv_files_physical + [Teacher_phy]
 
 # Virtual
-#path = "C:/Users/cheli/OneDrive/Skrivebord/Fagprojekt/Fagprojekt_data/virtual"
+path2 = "C:/Users/cheli/OneDrive/Skrivebord/Fagprojekt/Fagprojekt_data/virtual"
 #path = "/Users/andreabolvig/Desktop/4.semester/Project work/Fagprojekt_data/virtual"
-path2 = "/Users/jesperberglund/Downloads/HR_Data/virtual"
+#path = "/Users/jesperberglund/Downloads/HR_Data/virtual"
 os.chdir(path2)
-# Using list comprehension to loop over all files in folder
-csv_files_virtual = [f for f in os.listdir(path2) if f.endswith('.csv')][:len(os.listdir(path2))-2]
+# Using list comprehension to loop over all files in folder minus the teacher
+csv_files_virtual = [f for f in os.listdir(path2) if f.endswith('.csv')][:-1]
+# Sort the files from smallest to largest device number
+csv_files_virtual = sorted(csv_files_virtual, key=lambda x: int(x.split('.')[0]))
+# Read the teacher file independently
+Teacher_vir = os.listdir(path2)[-1]
+# Add the teacher to the end of the list
+csv_files_virtual = csv_files_virtual + [Teacher_vir]
 
 
 # Create lists for dataframes and starting times
@@ -36,7 +48,7 @@ data_frames_virtual = []
 start_times_physical = []
 start_times_virtual = []
 
-# Function for loading data
+# Function for loading data into dataframes and starting times
 def Load_data(csv_files, data_frames, start_times, path):
     for file in csv_files:
         file_path = os.path.join(path, file)
