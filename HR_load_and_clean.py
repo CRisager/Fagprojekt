@@ -24,8 +24,8 @@ csv_files_physical = [f for f in os.listdir(path1) if f.endswith('.csv')][:-1]
 csv_files_physical = sorted(csv_files_physical, key=lambda x: int(x.split('.')[0]))
 # Read the teacher file independently
 Teacher_phy = os.listdir(path1)[-1]
-# Create a seperate list with the students AND the teacher
-all_files_virtual = csv_files_physical + [Teacher_phy]
+# Add the teacher to the end of the list
+csv_files_physical = csv_files_physical + [Teacher_phy]
 
 # Virtual
 path2 = "C:/Users/cheli/OneDrive/Skrivebord/Fagprojekt/Fagprojekt_data/virtual"
@@ -38,8 +38,8 @@ csv_files_virtual = [f for f in os.listdir(path2) if f.endswith('.csv')][:-1]
 csv_files_virtual = sorted(csv_files_virtual, key=lambda x: int(x.split('.')[0]))
 # Read the teacher file independently
 Teacher_vir = os.listdir(path2)[-1]
-# Create a seperate list with the students AND the teacher
-all_files_virtual = csv_files_virtual + [Teacher_vir]
+# Add the teacher to the end of the list
+csv_files_virtual = csv_files_virtual + [Teacher_vir]
 
 
 # Create lists for dataframes and starting times
