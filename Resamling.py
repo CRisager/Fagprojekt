@@ -1,4 +1,4 @@
-from HR_load_and_clean import sns, scipy, plt, dphy, dvir, datetime, np, pd, Cutting, start_times_physical, start_times_virtual, mdates
+from HR_load_and_clean import sns, scipy, plt, dphy, dvir, datetime, np, pd, Cutting, start_times_physical, start_times_virtual, mdates, all_files_virtual, all_files_physical
 
 
 # Define lecture start and end time in danish timezone
@@ -35,7 +35,7 @@ def Resamling(start, end, df_list):
         # Create a list of the upsampled time stamps
         upsampled_timestamps = np.linspace(lecture_start,lecture_end,(freq_new*lecture_length)+1)
 
-        # Fit a linear interpolation function to the measured time stamps and RR-values
+        # Fit a cubid interpolation function to the measured time stamps and RR-values
         f = scipy.interpolate.interp1d(timestamps,df["Artifact corrected RR"], kind="cubic")
         # Interpolate the signal creating new RR-intervals based on the upsampled timestamps
         RR_resampled = f(upsampled_timestamps) 
