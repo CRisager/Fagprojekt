@@ -1,5 +1,6 @@
-from Resampling import (pd, sns, plt, dphy, dvir, datetime, np, start_times_physical, 
-start_times_virtual, mdates, dphy_resampled, dvir_resampled, Cutting, phy_lecture_start_time, phy_lecture_end_time, vir_lecture_start_time, vir_lecture_end_time)
+from Resampling import (pd, sns, plt, datetime, np, mdates, dphy_resampled, dvir_resampled, Cutting,
+                        phy_lecture_start_time, phy_lecture_end_time, vir_lecture_start_time, 
+                        vir_lecture_end_time, dphy_students, dvir_students)
 
 # Define break start and end time 
 phy_break_start_time = datetime.datetime.strptime("21.03.2023 14:11:47", "%d.%m.%Y %H:%M:%S")
@@ -12,6 +13,9 @@ phy_length_before_break = phy_break_start_time - phy_lecture_start_time # 1:01:4
 phy_length_after_break = phy_lecture_end_time - phy_break_end_time # 0:43:09
 vir_length_before_break = vir_break_start_time - vir_lecture_start_time # 0:34:17
 vir_length_after_break = vir_lecture_end_time - vir_break_end_time # 0:58:57
+# We can part the lectures into 14 minutes segments. 
+# In that way we only loose the first 5 and last 1 minute of the physical lecture 
+# and the first 6 and last 3 minutes of the virtual lecture. That is very good. 
 
 # Physical manual splitting times
 phys_starttime1 = datetime.datetime.strptime("21.03.2023 13:15:47", "%d.%m.%Y %H:%M:%S")

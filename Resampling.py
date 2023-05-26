@@ -1,4 +1,4 @@
-from HR_load_and_clean import sns, scipy, plt, dphy, dvir, datetime, np, pd, Cutting, start_times_physical, start_times_virtual, mdates
+from HR_load_and_clean import sns, scipy, plt, dphy, dvir, datetime, np, pd, Cutting, mdates
 
 
 # Define lecture start and end time in danish timezone
@@ -79,9 +79,9 @@ Cutting(vir_lecture_start_time, vir_lecture_end_time, dvir) # Virtual lecture
 
 # Parting the data into two versions: with/without the teacher
 # Physical students only (without teacher)
-dphy_students = dphy.copy()
+dphy_students = dphy_resampled.copy()
 dphy_students.pop()
 # Virtual students only (without teacher)
-dvir_students = dvir.copy()
+dvir_students = dvir_resampled.copy()
 dvir_students.pop()
 
