@@ -3,48 +3,6 @@ from Resampling import pd, sns, plt, dphy, dvir, datetime, np, start_times_physi
 ### ------------------------------------------------------------------------------------ ###
 ### Plots
 
-"""
-# Instantaneus heart rate (BPM) of a random physical student (only 15 data points)
-fig, ax = plt.subplots(1, 1)
-sns.lineplot(data=dphy_resampled[12].iloc[81:196], x="Time", y="Heart Rate", color="royalblue", label = "Resampled heart rate signal")
-sns.scatterplot(data=dphy[12].iloc[10:26], x="Time", y="Heart Rate", color = "crimson",
-                alpha=0.5, label = "Original data points")
-plt.title("BPM based on corrected RR (example snippet)")
-plt.xticks(rotation=45) # rotate the x-tick labels by 45 degrees
-handles, labels = plt.gca().get_legend_handles_labels() # Get handles and labels for costomized legend()
-order = [1,0] # Specify order of items in legend
-plt.legend([handles[idx] for idx in order],[labels[idx] for idx in order]) # Add legend to plot
-plt.show()
-"""
-
-# BPM original vs resampled (same student and data points)
-fig, ax = plt.subplots(1, 1)
-sns.lineplot(data=dphy[12].iloc[10:26], x="Time", y="Heart Rate", color="royalblue", label = "Original heart rate signal")
-sns.lineplot(data=dphy_resampled[12].iloc[81:196], x="Time", y="Heart Rate", color="crimson", label = "Resampled heart rate signal")
-sns.scatterplot(data=dphy_resampled[12].iloc[81:196], x="Time", y="Heart Rate", color = "crimson",
-                alpha=0.5, label = "Resampled data points")
-sns.scatterplot(data=dphy[12].iloc[10:26], x="Time", y="Heart Rate", color = "royalblue",
-                alpha=0.75, label = "Original data points")
-plt.title("BPM based on corrected RR (example snippet)")
-plt.xticks(rotation=45) # rotate the x-tick labels by 45 degrees
-handles, labels = plt.gca().get_legend_handles_labels() # Get handles and labels for costomized legend()
-order = [0,1,3,2] # Specify order of items in legend
-plt.legend([handles[idx] for idx in order],[labels[idx] for idx in order]) # Add legend to plot
-plt.show()
-
-
-# RR before and after Artifact detection (new random student)
-fig, ax = plt.subplots(1,1)
-sns.lineplot(data = dphy[10].iloc[10:], x="Time", y="RR", color = "crimson", label="Raw RR-data")
-sns.lineplot(data = dphy[10].iloc[10:], x="Time", y="Artifact corrected RR", color = "royalblue", label="Cleaned RR-data")
-plt.title("Artifact detection on RR")
-plt.legend()
-# format the x-tick labels to only show the time part
-plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
-plt.xticks(rotation=45) # rotate the x-tick labels by 45 degrees
-plt.show()
-
-
 ####### Average heart rate (BPM) ######################################################################
 # Create an empty list for the average signal
 phy_average_signal = []
@@ -103,3 +61,34 @@ plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
 plt.xticks(rotation=45) # rotate the x-tick labels by 45 degrees
 plt.title("Average BPM for virtual lecture") 
 plt.show() 
+
+
+####### Artifact detection ######################################################################
+
+# RR before and after Artifact detection (new random student)
+fig, ax = plt.subplots(1,1)
+sns.lineplot(data = dphy[10].iloc[10:], x="Time", y="RR", color = "crimson", label="Raw RR-data")
+sns.lineplot(data = dphy[10].iloc[10:], x="Time", y="Artifact corrected RR", color = "royalblue", label="Cleaned RR-data")
+plt.title("Artifact detection on RR")
+plt.legend()
+# format the x-tick labels to only show the time part
+plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
+plt.xticks(rotation=45) # rotate the x-tick labels by 45 degrees
+plt.show()
+
+####### Resamling ######################################################################
+
+# BPM original vs resampled (random student and a small data snippet)
+fig, ax = plt.subplots(1, 1)
+sns.lineplot(data=dphy[12].iloc[10:26], x="Time", y="Heart Rate", color="royalblue", label = "Original heart rate signal")
+sns.lineplot(data=dphy_resampled[12].iloc[81:196], x="Time", y="Heart Rate", color="crimson", label = "Resampled heart rate signal")
+sns.scatterplot(data=dphy_resampled[12].iloc[81:196], x="Time", y="Heart Rate", color = "crimson",
+                alpha=0.5, label = "Resampled data points")
+sns.scatterplot(data=dphy[12].iloc[10:26], x="Time", y="Heart Rate", color = "royalblue",
+                alpha=0.75, label = "Original data points")
+plt.title("BPM based on corrected RR (example snippet)")
+plt.xticks(rotation=45) # rotate the x-tick labels by 45 degrees
+handles, labels = plt.gca().get_legend_handles_labels() # Get handles and labels for costomized legend()
+order = [0,1,3,2] # Specify order of items in legend
+plt.legend([handles[idx] for idx in order],[labels[idx] for idx in order]) # Add legend to plot
+plt.show()
