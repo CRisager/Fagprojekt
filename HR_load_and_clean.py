@@ -12,12 +12,20 @@ import matplotlib.dates as mdates
 ### ------------------------------------------------------------------------------------ ### 
 ### Load Data ###
 
-# Loading the data files
+path = "C:/Users/cheli/OneDrive/Skrivebord/Fagprojekt/Fagprojekt_data"
+#path = "/Users/andreabolvig/Desktop/4.semester/Project work/Fagprojekt_data"
+#path = "/Users/jesperberglund/Downloads"
+os.chdir(path)
+
+### Load data about quiz scores and such in order to create the 
+# dataframes for statistical analysis
+df_quiz_phy = pd.read_csv("Quiz_scores_physical.txt")
+df_quiz_vir = pd.read_csv("Quiz_scores_virtual.txt")
+
+
+### Loading the HR data files ###
 # Physical
-#path1 = "C:/Users/cheli/OneDrive/Skrivebord/Fagprojekt/Fagprojekt_data/physical"
-#path1 = "/Users/andreabolvig/Desktop/4.semester/Project work/Fagprojekt_data/physical"
-path1 = "/Users/jesperberglund/Downloads/HR_Data/physical"
-os.chdir(path1)
+path1 = os.path.join(path, "physical")
 # Using list comprehension to loop over all files in folder
 csv_files_physical = [f for f in os.listdir(path1) if f.endswith('.csv')]
 # Save the teacher file name 
@@ -30,10 +38,7 @@ csv_files_physical = sorted(csv_files_physical, key=lambda x: int(x.split('.')[0
 csv_files_physical = csv_files_physical + [Teacher_phy]
 
 # Virtual
-#path2 = "C:/Users/cheli/OneDrive/Skrivebord/Fagprojekt/Fagprojekt_data/virtual"
-#path2 = "/Users/andreabolvig/Desktop/4.semester/Project work/Fagprojekt_data/virtual"
-path2 = "/Users/jesperberglund/Downloads/HR_Data/virtual"
-os.chdir(path2)
+path2 = os.path.join(path, "virtual")
 # Using list comprehension to loop over all files in folder minus the teacher
 csv_files_virtual = [f for f in os.listdir(path2) if f.endswith('.csv')]
 # Save the teacher file name 

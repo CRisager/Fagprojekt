@@ -1,6 +1,6 @@
 from Resampling import (pd, sns, plt, datetime, np, mdates, dphy_resampled, dvir_resampled, Cutting,
                         phy_lecture_start_time, phy_lecture_end_time, vir_lecture_start_time, 
-                        vir_lecture_end_time, dphy_students, dvir_students)
+                        vir_lecture_end_time, dphy_students, dvir_students, df_quiz_phy, df_quiz_vir)
 
 # Define break start and end time 
 phy_break_start_time = datetime.datetime.strptime("21.03.2023 14:11:47", "%d.%m.%Y %H:%M:%S")

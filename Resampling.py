@@ -1,4 +1,4 @@
-from HR_load_and_clean import sns, scipy, plt, dphy, dvir, datetime, np, pd, Cutting, mdates
+from HR_load_and_clean import sns, scipy, plt, dphy, dvir, datetime, np, pd, Cutting, mdates, df_quiz_phy, df_quiz_vir
 
 
 # Define lecture start and end time in danish timezone
@@ -53,16 +53,12 @@ def Resamling(start, end, df_list):
         # Calculate new BPM based on the resampled RR-intervals
         BPM_resampled = 60/(RR_resampled/1000)
 
-        # Create a new DataFrame with a unique name based on the loop index
-        df_name = 'df{}_resampled'.format(0)
+        # Create a new DataFrame and add it to the dataframelist
         df = pd.DataFrame({'RR': RR_resampled, 'Time': timestamps_resampled, 'Heart Rate': BPM_resampled})
-
-        # assign the new DataFrame to a variable with the unique name
-        globals()[df_name] = df
         if df_list == dphy:
-            dphy_resampled.append(globals()[df_name]) 
+            dphy_resampled.append(df) 
         elif df_list == dvir:       
-            dvir_resampled.append(globals()[df_name]) 
+            dvir_resampled.append(df) 
         else:
             print("What is df_list??")
 
