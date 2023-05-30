@@ -1,6 +1,8 @@
 from Split_signals import (pd, sns, plt, datetime, np, mdates, dphy_resampled, dvir_resampled,
                            dphy_students, dvir_students, phy_sections, vir_sections, df_quiz_phy, df_quiz_vir)
 import scipy
+from scipy.signal import correlate
+
 
 ############################################################## 
 ### Create the correct dataframes ###
@@ -25,13 +27,18 @@ def CrossCorrelation(signal1, signal2):
     # Calculate cross-correlations (Maximum shift is 1 minute)   
     cross_corr = scipy.signal.correlate(signal1_norm, signal2_norm, mode="full")
     cross_corr /= len(cross_corr)
-    # Return the maximum correlation
-    return np.max(cross_corr)
+    delays = np.linspace(-(len(signal1_norm)-1),len(signal2_norm)-1,len(cross_corr))
+    shift = int(delays[np.argmax(cross_corr)])
+    # Shift the signals accordingly 
+    shifted_signal1 = np.roll(signal1_norm, -shift)
+    shifted_signal2 = np.roll(signal2_norm, shift)
+    # Calculate correlation
+    pearson_corr = np.corrcoef(shifted_signal1, shifted_signal2)[0, 1]
+    return pearson_corr
 
 def Correlations(total_list, df_quiz_list, i):
     # Define the teachers RR-intervals
     Teacher = total_list[-1]["RR"]
-    Teacher = (Teacher-np.mean(Teacher))/np.std(Teacher) # Normalize
 
     # Create column lists for the student/teacher correlation as well as 
     # average student correlation
@@ -43,86 +50,51 @@ def Correlations(total_list, df_quiz_list, i):
     student_list.pop() # Remove the teacher
     for student in student_list:
         Student = student["RR"] # Define the student
-        Student = (Student-np.mean(Student))/np.std(Student) # Normalize
         # Calculate teacher/student correlation
         Teacher_corr_column.append(CrossCorrelation(Student, Teacher)) 
         # Calculate average student correlation
         corr_list = []
         for student in student_list:
             Student2 = student["RR"]
-            Student2 = (Student2-np.mean(Student2))/np.std(Student2) # Normalize
             corr = CrossCorrelation(Student, Student2)
             corr_list.append(corr)
         # Remove the correlation from the given student to himself
-        corr_list.pop(0)
+        corr_list = [num for num in corr_list if num < 0.99]
         # Add correlation to the column
         Student_corr_column.append(sum(corr_list)/len(corr_list))
         
     # Add the columns to the dataframe
     df = df_quiz_list[i]
-    print(len(df["Time"]))
-    print(len(Teacher_corr_column))
-    df["Teacher_Student_corr"] = Teacher_corr_column 
-    df["Avg_student_corr"] = Student_corr_column
-
-Correlations(phy_sections[0], df_quiz_phy, 0)
+    df["Teacher/Student corr"] = Teacher_corr_column 
+    df["Avg. student corr"] = Student_corr_column
 
 # Call the function in order to calculate the correlations for physical and virtual
+print("Calculating correlations ...")
 for i in range(7):
-    Correlations(phy_sections[i], df_quiz_phy, i)
-for i in vir_sections:
-    Correlations(vir_sections[i], df_quiz_vir, i)
+    Correlations(phy_sections[i], df_list_quiz_phy, i)
+for i in range(6):
+    Correlations(vir_sections[i], df_list_quiz_vir, i)
 
 ####################### check results #######################################
-print(np.max(df_quiz_phy[0]["Teacher/Student corr"]))
-print(np.max(df_quiz_phy[0]["Avg. student corr"]))
+print(np.max(df_list_quiz_phy[0]["Teacher/Student corr"]))
+print(np.max(df_list_quiz_phy[0]["Avg. student corr"]))
 
-print(np.max(df_quiz_vir["Teacher/Student corr"]))
-print(np.max(df_quiz_vir["Avg. student corr"]))
+print(df_list_quiz_phy[0]["Teacher/Student corr"])
+print(df_list_quiz_phy[0]["Avg. student corr"])
 
-
-max_corr_index = df_quiz_phy["Teacher/Student corr"].idxmax()
-min_corr_index = df_quiz_phy["Teacher/Student corr"].idxmin()
-
-
-fig, ax = plt.subplots(1,1)
-sns.lineplot(data = dphy_resampled[min_corr_index].iloc[10:], x="Time", y="RR", color = "crimson", label="student")
-sns.lineplot(data = dphy_resampled[-1].iloc[10:], x="Time", y="RR", color = "royalblue", label="teacher")
-plt.title("Correlation")
-plt.legend()
-# format the x-tick labels to only show the time part
-plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
-plt.xticks(rotation=45) # rotate the x-tick labels by 45 degrees
-plt.show()
+print(np.max(df_list_quiz_vir[0]["Teacher/Student corr"]))
+print(np.max(df_list_quiz_vir[0]["Avg. student corr"]))
 
 
-#########################################################################
+max_corr_index = df_list_quiz_phy[0]["Teacher/Student corr"].idxmax()
+min_corr_index = df_list_quiz_phy[0]["Teacher/Student corr"].idxmin()
 
-# Student 1 correlations
+############## Plot: Correlation as a functions of delay/shift ################################
 
 # Teacher/student correlation
 Student = dphy_resampled[0]["RR"]
 Teacher = dphy_resampled[-1]["RR"]
 
-print("Teacher/student correlation: ", CrossCorrelation(Student, Teacher))
-
-# Average student correlation
-Student = dphy_resampled[0]["RR"]
-
-corr_list = []
-for student in dphy_students:
-    Student2 = student["RR"]
-    corr = CrossCorrelation(Student, Student2)
-    corr_list.append(corr)
-
-corr_list.pop(0)
-print("Avg. student correlation: ", sum(corr_list)/len(corr_list))
-
-
-
-
-
-############## eksempel #####################
 signal1_norm = (Student-np.mean(Student))/np.std(Student)
 signal2_norm = (Teacher-np.mean(Teacher))/np.std(Teacher)
 # Calculate cross-correlations
@@ -133,41 +105,40 @@ delays = np.linspace(-(len(Student)-1),len(Teacher)-1,len(cross_corr))
 
 fig, ax = plt.subplots(1,1)
 plt.plot(delays, cross_corr)
+plt.title("Correlation as a function of delay")
 plt.xlabel("Delay in miliseconds")
 plt.ylabel("Correlation")
 plt.show()
 
-# Return the maximum correlation
-print(np.max(cross_corr))
+############## Plot: High vs low correlation ################################
 
-############## eksempel med correlation med sig selv #####################
-signal1_norm = (Student-np.mean(Student))/np.std(Student)
-signal2_norm = signal1_norm
-# Calculate cross-correlations
-cross_corr = scipy.signal.correlate(signal1_norm, signal2_norm, mode="full")
-cross_corr /= len(cross_corr)
-# Maximum shift is 1 minute
-delays = np.linspace(-(len(Student)-1),len(Student)-1,len(cross_corr))
+# Define teacher and max/min correlation students
+teacher = phy_sections[0][-1]
+min_corr_student = phy_sections[0][min_corr_index]
+max_corr_student = phy_sections[0][max_corr_index]
+# Normalize RR-values
+teacher["RR"] = (teacher["RR"]-np.mean(teacher["RR"]))/np.std(teacher["RR"])
+min_corr_student["RR"] = (min_corr_student["RR"]-np.mean(min_corr_student["RR"]))/np.std(min_corr_student["RR"])
+max_corr_student["RR"] = (max_corr_student["RR"]-np.mean(max_corr_student["RR"]))/np.std(max_corr_student["RR"])
 
+# Plot of a student with the lowest correlation with teacher
 fig, ax = plt.subplots(1,1)
-plt.plot(delays, cross_corr)
-plt.xlabel("Delay in miliseconds")
-plt.ylabel("Correlation")
+sns.lineplot(data = min_corr_student, x="Time", y="RR", color = "crimson", label="student")
+sns.lineplot(data = teacher, x="Time", y="RR", color = "green", label="teacher")
+plt.title("Low correlation")
+plt.legend()
+# format the x-tick labels to only show the time part
+plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
+plt.xticks(rotation=45) # rotate the x-tick labels by 45 degrees
 plt.show()
 
-# Return the maximum correlation
-print(np.max(cross_corr))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# Plot of a student with the highest correlation with teacher
+fig, ax = plt.subplots(1,1)
+sns.lineplot(data = max_corr_student, x="Time", y="RR", color = "crimson", label="student")
+sns.lineplot(data = teacher, x="Time", y="RR", color = "green", label="teacher")
+plt.title("High correlation")
+plt.legend()
+# format the x-tick labels to only show the time part
+plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
+plt.xticks(rotation=45) # rotate the x-tick labels by 45 degrees
+plt.show()
