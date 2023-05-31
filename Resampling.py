@@ -1,4 +1,4 @@
-from HR_load_and_clean import sns, scipy, plt, dphy, dvir, datetime, np, pd, Cutting, start_times_physical, start_times_virtual, mdates
+from HR_load_and_clean import sns, scipy, plt, dphy, dvir, datetime, np, pd, Cutting, mdates, df_quiz_phy, df_quiz_vir
 
 
 # Define lecture start and end time in danish timezone
@@ -53,16 +53,12 @@ def Resamling(start, end, df_list):
         # Calculate new BPM based on the resampled RR-intervals
         BPM_resampled = 60/(RR_resampled/1000)
 
-        # Create a new DataFrame with a unique name based on the loop index
-        df_name = 'df{}_resampled'.format(0)
+        # Create a new DataFrame and add it to the dataframelist
         df = pd.DataFrame({'RR': RR_resampled, 'Time': timestamps_resampled, 'Heart Rate': BPM_resampled})
-
-        # assign the new DataFrame to a variable with the unique name
-        globals()[df_name] = df
         if df_list == dphy:
-            dphy_resampled.append(globals()[df_name]) 
+            dphy_resampled.append(df) 
         elif df_list == dvir:       
-            dvir_resampled.append(globals()[df_name]) 
+            dvir_resampled.append(df) 
         else:
             print("What is df_list??")
 
@@ -79,9 +75,9 @@ Cutting(vir_lecture_start_time, vir_lecture_end_time, dvir) # Virtual lecture
 
 # Parting the data into two versions: with/without the teacher
 # Physical students only (without teacher)
-dphy_students = dphy.copy()
+dphy_students = dphy_resampled.copy()
 dphy_students.pop()
 # Virtual students only (without teacher)
-dvir_students = dvir.copy()
+dvir_students = dvir_resampled.copy()
 dvir_students.pop()
 
