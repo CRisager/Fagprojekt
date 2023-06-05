@@ -108,7 +108,7 @@ plt.plot(delays, cross_corr)
 plt.title("Correlation as a function of delay")
 plt.xlabel("Delay in miliseconds")
 plt.ylabel("Correlation")
-plt.show()
+#plt.show()
 
 ############## Plot: High vs low correlation ################################
 
@@ -130,7 +130,7 @@ plt.legend()
 # format the x-tick labels to only show the time part
 plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
 plt.xticks(rotation=45) # rotate the x-tick labels by 45 degrees
-plt.show()
+#plt.show()
 
 # Plot of a student with the highest correlation with teacher
 fig, ax = plt.subplots(1,1)
@@ -141,4 +141,4 @@ plt.legend()
 # format the x-tick labels to only show the time part
 plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
 plt.xticks(rotation=45) # rotate the x-tick labels by 45 degrees
-plt.show()
+#plt.show()
