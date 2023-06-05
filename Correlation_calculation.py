@@ -27,25 +27,16 @@ def MaxCorr(signal1, signal2, min_shift, max_shift):
     # Calculate cross-correlations (Maximum shift is 1 minute)   
     cross_corr = scipy.signal.correlate(signal1_norm, signal2_norm, mode="full")
     delays = np.linspace(-(len(signal1_norm)-1),len(signal2_norm)-1,len(cross_corr)) # list of delays
-    ################### plot
-    fig, ax = plt.subplots(1,1)
-    plt.plot(delays, cross_corr)
-    plt.title("Correlation as a function of delay")
-    plt.xlabel("Delay in miliseconds")
-    plt.ylabel("Correlation")
-    plt.show()
-    ################### end
-    # Create a list of correlations within the max shift of (1 sec or 1 min depending on phy/vir)
-    max_shift_corr = [cross_corr[i] for i in range(len(delays)) if delays[i] > min_shift and delays[i] < max_shift]
-    max_corr = max(max_shift_corr) # Find maximum correlation within this 
-    index = max_shift_corr.index(max_corr) # Find the index of this max correlation
-    max_corr_shift = int(delays[index]) # Find the shift resulting in max correlation
-    # Shift the first signal accordingly 
-    shifted_signal1 = np.roll(signal1_norm, max_corr_shift)
-    # Calculate correlation as Pearson's
-    pearson_corr = np.corrcoef(shifted_signal1, signal2_norm)[0, 1]
-    print(pearson_corr)
-    return pearson_corr
+    
+    # Calculate max correlation with Pearson's correlation
+    interval_delays = [num for num in delays if num > min_shift and num < max_shift]
+    max_corr = -1
+    for delay in interval_delays:
+        shifted_signal2 = np.roll(signal2_norm, int(delay))
+        pearson_corr = np.corrcoef(signal1_norm, shifted_signal2)[0, 1]
+        if pearson_corr > max_corr:
+                max_corr = pearson_corr
+    return max_corr
 
 def Correlations(total_list, df_quiz_list, i):
     # Define the teachers RR-intervals
@@ -214,7 +205,7 @@ print(pearson_corr)
 
 #####################################################################################################3
 ################# cross-correlation vs pearsons #######################
-signal1 = phy_sections[0][0]["RR"]
+signal1 = phy_sections[0][0]["RR"] 
 signal2 = phy_sections[0][-1]["RR"]
 
 min_shift = -1000
@@ -232,8 +223,10 @@ index = max_shift_corr.index(max_corr) # Find the index of this max correlation
 max_corr_shift = int(delays[index]) # Find the shift resulting in max correlation
 # Shift the first signal accordingly 
 shifted_signal1 = np.roll(signal1_norm, max_corr_shift)
+#shifted_signal2 = np.roll(signal2_norm, max_corr_shift)
 # Calculate correlation as Pearson's
 pearson_corr = np.corrcoef(shifted_signal1, signal2_norm)[0, 1]
+#pearson_corr = np.corrcoef(signal1_norm, shifted_signal2)[0, 1]
 print(pearson_corr)
 
 # plot cross-correlations within max shift
@@ -246,20 +239,33 @@ plt.xlabel("Delay in miliseconds")
 plt.ylabel("Correlation")
 plt.show()
 
-
-
-
 # Print delay for max correlation when using cross-correlation function
 index = max_shift_corr.index(np.max(max_shift_corr))
+print(max_shift_corr[index])
 print("Cross-correlation", plot_delays[index])
+
+
+
+
+# Calculate max correlation with Pearson's correlation
+interval_delays = [num for num in delays if num > min_shift and num < max_shift]
+max_corr = -1
+for delay in interval_delays:
+    shifted_signal2 = np.roll(signal2_norm, int(delay))
+    pearson_corr = np.corrcoef(signal1_norm, shifted_signal2)[0, 1]
+    if pearson_corr > max_corr:
+            max_corr = pearson_corr
+print(max_corr)
+
 
 # Plot actual correlations within max shift
 plot_delays = [num for num in delays if num > min_shift and num < max_shift]
 plot_corr = []
 for delay in plot_delays:
-    shifted_signal1 = np.roll(signal1_norm, int(delay))
-    pearson_corr = np.corrcoef(shifted_signal1, signal2_norm)[0, 1]
+    shifted_signal2 = np.roll(signal2_norm, int(delay))
+    pearson_corr = np.corrcoef(signal1_norm, shifted_signal2)[0, 1]
     plot_corr.append(pearson_corr)
+print(np.max(plot_corr)) 
     
 fig, ax = plt.subplots(1,1)
 plt.plot(plot_delays, plot_corr)
@@ -271,3 +277,6 @@ plt.show()
 # Print delay for max correlation when using Pearson's correlation
 index = plot_corr.index(np.max(plot_corr))
 print("Pearson's", plot_delays[index])
+
+
+
