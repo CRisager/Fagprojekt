@@ -53,3 +53,37 @@ print(statistics.mean(granger_list_phys_student_to_teacher))
 print(max(granger_list_phys_student_to_teacher))
 print(min(granger_list_phys_student_to_teacher))
 print(statistics.median(granger_list_phys_student_to_teacher))
+
+# Function to perform Granger Causality from teacher to student in virtual lecture
+granger_list_vir_teacher_to_student = []
+def granger_vir_teacher_to_student(data):
+    for section in data:
+        for student in section[0:-1]:
+            temp_data = pd.DataFrame({"teacher": section[-1]["RR"], "student": student["RR"]})
+            result = grangercausalitytests(temp_data, maxlag=1, verbose=False)
+            p_value = result[1][0]['ssr_ftest'][1]
+            granger_list_vir_teacher_to_student.append(p_value)
+
+granger_vir_teacher_to_student(vir_sections)
+
+print(statistics.mean(granger_list_vir_teacher_to_student))
+print(max(granger_list_vir_teacher_to_student))
+print(min(granger_list_vir_teacher_to_student))
+print(statistics.median(granger_list_vir_teacher_to_student))
+
+# Function to perform Granger Causality from student to teacher in virtual lecture
+granger_list_vir_student_to_teacher = []
+def granger_vir_student_to_teacher(data):
+    for section in data:
+        for student in section[0:-1]:
+            temp_data = pd.DataFrame({"student": student["RR"], "teacher": section[-1]["RR"]})
+            result = grangercausalitytests(temp_data, maxlag=1, verbose=False)
+            p_value = result[1][0]['ssr_ftest'][1]
+            granger_list_vir_student_to_teacher.append(p_value)
+
+granger_vir_student_to_teacher(phy_sections)
+
+print(statistics.mean(granger_list_vir_student_to_teacher))
+print(max(granger_list_vir_student_to_teacher))
+print(min(granger_list_vir_student_to_teacher))
+print(statistics.median(granger_list_vir_student_to_teacher))
