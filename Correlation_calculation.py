@@ -224,8 +224,17 @@ max_corr_shift = int(delays[index]) # Find the shift resulting in max correlatio
 # Shift the first signal accordingly 
 shifted_signal1 = np.roll(signal1_norm, max_corr_shift)
 #shifted_signal2 = np.roll(signal2_norm, max_corr_shift)
+max_shift_delays = [num for num in delays if num > min_shift and num < max_shift]
+opt_delay = max_shift_delays[max_shift_corr.index(np.max(max_shift_corr))]
+if opt_delay > 0:
+    signal1_padded = np.concatenate([shifted_signal1,np.zeros((int(opt_delay)))])
+    signal2_padded = np.concatenate([np.zeros((int(opt_delay))),signal2_norm])
+elif opt_delay < 0:
+    signal1_padded = np.concatenate([np.zeros((int(np.abs(opt_delay)))),shifted_signal1])
+    signal2_padded = np.concatenate([signal2_norm,np.zeros((int(np.abs(opt_delay))))])
+
 # Calculate correlation as Pearson's
-pearson_corr = np.corrcoef(shifted_signal1, signal2_norm)[0, 1]
+pearson_corr = np.corrcoef(signal1_padded, signal2_padded)[0, 1]
 #pearson_corr = np.corrcoef(signal1_norm, shifted_signal2)[0, 1]
 print(pearson_corr)
 
