@@ -74,7 +74,7 @@ def Correlations(total_list, df_quiz_list, i):
     df["Teacher/Student corr"] = Teacher_corr_column 
     df["Avg. student corr"] = Student_corr_column
 
-Correlations(phy_sections[0], df_list_quiz_phy, 0)
+#Correlations(phy_sections[0], df_list_quiz_phy, 0)
 
 # Call the function in order to calculate the correlations for physical and virtual
 print("Calculating correlations ...")

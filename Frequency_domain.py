@@ -1,13 +1,3 @@
-from Resampling import (pd, sns, plt, datetime, np, mdates, dphy_resampled, dvir_resampled, Cutting,
-                        phy_lecture_start_time, phy_lecture_end_time, vir_lecture_start_time, 
-                        vir_lecture_end_time, dphy_students, dvir_students, df_quiz_phy, df_quiz_vir)
-
-from Split_signals import (phy_break_start_time, phy_break_end_time, vir_break_start_time, vir_break_end_time, 
-                           phy_length_before_break, phy_length_after_break, vir_length_before_break, vir_length_after_break, 
-                           phys_starttime1, phys_starttime2, phys_starttime3, phys_starttime4, phys_endtime4, phys_starttime5, 
-                           phys_starttime6, phys_starttime7, phys_endtime7, vir_starttime1, vir_starttime2, vir_endtime2, 
-                           vir_starttime3, vir_starttime4, vir_starttime5, vir_starttime6, vir_endtime6)
-
 from Split_signals import (pd, sns, plt, datetime, np, mdates, dphy_resampled, dvir_resampled,
                            dphy_students, dvir_students, phy_sections, vir_sections, df_quiz_phy, df_quiz_vir)
 
@@ -44,6 +34,7 @@ rr_interpolated = f(timeindex_inter)
 plt.figure(figsize = (15,7))
 plt.plot(timestamp, RR)
 plt.plot(timeindex_inter, rr_interpolated, 'o')
+plt.show()
 
 # Detrend time-series (to remove slow drifts)
 rr_interpolated = detrend(rr_interpolated)
