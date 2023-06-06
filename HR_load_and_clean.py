@@ -14,7 +14,11 @@ import matplotlib.dates as mdates
 
 #path = "C:/Users/cheli/OneDrive/Skrivebord/Fagprojekt/Fagprojekt_data"
 path = "/Users/andreabolvig/Desktop/4.semester/Project work/Fagprojekt_data"
+<<<<<<< Updated upstream
 #path = "/Users/jesperberglund/Downloads"
+=======
+#path = "/Users/jesperberglund/Downloads/HR_data"
+>>>>>>> Stashed changes
 os.chdir(path)
 
 ### Load data about quiz scores and such in order to create the 
