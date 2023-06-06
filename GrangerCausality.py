@@ -87,3 +87,13 @@ print(statistics.mean(granger_list_vir_student_to_teacher))
 print(max(granger_list_vir_student_to_teacher))
 print(min(granger_list_vir_student_to_teacher))
 print(statistics.median(granger_list_vir_student_to_teacher))
+
+
+##############################################################
+section = phy_sections[0]
+test_list = []
+for student in section[0:-1]:
+    temp_data = pd.DataFrame({"teacher": section[-1]["RR"], "student": student["RR"]})
+    result = grangercausalitytests(temp_data, maxlag=1, verbose=False)
+    p_value = result[1][0]['ssr_ftest'][1]
+    test_list.append(p_value)
