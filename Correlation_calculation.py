@@ -86,17 +86,28 @@ for i in range(6):
     Correlations(vir_sections[i], df_list_quiz_vir, i) 
 
 ####################### check results #######################################
-print(np.max(df_list_quiz_phy[3]["Teacher/Student corr"])) 
-print(np.max(df_list_quiz_phy[3]["Avg. student corr"]))
 
+# Average
+print(np.mean(df_list_quiz_phy[3]["Teacher/Student corr"])) # 0.1548
+print(np.mean(df_list_quiz_phy[3]["Avg. student corr"]))    # 0.1845
+
+print(np.mean(df_list_quiz_vir[3]["Teacher/Student corr"])) # 0.1849 # without sus: 0.1767
+print(np.mean(df_list_quiz_vir[3]["Avg. student corr"]))    # 0.1838
+
+# Max
+print(np.max(df_list_quiz_phy[3]["Teacher/Student corr"]))  # 0.2485
+print(np.max(df_list_quiz_phy[3]["Avg. student corr"]))     # 0.2187
+
+print(np.max(df_list_quiz_vir[3]["Teacher/Student corr"]))  # 0.3163 # 2. højeste: 0.221329
+print(np.max(df_list_quiz_vir[3]["Avg. student corr"]))     # 0.2136
+
+# Lists
 print(df_list_quiz_phy[3]["Teacher/Student corr"])
 print(df_list_quiz_phy[3]["Avg. student corr"])
 
-print(np.max(df_list_quiz_vir[3]["Teacher/Student corr"])) # 2. højeste er 0.221329
-print(np.max(df_list_quiz_vir[3]["Avg. student corr"]))
-
 print(df_list_quiz_vir[3]["Teacher/Student corr"])
 print(df_list_quiz_vir[3]["Avg. student corr"])
+
 
 
 ############## Plot: Correlation as a functions of delay/shift ################################
