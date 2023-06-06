@@ -86,13 +86,13 @@ for i in range(6):
     Correlations(vir_sections[i], df_list_quiz_vir, i) 
 
 ####################### check results #######################################
-print(np.max(df_list_quiz_phy[3]["Teacher/Student corr"])) # 2. højeste er 0.221329
+print(np.max(df_list_quiz_phy[3]["Teacher/Student corr"])) 
 print(np.max(df_list_quiz_phy[3]["Avg. student corr"]))
 
 print(df_list_quiz_phy[3]["Teacher/Student corr"])
 print(df_list_quiz_phy[3]["Avg. student corr"])
 
-print(np.max(df_list_quiz_vir[3]["Teacher/Student corr"]))
+print(np.max(df_list_quiz_vir[3]["Teacher/Student corr"])) # 2. højeste er 0.221329
 print(np.max(df_list_quiz_vir[3]["Avg. student corr"]))
 
 print(df_list_quiz_vir[3]["Teacher/Student corr"])
@@ -179,3 +179,31 @@ plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
 plt.xticks(rotation=45) # rotate the x-tick labels by 45 degrees
 plt.show()
 
+
+###################### test vir student with sus high corr #####################
+################################################################################
+
+# Determine the index of the highest and lowest correlations
+max_corr_index = 9
+second_corr_index = 12
+
+# Define teacher and max/min correlation students
+teacher = vir_sections[3][-1]
+max_corr_student = vir_sections[3][max_corr_index]
+second_corr_student = vir_sections[3][second_corr_index]
+# Normalize RR-values
+teacher["RR"] = (teacher["RR"]-np.mean(teacher["RR"]))/np.std(teacher["RR"])
+max_corr_student["RR"] = (max_corr_student["RR"]-np.mean(max_corr_student["RR"]))/np.std(max_corr_student["RR"])
+second_corr_student["RR"] = (second_corr_student["RR"]-np.mean(second_corr_student["RR"]))/np.std(second_corr_student["RR"])
+
+# Plot of a student with the lowest correlation with teacher
+fig, ax = plt.subplots(1,1)
+#sns.lineplot(data = max_corr_student, x="Time", y="RR", color = "crimson", label="sus student")
+sns.lineplot(data = second_corr_student, x="Time", y="RR", color = "blue", label="second student")
+sns.lineplot(data = teacher, x="Time", y="RR", color = "green", label="teacher")
+plt.title("Low correlation")
+plt.legend()
+# format the x-tick labels to only show the time part
+plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
+plt.xticks(rotation=45) # rotate the x-tick labels by 45 degrees
+plt.show()
