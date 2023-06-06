@@ -81,9 +81,13 @@ def granger_vir_student_to_teacher(data):
             p_value = result[1][0]['ssr_ftest'][1]
             granger_list_vir_student_to_teacher.append(p_value)
 
-granger_vir_student_to_teacher(phy_sections)
+granger_vir_student_to_teacher(vir_sections)
 
 print(statistics.mean(granger_list_vir_student_to_teacher))
 print(max(granger_list_vir_student_to_teacher))
 print(min(granger_list_vir_student_to_teacher))
 print(statistics.median(granger_list_vir_student_to_teacher))
+
+xlist = np.arange(0,len(granger_list_vir_student_to_teacher))
+plt.plot(xlist, granger_list_vir_student_to_teacher)
+plt.show()
