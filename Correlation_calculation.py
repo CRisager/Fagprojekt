@@ -28,7 +28,7 @@ def MaxCorr(signal1, signal2, min_shift, max_shift):
     delays = np.linspace(-(len(signal1_norm)-1),len(signal2_norm)-1,len(cross_corr)) # list of delays
     delays /= 10 # Go from samples to seconds. 10 Hz = 10 samples in 1 second
     # Create a list of correlations within the max shift of (1 sec or 1 min depending on phy/vir)
-    max_shift_corr = [cross_corr[i] for i in range(len(delays)) if delays[i] > min_shift and delays[i] < max_shift]
+    max_shift_corr = [cross_corr[i] for i in range(len(delays)) if delays[i] >= min_shift and delays[i] <= max_shift]
     max_corr = max(max_shift_corr) # Find maximum correlation within this 
     return max_corr
 
@@ -42,26 +42,24 @@ def Correlations(total_list, df_quiz_list, i):
     Student_corr_column = []
 
     # Calculate the correlations for all participands
-    student_list = total_list.copy() 
-    student_list.pop() # Remove the teacher
-    for student in student_list:
+    for student in total_list[:-1]:
         Student = student["RR"] # Define the student 
         # Calculate teacher/student correlation
         if df_quiz_list == df_list_quiz_phy:
-            # calculate the correlation with max shift on 1.000 milliseconds (1 sec)
-            Teacher_corr_column.append(MaxCorr(Student, Teacher, -1000, 10001))
+            # calculate the correlation with max shift on 1 sec
+            Teacher_corr_column.append(MaxCorr(Student, Teacher, -1, 1))
         elif df_quiz_list == df_list_quiz_vir:
-            # max shift on 60.000 milliseconds (1 min)
-            Teacher_corr_column.append(MaxCorr(Student, Teacher, -60000, 600001))
+            # max shift on 60 seconds (1 min)
+            Teacher_corr_column.append(MaxCorr(Student, Teacher, -60, 60))
         
         # Calculate average student correlation
         corr_list = []
-        for student in student_list:
+        for student in total_list[:-1]:
             Student2 = student["RR"]
             if df_quiz_list == df_list_quiz_phy:
-                corr = MaxCorr(Student, Student2, -1000, 10001) # max 1 sec
+                corr = MaxCorr(Student, Student2, -1, 1) # max 1 sec
             elif df_quiz_list == df_list_quiz_vir:
-                corr = MaxCorr(Student, Student2, -60000, 600001) # max 1 min
+                corr = MaxCorr(Student, Student2, -60, 60) # max 1 min
             corr_list.append(corr)
         # Remove the correlation from the given student to himself
         corr_list = [num for num in corr_list if num < 0.99]
@@ -83,20 +81,20 @@ for i in range(6):
     Correlations(vir_sections[i], df_list_quiz_vir, i) 
 
 ####################### check results #######################################
-"""
-# Average
-print(np.mean(df_list_quiz_phy[3]["Teacher/Student corr"])) # 0.1573
-print(np.mean(df_list_quiz_phy[3]["Avg. student corr"]))    # 0.1965
 
-print(np.mean(df_list_quiz_vir[3]["Teacher/Student corr"])) # 0.1849 
-print(np.mean(df_list_quiz_vir[3]["Avg. student corr"]))    # 0.1838
+# Average                                                    ## Now:##    ## Before:##
+print(np.mean(df_list_quiz_phy[3]["Teacher/Student corr"]))  # 0.0332       # 0.1573
+print(np.mean(df_list_quiz_phy[3]["Avg. student corr"]))     # 0.0232       # 0.1965
+
+print(np.mean(df_list_quiz_vir[3]["Teacher/Student corr"]))  # 0.1196       # 0.1849 
+print(np.mean(df_list_quiz_vir[3]["Avg. student corr"]))     # 0.1330       # 0.1838
 
 # Max
-print(np.max(df_list_quiz_phy[3]["Teacher/Student corr"]))  # 0.2485
-print(np.max(df_list_quiz_phy[3]["Avg. student corr"]))     # 0.2269
+print(np.max(df_list_quiz_phy[3]["Teacher/Student corr"]))   # 0.1379       # 0.2485
+print(np.max(df_list_quiz_phy[3]["Avg. student corr"]))      # 0.0543       # 0.2269
 
-print(np.max(df_list_quiz_vir[3]["Teacher/Student corr"]))  # 0.3163 
-print(np.max(df_list_quiz_vir[3]["Avg. student corr"]))     # 0.2136
+print(np.max(df_list_quiz_vir[3]["Teacher/Student corr"]))   # 0.3163       # 0.3163 
+print(np.max(df_list_quiz_vir[3]["Avg. student corr"]))      # 0.1528       # 0.2136
 
 # Lists
 print(df_list_quiz_phy[3]["Teacher/Student corr"])
@@ -104,5 +102,38 @@ print(df_list_quiz_phy[3]["Avg. student corr"])
 
 print(df_list_quiz_vir[3]["Teacher/Student corr"])
 print(df_list_quiz_vir[3]["Avg. student corr"])
-"""
 
+############### plots ##############
+# Teacher/student corr
+x_plot_phy = np.arange(0,len(df_list_quiz_phy[3]["Teacher/Student corr"]))
+y_plot_phy = df_list_quiz_phy[3]["Teacher/Student corr"]
+x_plot_vir = np.arange(0,len(df_list_quiz_vir[3]["Teacher/Student corr"]))
+y_plot_vir = df_list_quiz_vir[3]["Teacher/Student corr"]
+
+plt.axhline(y=0, linestyle='dotted', color='gray')  # Add a dotted line at y=0
+plt.scatter(x_plot_phy, y_plot_phy, color = "crimson",
+                alpha=0.8, label = "Physical")
+plt.scatter(x_plot_vir, y_plot_vir, color = "royalblue",
+                alpha=0.8, label = "Virtual")
+plt.title("Teacher/Student correlations")
+plt.xlabel("Student")
+plt.ylabel("Correlation")
+plt.legend()
+plt.show()
+
+# student/student corr
+x_plot_phy = np.arange(0,len(df_list_quiz_phy[3]["Avg. student corr"]))
+y_plot_phy = df_list_quiz_phy[3]["Avg. student corr"]
+x_plot_vir = np.arange(0,len(df_list_quiz_vir[3]["Avg. student corr"]))
+y_plot_vir = df_list_quiz_vir[3]["Avg. student corr"]
+
+plt.axhline(y=0, linestyle='dotted', color='gray')  # Add a dotted line at y=0
+plt.scatter(x_plot_phy, y_plot_phy, color = "crimson",
+                alpha=0.8, label = "Physical")
+plt.scatter(x_plot_vir, y_plot_vir, color = "royalblue",
+                alpha=0.8, label = "Virtual")
+plt.title("Avg. Student correlations")
+plt.xlabel("Student")
+plt.ylabel("Correlation")
+plt.legend()
+plt.show()
