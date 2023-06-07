@@ -62,12 +62,10 @@ def Resamling(start, end, df_list):
         else:
             print("What is df_list??")
 
-print("Resamling:")
+print("Re-samling signals:")
 # Resample         
 Resamling(phy_lecture_start_time, phy_lecture_end_time, dphy) # Physical lecture
 Resamling(vir_lecture_start_time, vir_lecture_end_time, dvir) # Virtual lecture
-
-print("Re-sampling done")
 
 # Cutting the non-resampled data to only contain the lecture (without padding) for plots
 Cutting(phy_lecture_start_time, phy_lecture_end_time, dphy) # Physical lecture
