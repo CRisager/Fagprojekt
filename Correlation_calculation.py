@@ -81,7 +81,7 @@ for i in range(6):
     Correlations(vir_sections[i], df_list_quiz_vir, i) 
 
 ####################### check results #######################################
-
+"""
 # Average                                                    ## Now:##    ## Before:##
 print(np.mean(df_list_quiz_phy[3]["Teacher/Student corr"]))  # 0.0332       # 0.1573
 print(np.mean(df_list_quiz_phy[3]["Avg. student corr"]))     # 0.0232       # 0.1965
@@ -137,3 +137,4 @@ plt.xlabel("Student")
 plt.ylabel("Correlation")
 plt.legend()
 plt.show()
+"""
