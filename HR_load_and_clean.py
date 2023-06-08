@@ -75,12 +75,10 @@ def Load_data(csv_files, data_frames, start_times, path):
         start_time = datetime.datetime.strptime(start_time, "%d.%m.%Y %H:%M:%S")
         start_times.append(start_time) # add to the start times list
 
-print("...")
+print("Loading data ...")
 
 Load_data(csv_files_physical, data_frames_physical, start_times_physical, path1)
 Load_data(csv_files_virtual, data_frames_virtual, start_times_virtual, path2)
-
-print("Loading done \n ...")
     
 ### ------------------------------------------------------------------------------------ ###
 ### Update dataframes with time stamps and heart rate (beats per minute)
@@ -126,10 +124,10 @@ def Update_df(df_list, starts_list):
         df["Heart Rate"] = bpm # Add column of HR (beats per minute) to the data frame
         df_list[i] = df
 
+print("Updating dataframes ...")
+
 Update_df(dphy, starts_phy)
 Update_df(dvir, starts_vir)
-
-print("Dataframe updates done")
 
 
 ### ------------------------------------------------------------------------------------ ###
@@ -152,7 +150,7 @@ def Cutting(start, end, df_list):
         #df.iloc[0, df.columns.get_loc('Time')] = pd.to_datetime('2023-03-21 11:10:00.00000').floor('s')
         df_list[i] = df
 
+print("Cutting signal ...")
+
 Cutting(phy_lecture_start_plus, phy_lecture_end_plus, dphy) # Physical lecture
 Cutting(vir_lecture_start_plus, vir_lecture_end_plus, dvir) # Virtual lecture
-
-print("Cutting signal done")

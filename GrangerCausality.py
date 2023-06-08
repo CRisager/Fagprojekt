@@ -1,9 +1,8 @@
-from statsmodels.tsa.stattools import grangercausalitytests
-import statistics
 from Correlation_calculation import (pd, sns, plt, datetime, np, mdates, dphy_resampled, dvir_resampled,
                            dphy_students, dvir_students, phy_sections, vir_sections, 
                            df_quiz_phy, df_quiz_vir, df_list_quiz_phy, df_list_quiz_vir)
-
+from statsmodels.tsa.stattools import grangercausalitytests
+import statistics
 
 ################### Just some tests ###################
 test1 = phy_sections[1][16]["RR"]
@@ -87,3 +86,55 @@ print(statistics.mean(granger_list_vir_student_to_teacher))
 print(max(granger_list_vir_student_to_teacher))
 print(min(granger_list_vir_student_to_teacher))
 print(statistics.median(granger_list_vir_student_to_teacher))
+
+
+##############################################################
+####################### test teacher -> student ##############
+
+######## physical
+section = phy_sections[0] # first section
+test_list_y = []
+for student in section[0:-1]:
+    temp_data = pd.DataFrame({"teacher": section[-1]["RR"], "student": student["RR"]})
+    result = grangercausalitytests(temp_data, maxlag=1, verbose=False)
+    p_value = result[1][0]['ssr_ftest'][1]
+    test_list_y.append(p_value)
+
+test_list_x = np.arange(0,len(test_list_y))
+
+plt.scatter(test_list_x,test_list_y)
+plt.title("Granger physical distribution")
+plt.show()
+
+print("Average: ", np.mean(test_list_y)) # 0.2819
+print("Median: ", np.median(test_list_y)) # 0.2020
+
+under_05 = len([num for num in test_list_y if num < 0.05])/len(test_list_y)*100
+above_05 = len([num for num in test_list_y if num => 0.05])/len(test_list_y)*100
+print("Significant: ", under_05, "%")    # 37.5 % 
+print("Unsignificant: ", above_05, "%")  # 62.5 % 
+
+
+######## virtual
+section2 = vir_sections[0] # first section
+test_list_y2 = []
+
+for student in section2[0:-1]:
+    temp_data = pd.DataFrame({"teacher": section2[-1]["RR"], "student": student["RR"]})
+    result = grangercausalitytests(temp_data, maxlag=1, verbose=False)
+    p_value = result[1][0]['ssr_ftest'][1]
+    test_list_y2.append(p_value)
+
+test_list_x2 = np.arange(0,len(test_list_y2))
+
+print("Average: ", np.mean(test_list_y2)) # 0.1371
+print("Median: ", np.median(test_list_y2)) # 0.0046
+
+under_05_2 = len([num for num in test_list_y2 if num < 0.05])/len(test_list_y2)*100
+above_05_2 = len([num for num in test_list_y2 if num => 0.05])/len(test_list_y2)*100
+print("Significant: ", under_05_2, "%")    # 64.7 %
+print("Unsignificant: ", above_05_2, "%")  # 35.2 %
+
+
+
+
