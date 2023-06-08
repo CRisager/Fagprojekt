@@ -87,8 +87,8 @@ def Stationarity_result(selections, state):
     else:
         print(state, "data is non-stationary") 
 
-Stationarity_result(phy_selections, state = "Physical")
-Stationarity_result(vir_selections, state = "Virtual")
+Stationarity_result(phy_selections, state = "Physical") # non-stationary
+Stationarity_result(vir_selections, state = "Virtual")  # non-stationary
 
 
 
