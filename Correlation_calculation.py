@@ -10,15 +10,28 @@ state1 = ["Physical"] * len(df_quiz_phy)
 df_quiz_phy["State"] = state1
 state2 = ["Virtual"] * len(df_quiz_vir)
 df_quiz_vir["State"] = state2
+        
 # Create a list of dataframes, one for each section
 df_list_quiz_phy = [df_quiz_phy.copy() for _ in range(7)]
 df_list_quiz_vir = [df_quiz_vir.copy() for _ in range(6)]
 
+# Function to add average heart rate column
+def Average_BPM(sections, df_list_quiz):
+    for i in range(len(sections)):
+        df = df_list_quiz[i].copy()
+        section_column = []
+        for student in sections[i][:-1]: # minus the teacher
+            section_column.append(np.mean(student["Heart Rate"])) 
+        df["Average BPM"] = section_column
+        df_list_quiz[i] = df
+        
+Average_BPM(phy_sections, df_list_quiz_phy)
+Average_BPM(vir_sections, df_list_quiz_vir)
 
 
 ############################################################## 
 ### Cross-correlation ###
-def MaxCorr(signal1, signal2, min_shift, max_shift):
+def MaxCorr(signal1, signal2, min_shift, max_shift, absolute):
     # Normalize signals
     signal1_norm = (signal1-np.mean(signal1))/np.std(signal1)
     signal2_norm = (signal2-np.mean(signal2))/np.std(signal2)
@@ -28,7 +41,10 @@ def MaxCorr(signal1, signal2, min_shift, max_shift):
     delays = np.linspace(-(len(signal1_norm)-1),len(signal2_norm)-1,len(cross_corr)) # list of delays
     delays /= 10 # Go from samples to seconds. 10 Hz = 10 samples in 1 second
     # Create a list of correlations within the max shift of (1 sec or 1 min depending on phy/vir)
-    max_shift_corr = [cross_corr[i] for i in range(len(delays)) if delays[i] >= min_shift and delays[i] <= max_shift]
+    if absolute == True:
+        max_shift_corr = [cross_corr[i] for i in range(len(delays)) if delays[i] >= min_shift and delays[i] <= max_shift]
+    else:
+        max_shift_corr = [abs(cross_corr[i]) for i in range(len(delays)) if delays[i] >= min_shift and delays[i] <= max_shift]
     max_corr = max(max_shift_corr) # Find maximum correlation within this 
     return max_corr
 
@@ -40,6 +56,7 @@ def Correlations(total_list, df_quiz_list, i):
     # average student correlation
     Teacher_corr_column = []
     Student_corr_column = []
+    Abs_student_corr_column = []
 
     # Calculate the correlations for all participands
     for student in total_list[:-1]:
@@ -47,29 +64,36 @@ def Correlations(total_list, df_quiz_list, i):
         # Calculate teacher/student correlation
         if df_quiz_list == df_list_quiz_phy:
             # calculate the correlation with max shift on 1 sec
-            Teacher_corr_column.append(MaxCorr(Student, Teacher, -1, 1))
+            Teacher_corr_column.append(MaxCorr(Student, Teacher, -1, 1, absolute = False))
         elif df_quiz_list == df_list_quiz_vir:
             # max shift on 60 seconds (1 min)
-            Teacher_corr_column.append(MaxCorr(Student, Teacher, -60, 60))
+            Teacher_corr_column.append(MaxCorr(Student, Teacher, -60, 60, absolute = False))
         
         # Calculate average student correlation
         corr_list = []
+        abs_corr_list = []
         for student in total_list[:-1]:
             Student2 = student["RR"]
             if df_quiz_list == df_list_quiz_phy:
-                corr = MaxCorr(Student, Student2, -1, 1) # max 1 sec
+                corr = MaxCorr(Student, Student2, -1, 1, absolute = False) # max 1 sec
+                abs_corr = MaxCorr(Student, Student2, -1, 1, absolute = True) # max 1 sec
             elif df_quiz_list == df_list_quiz_vir:
-                corr = MaxCorr(Student, Student2, -60, 60) # max 1 min
+                corr = MaxCorr(Student, Student2, -60, 60, absolute = False) # max 1 min
+                abs_corr = MaxCorr(Student, Student2, -60, 60, absolute = True) # max 1 sec
             corr_list.append(corr)
+            abs_corr_list.append(abs_corr)
         # Remove the correlation from the given student to himself
         corr_list = [num for num in corr_list if num < 0.99]
+        abs_corr_list = [num for num in abs_corr_list if num < 0.99]
         # Add correlation to the column
         Student_corr_column.append(sum(corr_list)/len(corr_list))
+        Abs_student_corr_column.append(sum(abs_corr_list)/len(Abs_student_corr_column))
         
     # Add the columns to the dataframe
     df = df_quiz_list[i]
     df["Teacher/Student corr"] = Teacher_corr_column 
     df["Avg. student corr"] = Student_corr_column
+    df["Avg. abs student corr"] = Abs_student_corr_column
 
 # Call the function in order to calculate the correlations for physical and virtual
 print("Calculating correlations:")
