@@ -48,7 +48,6 @@ vir_split_before_b = generate_break_timestamps(vir_lecture_start_time, vir_lectu
 vir_split_after_b = generate_break_timestamps(vir_lecture_start_time, vir_lecture_end_time, 
                                        vir_break_start_time, vir_break_end_time, interval_size)[1]
 
-
 # Function for cutting data into sections
 def Cut_sections(before_b, after_b, df_list):
     section_list = []
@@ -64,3 +63,56 @@ def Cut_sections(before_b, after_b, df_list):
 
 phy_sections = Cut_sections(phy_split_before_b, phy_split_after_b, dphy_resampled)
 vir_sections = Cut_sections(vir_split_before_b, vir_split_after_b, dvir_resampled)
+
+
+
+
+
+
+################# test stationarity #############################
+from statsmodels.tsa.stattools import adfuller, kpss
+
+
+rr = phy_sections[0][0]["RR"]
+rr_norm = (rr-np.mean(rr))/np.std(rr)
+
+# Perform stationarity tests
+stationarity = []
+# Perform the ADF test
+if adfuller(rr_norm)[1] > 0.05: 
+    stationarity.append("non-stationary")
+else:
+    stationarity.append("stationary") # p-value = 7.58654334e-07 = stationary
+# Perform the KPSS test
+if kpss(rr_norm)[1] < 0.05: 
+    stationarity.append("non-stationary") # p-value = aprox. 0.01 = non-stationary
+else:
+    stationarity.append("stationary") 
+# Perform the PP test
+if adfuller(rr_norm, autolag='AIC', regression='ct')[1] < 0.05: 
+    stationarity.append("non-stationary") # p-value = 8.2601133e-08 = non-stationary
+else:
+    stationarity.append("stationary")
+# Print whether stationary or not 
+if stationarity.count("stationary") > 1:
+    print("The data is stationary")
+else:
+    print("The data is non-stationary") 
+
+
+first_half = rr_norm[:len(rr_norm)//2]
+second_half = rr_norm[len(rr_norm)//2:]
+print(np.mean(first_half))   # -0.3817
+print(np.mean(second_half))  # 0.3816
+print(np.std(first_half))    # 1.0204
+print(np.std(second_half))   # 0.8169
+
+
+x_plot = np.arange(0,len(rr_norm))
+
+fig, ax = plt.subplots(1,1)
+plt.plot(x_plot, rr_norm)
+plt.title("")
+plt.xlabel("Observation")
+plt.ylabel("RR_norm")
+plt.show()
