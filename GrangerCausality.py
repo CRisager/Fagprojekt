@@ -1,10 +1,13 @@
+import time
+start_time = time.time()
 from Correlation_calculation import (pd, sns, plt, datetime, np, mdates, dphy_resampled, dvir_resampled,
                            dphy_students, dvir_students, phy_sections, vir_sections, 
                            df_quiz_phy, df_quiz_vir, df_list_quiz_phy, df_list_quiz_vir)
 from statsmodels.tsa.stattools import grangercausalitytests
 import statistics 
 import warnings
-import time
+end_time = time.time()
+print(end_time - start_time)
 
 
 def Granger(person1, person2, model_order):
@@ -44,6 +47,7 @@ for section in vir_sections:
         granger_list_vir_teacher_to_student.append(Granger(section[-1], student, max_lag)) # teacher to student
         
 print(granger_list_phys_student_to_teacher[:5])
+
 
 
 #############################################################################################################
@@ -201,22 +205,15 @@ with warnings.catch_warnings():
     warnings.filterwarnings("ignore")
     gc_res = grangercausalitytests(data, model_order, verbose=False) # fit AR models up to model_order lag
 # GC: log of the ratio of variance of residuals between restricted and unrestricted model
-max_gc = -float('inf')  # Initialize with negative infinity
-max_gc_lag = None
-all_gc = []
-for lag in gc_res.keys():
-    restrict_model = gc_res[lag][1][0]
-    unrestrict_model = gc_res[lag][1][1]
-    variance_of_residuals_restrict = np.var(restrict_model.resid)
-    variance_of_residuals_unrestrict = np.var(unrestrict_model.resid)
-    GC = np.log(variance_of_residuals_restrict/variance_of_residuals_unrestrict)
-    all_gc.append(GC)
-    if GC > max_gc:
-        max_gc = GC
-        max_gc_lag = lag
+restrict_model = gc_res[model_order][1][0]
+unrestrict_model = gc_res[model_order][1][1]
+variance_of_residuals_restrict = np.var(restrict_model.resid)
+variance_of_residuals_unrestrict = np.var(unrestrict_model.resid)
+GC = np.log(variance_of_residuals_restrict/variance_of_residuals_unrestrict)
 
-print(all_gc)
-print(max_gc)
+AIC = unrestrict_model.aic
+BIC = unrestrict_model.bic
+
 end_time = time.time()
 one_calculation = end_time - start_time # 2.8891 s
 
