@@ -66,3 +66,4 @@ vir_section6 = Cut_section(vir_starttime6, vir_endtime6, dvir_resampled)
 vir_sections = [vir_section1, vir_section2, vir_section3, vir_section4, vir_section5, vir_section6] 
 
 
+print(len(phy_sections[0][0]))
