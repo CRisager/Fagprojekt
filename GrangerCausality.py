@@ -2,7 +2,53 @@ from Correlation_calculation import (pd, sns, plt, datetime, np, mdates, dphy_re
                            dphy_students, dvir_students, phy_sections, vir_sections, 
                            df_quiz_phy, df_quiz_vir, df_list_quiz_phy, df_list_quiz_vir)
 from statsmodels.tsa.stattools import grangercausalitytests
-import statistics
+import statistics 
+import warnings
+import time
+
+
+def Granger(person1, person2, model_order):
+    # Load data
+    df = pd.DataFrame({'Person 1': person1["RR"], 'Person 2': person2["RR"]}).reset_index(drop=True)
+    data = df.pct_change().dropna() # calculate procental change and remove NaN values if any
+    with warnings.catch_warnings():
+        warnings.filterwarnings("ignore")
+        # fit AR models up to model_order lag
+        gc_res = grangercausalitytests(data, model_order, verbose=False)    
+    # GC: log of the ratio of variance of residuals between restricted and unrestricted model
+    restrict_model = gc_res[model_order][1][0]
+    unrestrict_model = gc_res[model_order][1][1]
+    variance_of_residuals_restrict = np.var(restrict_model.resid)
+    variance_of_residuals_unrestrict = np.var(unrestrict_model.resid)
+    GC = np.log(variance_of_residuals_restrict/variance_of_residuals_unrestrict)
+    return GC
+
+print("Calculating Granger causality:")
+# Calculate Granger causality for physical
+granger_list_phys_student_to_teacher = []
+granger_list_phys_teacher_to_student = []
+for section in phy_sections:
+    for student_index, student in enumerate(section[:-1], start=1):
+        print("Student", student_index, "/", len(section[:-1])) 
+        max_lag = 5*10 # 5 sec react time * sfreq on 10 Hz
+        granger_list_phys_student_to_teacher.append(Granger(student, section[-1], max_lag)) # student to teacher
+        granger_list_phys_teacher_to_student.append(Granger(section[-1], student, max_lag)) # teacher to student
+# Calculate Granger causality for virtual
+granger_list_vir_student_to_teacher = []
+granger_list_vir_teacher_to_student = []
+for section in vir_sections:
+    for student_index, student in enumerate(section[:-1], start=1):
+        print("Student", student_index, "/", len(section[:-1]))  
+        max_lag = (60+5)*10 # (60 sec stream delay + 5 sec react time) * sfreq on 10 Hz
+        granger_list_vir_student_to_teacher.append(Granger(student, section[-1], max_lag)) # student to teacher
+        granger_list_vir_teacher_to_student.append(Granger(section[-1], student, max_lag)) # teacher to student
+        
+print(granger_list_phys_student_to_teacher[:5])
+
+
+#############################################################################################################
+########################################## jesper ###########################################################
+
 
 ################### Just some tests ###################
 test1 = phy_sections[1][16]["RR"]
@@ -26,7 +72,7 @@ def granger_phys_teacher_to_student(data):
         for student in section[0:-1]:
             temp_data = pd.DataFrame({"teacher": section[-1]["RR"], "student": student["RR"]})
             result = grangercausalitytests(temp_data, maxlag=1, verbose=False)
-            p_value = result[1][0]['ssr_ftest'][1]
+            p_value = result[1][0]['ssr_ftest'][1] 
             granger_list_phys_teacher_to_student.append(p_value)
 
 granger_phys_teacher_to_student(phy_sections)
@@ -137,4 +183,40 @@ print("Unsignificant: ", above_05_2, "%")  # 35.2 %
 
 
 
+
+##################################################################################
+###################################### test ############################################
+import warnings
+import time
+
+
+# Load data
+person1 = phy_sections[0][0]
+person2 = phy_sections[0][-1]
+model_order = 50 
+start_time = time.time()
+df = pd.DataFrame({'Person 1': person1["RR"], 'Person 2': person2["RR"]}).reset_index(drop=True)
+data = df.pct_change().dropna() 
+with warnings.catch_warnings():
+    warnings.filterwarnings("ignore")
+    gc_res = grangercausalitytests(data, model_order, verbose=False) # fit AR models up to model_order lag
+# GC: log of the ratio of variance of residuals between restricted and unrestricted model
+max_gc = -float('inf')  # Initialize with negative infinity
+max_gc_lag = None
+all_gc = []
+for lag in gc_res.keys():
+    restrict_model = gc_res[lag][1][0]
+    unrestrict_model = gc_res[lag][1][1]
+    variance_of_residuals_restrict = np.var(restrict_model.resid)
+    variance_of_residuals_unrestrict = np.var(unrestrict_model.resid)
+    GC = np.log(variance_of_residuals_restrict/variance_of_residuals_unrestrict)
+    all_gc.append(GC)
+    if GC > max_gc:
+        max_gc = GC
+        max_gc_lag = lag
+
+print(all_gc)
+print(max_gc)
+end_time = time.time()
+one_calculation = end_time - start_time # 2.8891 s
 
