@@ -57,7 +57,7 @@ start_time = time.time()
 Stationarity_test(phy_sections[0][0]["RR"])
 end_time = time.time()
 one_calculation = end_time - start_time # 0.5802 s
-#print("Total time:", (one_calculation*7*32 + one_calculation*6*18)/60, "minutes")
+Total_time = one_calculation*(7*32 + 6*18)/60
 # it would take approximately 3.2 minutes to run through all the data
 # That's too long, let's only look at enough data for 30 sec = 50 student segments in total
 

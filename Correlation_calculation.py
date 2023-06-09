@@ -41,7 +41,7 @@ def MaxCorr(signal1, signal2, min_shift, max_shift, absolute):
     delays = np.linspace(-(len(signal1_norm)-1),len(signal2_norm)-1,len(cross_corr)) # list of delays
     delays /= 10 # Go from samples to seconds. 10 Hz = 10 samples in 1 second
     # Create a list of correlations within the max shift of (1 sec or 1 min depending on phy/vir)
-    if absolute == True:
+    if absolute == False:
         max_shift_corr = [cross_corr[i] for i in range(len(delays)) if delays[i] >= min_shift and delays[i] <= max_shift]
     else:
         max_shift_corr = [abs(cross_corr[i]) for i in range(len(delays)) if delays[i] >= min_shift and delays[i] <= max_shift]
@@ -87,7 +87,7 @@ def Correlations(total_list, df_quiz_list, i):
         abs_corr_list = [num for num in abs_corr_list if num < 0.99]
         # Add correlation to the column
         Student_corr_column.append(sum(corr_list)/len(corr_list))
-        Abs_student_corr_column.append(sum(abs_corr_list)/len(Abs_student_corr_column))
+        Abs_student_corr_column.append(sum(abs_corr_list)/len(abs_corr_list))
         
     # Add the columns to the dataframe
     df = df_quiz_list[i]
