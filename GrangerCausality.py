@@ -60,7 +60,7 @@ max_lag = (60+5)*10 # (60 sec stream delay + 5 sec react time) * sfreq on 10 Hz
 vir_MO_student_teacher = best_model_order(Student, Teacher, max_lag)
 vir_MO_teacher_student = best_model_order(Teacher, Student, max_lag)
 
-print(vir_MO_student_teacher, "and", vir_MO_teacher_student) # 17 and 19
+print(vir_MO_student_teacher, "and", vir_MO_teacher_student) # ville tage ca 46 min at køre bare den ene
 
  ####################### Calculate Granger causality ###########################################
  
@@ -153,4 +153,39 @@ end_time = time.time()
 print(end_time - start_time, "s") # 4.3 s
 
 
-GC_for_all(phy_sections[0], df_list_quiz_phy, i, max_lag_phy)
+
+
+
+
+
+import warnings
+import time
+start_time = time.time()
+# Load data
+person1 = phy_sections[0][0]
+person2 = phy_sections[0][-1]
+df = pd.DataFrame({'Person 1': person1["RR"], 'Person 2': person2["RR"]}).reset_index(drop=True)
+data = df.pct_change().dropna() # calculate procental change and remove NaN values if any
+
+all_AIC = [] # list to contain all AIC values
+for i in range(1, 51+1): # Loop through possible model orders up to max lag
+    model_order = i
+    with warnings.catch_warnings():
+        warnings.filterwarnings("ignore")
+        gc_res = grangercausalitytests(data, model_order, verbose=False) # fit AR models up to model_order lag
+    # GC: log of the ratio of variance of residuals between restricted and unrestricted model
+    unrestrict_model = gc_res[model_order][1][1]
+    # Calculate the AIC
+    AIC = unrestrict_model.aic
+    all_AIC.append(AIC)
+
+# Sort the list of all AIC values
+sort_AIC = all_AIC.copy()
+sort_AIC.sort()
+# A difference of 2 or more indicates substantial evidence in favor of the model with the lower AIC
+if sort_AIC[1]-sort_AIC[0] > 2: 
+    model_order = all_AIC.index(sort_AIC[0]) # Set the the model order from this result
+print(model_order)
+end_time = time.time()
+print(end_time-start_time)  # max_lag = 51 -> 44 s
+                            # max_lag = 650 -> 9.3 min
