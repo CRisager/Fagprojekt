@@ -26,27 +26,30 @@ RR = phy_sections[0][0]['RR'] #eksempel på en person
 RR_data = RR.to_numpy()
 
 # Define bandpass filter parameters
-lowcut = 0.04  # Low frequency cutoff (Hz)
-highcut = 0.4  # High frequency cutoff (Hz)
-sfreq = 1000.0  # Sampling frequency (Hz), time is milliseconds
+low1 = 0.04  # Low frequency cutoff (Hz)
+low2 = 0.15
+high1 = 0.15  # High frequency cutoff (Hz)
+high2 = 0.4
+sfreq = 10  # Sampling frequency (Hz), samples per second
 
 # Apply bandpass filter to RR interval data
-filtered_rr = mne.filter.filter_data(RR_data, sfreq, lowcut, highcut)
+filtered_rr_low = mne.filter.filter_data(RR_data, sfreq, low1, high1)
+filtered_rr_high = mne.filter.filter_data(RR_data, sfreq, low1, high2)
 
 # Plot the original RR data
-plt.figure(figsize=(10, 4))
-plt.plot(RR_data, label='Original RR Data')
-plt.xlabel('Time')
-plt.ylabel('RR Intervals')
-plt.title('Original vs Filtered RR Data')
-plt.legend()
+#plt.figure(figsize=(10, 4))
+#plt.plot(RR_data, label='Original RR Data')
+#plt.xlabel('Time')
+#plt.ylabel('RR Intervals')
+#plt.title('Original vs Filtered RR Data')
+#plt.legend()
 
 # Plot the filtered RR data
-plt.figure(figsize=(10, 4))
-plt.plot(filtered_rr, label='Filtered RR Data')
-plt.xlabel('Time')
-plt.ylabel('RR Intervals')
-plt.title('Original vs Filtered RR Data')
-plt.legend()
+#plt.figure(figsize=(10, 4))
+#plt.plot(filtered_rr, label='Filtered RR Data')
+#plt.xlabel('Time')
+#plt.ylabel('RR Intervals')
+#plt.title('Original vs Filtered RR Data')
+#plt.legend()
 
-plt.show()
+#plt.show()
