@@ -17,53 +17,49 @@ vir_length_after_break = vir_lecture_end_time - vir_break_end_time # 0:58:57
 # In that way we only loose the first 5 and last 1 minute of the physical lecture 
 # and the first 6 and last 3 minutes of the virtual lecture. That is very good. 
 
-# Physical manual splitting times
-phys_starttime1 = datetime.datetime.strptime("21.03.2023 13:15:47", "%d.%m.%Y %H:%M:%S")
-phys_starttime2 = datetime.datetime.strptime("21.03.2023 13:29:47", "%d.%m.%Y %H:%M:%S")
-phys_starttime3 = datetime.datetime.strptime("21.03.2023 13:43:47", "%d.%m.%Y %H:%M:%S")
-phys_starttime4 = datetime.datetime.strptime("21.03.2023 13:57:47", "%d.%m.%Y %H:%M:%S")
-phys_endtime4 = phy_break_start_time # 21.03.2023 14:11:47
-phys_starttime5 = phy_break_end_time # 21.03.2023 14:27:02
-phys_starttime6 = datetime.datetime.strptime("21.03.2023 14:41:02", "%d.%m.%Y %H:%M:%S")
-phys_starttime7 = datetime.datetime.strptime("21.03.2023 14:55:02", "%d.%m.%Y %H:%M:%S")
-phys_endtime7 = datetime.datetime.strptime("21.03.2023 15:09:02", "%d.%m.%Y %H:%M:%S")
+# Define the interval size in minutes
+interval_size = 14
 
-# Virtual manual splitting times
-vir_starttime1 = datetime.datetime.strptime("28.03.2023 13:27:42", "%d.%m.%Y %H:%M:%S")
-vir_starttime2 = datetime.datetime.strptime("28.03.2023 13:41:42", "%d.%m.%Y %H:%M:%S")
-vir_endtime2 = vir_break_start_time # 28.03.2023 13:55:42
-vir_starttime3 = vir_break_end_time # 28.03.2023 14:14:40
-vir_starttime4 = datetime.datetime.strptime("28.03.2023 14:28:40", "%d.%m.%Y %H:%M:%S")
-vir_starttime5 = datetime.datetime.strptime("28.03.2023 14:42:40", "%d.%m.%Y %H:%M:%S")
-vir_starttime6 = datetime.datetime.strptime("28.03.2023 14:56:40", "%d.%m.%Y %H:%M:%S")
-vir_endtime6 = datetime.datetime.strptime("28.03.2023 15:10:40", "%d.%m.%Y %H:%M:%S")
+# Function to generate timestamps before and after the break
+def generate_break_timestamps(lecture_start, lecture_end, break_start, break_end, interval):
+    before_break = []
+    # Generate timestamps before the break
+    current_time = break_start
+    while current_time >= lecture_start:
+        before_break.insert(0, current_time)
+        current_time -= datetime.timedelta(minutes=interval)
+    after_break = []
+    # Generate timestamps after the break
+    current_time = break_end
+    while current_time <= lecture_end:
+        after_break.append(current_time)
+        current_time += datetime.timedelta(minutes=interval)
+    return before_break, after_break
+
+
+# Generate splitting times for each section # Physical
+phy_split_before_b = generate_break_timestamps(phy_lecture_start_time, phy_lecture_end_time, 
+                                       phy_break_start_time, phy_break_end_time, interval_size)[0]
+phy_split_after_b = generate_break_timestamps(phy_lecture_start_time, phy_lecture_end_time, 
+                                       phy_break_start_time, phy_break_end_time, interval_size)[1]
+# Generate splitting times for each section # Virtual
+vir_split_before_b = generate_break_timestamps(vir_lecture_start_time, vir_lecture_end_time, 
+                                       vir_break_start_time, vir_break_end_time, interval_size)[0]
+vir_split_after_b = generate_break_timestamps(vir_lecture_start_time, vir_lecture_end_time, 
+                                       vir_break_start_time, vir_break_end_time, interval_size)[1]
 
 # Function for cutting data into sections
-def Cut_section(start_time, end_time, df_list):
-    data = df_list.copy()
-    Cutting(start_time, end_time, data)
-    return data
+def Cut_sections(before_b, after_b, df_list):
+    section_list = []
+    for i in range(len(before_b)-1): # Before break
+        data = df_list.copy()
+        Cutting(before_b[i], before_b[i+1], data)
+        section_list.append(data)
+    for i in range(len(after_b)-1): # After break
+        data = df_list.copy()
+        Cutting(after_b[i], after_b[i+1], data)
+        section_list.append(data)
+    return section_list
 
-# Physical cut into sections
-phy_section1 = Cut_section(phys_starttime1, phys_starttime2, dphy_resampled)
-phy_section2 = Cut_section(phys_starttime2, phys_starttime3, dphy_resampled)
-phy_section3 = Cut_section(phys_starttime3, phys_starttime4, dphy_resampled)
-phy_section4 = Cut_section(phys_starttime4, phys_endtime4, dphy_resampled)
-phy_section5 = Cut_section(phys_starttime5, phys_starttime6, dphy_resampled)
-phy_section6 = Cut_section(phys_starttime6, phys_starttime7, dphy_resampled)
-phy_section7 = Cut_section(phys_starttime7, phys_endtime7, dphy_resampled)
-# Collect them in a list
-phy_sections = [phy_section1, phy_section2, phy_section3, phy_section4, phy_section5, phy_section6, phy_section7]
-
-# Virtual cut into sections
-vir_section1 = Cut_section(vir_starttime1, vir_starttime2, dvir_resampled)
-vir_section2 = Cut_section(vir_starttime2, vir_endtime2, dvir_resampled)
-vir_section3 = Cut_section(vir_starttime3, vir_starttime4, dvir_resampled)
-vir_section4 = Cut_section(vir_starttime4, vir_starttime5, dvir_resampled)
-vir_section5 = Cut_section(vir_starttime5, vir_starttime6, dvir_resampled)
-vir_section6 = Cut_section(vir_starttime6, vir_endtime6, dvir_resampled)
-# Collect them in a list
-vir_sections = [vir_section1, vir_section2, vir_section3, vir_section4, vir_section5, vir_section6] 
-
-
-print(len(phy_sections[0][0]))
+phy_sections = Cut_sections(phy_split_before_b, phy_split_after_b, dphy_resampled)
+vir_sections = Cut_sections(vir_split_before_b, vir_split_after_b, dvir_resampled)
