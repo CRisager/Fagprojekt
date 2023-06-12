@@ -115,7 +115,7 @@ for i in range(7): # Phsycial
 max_lag_vir = (60+5)*10 # (60 sec stream delay + 5 sec react time) * sfreq on 10 Hz
 for i in range(6): # Virtual
     print("Section: ", i+1, "/ 6")
-    GC_for_all(vir_sections[i], df_list_quiz_vir, i) 
+    GC_for_all(vir_sections[i], df_list_quiz_vir, i, max_lag_vir) 
 
 
 end_time = time.time()
@@ -168,7 +168,7 @@ df = pd.DataFrame({'Person 1': person1["RR"], 'Person 2': person2["RR"]}).reset_
 data = df.pct_change().dropna() # calculate procental change and remove NaN values if any
 
 all_AIC = [] # list to contain all AIC values
-for i in range(1, 51+1): # Loop through possible model orders up to max lag
+for i in range(1, ((60+5)*10)+1): # Loop through possible model orders up to max lag
     model_order = i
     with warnings.catch_warnings():
         warnings.filterwarnings("ignore")
@@ -188,4 +188,4 @@ if sort_AIC[1]-sort_AIC[0] > 2:
 print(model_order)
 end_time = time.time()
 print(end_time-start_time)  # max_lag = 51 -> 44 s
-                            # max_lag = 650 -> 9.3 min
+                            # max_lag = 650 -> 
