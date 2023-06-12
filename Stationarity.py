@@ -78,7 +78,25 @@ if stationarity_list.count("Stationary") > stationarity_list.count("Non-stationa
 else:
     print("Phy data is non-stationary") # jup...
     
+############### detrending #############
 
+stationarity_list = []
+for index, section in enumerate(phy_sections, start=1):
+    print("Section", index, "/", len(phy_sections))
+    for student in section:
+        # Create a DataFrame with the time series data
+        df = pd.DataFrame({'time': student["Time"], 'rr_intervals': student["RR"]})
+        # Fit a linear regression model to detrend the data
+        X = sm.add_constant(np.arange(len(df)))  # Add a constant term to the model
+        model = sm.OLS(df['rr_intervals'], X)
+        results = model.fit()
+        detrended = df['rr_intervals'] - results.fittedvalues
+        stationarity_list.append(Stationarity_test(detrended))
+# Print whether the physical data is stationary or not
+if stationarity_list.count("Stationary") > stationarity_list.count("Non-stationary"):
+    print("Phy data is stationary")
+else:
+    print("Phy data is non-stationary") # jup..
 
 ###################### manually test ########################
 
@@ -105,3 +123,38 @@ plt.title("Visual examination of stationarity")
 plt.xlabel("Time")
 plt.ylabel("Normalized RR-intervals")
 plt.show()
+
+
+###### detredning test and plot #########
+
+import numpy as np
+import pandas as pd
+import statsmodels.api as sm
+import matplotlib.pyplot as plt
+
+print(phy_sections[0][0]["Time"])
+
+# Create a DataFrame with the time series data
+df = pd.DataFrame({'time': phy_sections[0][0]["Time"], 'rr_intervals': phy_sections[0][0]["RR"]})
+# Fit a linear regression model to detrend the data
+X = sm.add_constant(np.arange(len(df)))  # Add a constant term to the model
+model = sm.OLS(df['rr_intervals'], X)
+results = model.fit()
+detrended = df['rr_intervals'] - results.fittedvalues
+print(Stationarity_test(detrended))
+
+# Plot the original and detrended RR-intervals
+plt.figure(figsize=(10, 6))
+plt.plot(df['time'], df['rr_intervals'], label='Original')
+plt.plot(df['time'], detrended, label='Detrended')
+plt.xlabel('Time')
+plt.ylabel('RR-Intervals')
+plt.legend()
+plt.show()
+
+
+
+
+
+
+

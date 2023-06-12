@@ -193,6 +193,37 @@ Corr_over_time_vir(section_num = 6, column = "Avg. student corr")
 # permutation 
 
 
+############# Plot: Variabale relationships ##################################
+
+
+
+
+###############################################################################
+############################## NOT DONE #######################################
+###############################################################################
+
+print(df_list_quiz_phy[0].columns)
+print(df_list_quiz_vir[0].columns)
+
+test_scores_val = []
+avg_teacher_corr_val= []
+
+for student in df_list_quiz_phy[0]:
+    test_scores_val.append(student["Quiz_score"])
+
+for student_index in range(len(df_list_quiz_phy[0])):
+    teacher_corr = []
+    for section in df_list_quiz_phy:
+        teacher_corr.append(section["Teacher/Student corr"][student_index])
+        print(section["Teacher/Student corr"][student_index])
+    avg_teacher_corr_val.append(np.mean(teacher_corr))
+
+plt.plot(avg_teacher_corr_val, test_scores_val)
+plt.show()
+        
+
+
+
 ############### Plot: correlation distribution ##############################
 
 def Corr_distribution():
