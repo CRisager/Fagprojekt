@@ -1,4 +1,4 @@
-from Split_signals import (plt, np, phy_sections, vir_sections, mdates)
+from Split_signals import (plt, np, phy_sections, vir_sections, mdates, dphy_resampled)
 from statsmodels.tsa.stattools import adfuller, kpss
 import warnings
 from collections import Counter
@@ -52,45 +52,53 @@ else:
 import time
 import random
 
+# Measure the time for one entire signal
+start_time = time.time()
+Stationarity_test(dphy_resampled[0]["RR"])
+end_time = time.time()
+print(end_time - start_time) # 36.9 s -> 20 min for hele dphy_resamled
+
+
 # Measure the time for phy_sections
 start_time = time.time()
 Stationarity_test(phy_sections[0][0]["RR"])
 end_time = time.time()
 one_calculation = end_time - start_time # 0.5802 s
 Total_time = one_calculation*(7*32 + 6*18)/60
-# it would take approximately 3.2 minutes to run through all the data
-# That's too long, let's only look at enough data for 30 sec = 50 student segments in total
+# it would take approximately 3.2 minutes to run through all the data:
 
-# Calculate how many to choose from phy vs vir to be fair
-num_physical = int(50 * (7 * 32) / ((7 * 32) + (6 * 18)))
-num_virtual = 51 - num_physical # 51 because then it's 33 and 18 respectively, which is nice
-
-# Create a list of all student segments for phy and vir
-all_studentsegment_phy = [student for section in phy_sections for student in section]
-all_studentsegment_vir = [student for section in vir_sections for student in section]
-
-# Randomly choose student segments from each
-phy_selections = random.sample(all_studentsegment_phy, num_physical)
-vir_selections = random.sample(all_studentsegment_vir, num_virtual)
-
-# Functions for checking chosen random data and printing stationarity result
-def Stationarity_result(selections, state):
-    # Test stationarity of the randomly chosen data 
-    stationarity_list = []
-    for student_index, student in enumerate(selections, start=1):
-        print("Student", student_index, "/", len(selections))    
+stationarity_list = []
+for index, section in enumerate(phy_sections, start=1):
+    print("Section", index, "/", len(phy_sections))
+    for student in section:
         stationarity_list.append(Stationarity_test(student["RR"]))
+# Print whether the physical data is stationary or not
+if stationarity_list.count("Stationary") > stationarity_list.count("Non-stationary"):
+    print("Phy data is stationary")
+else:
+    print("Phy data is non-stationary") # jup...
+    
+############### detrending #############
 
-    # Print whether the physical data is stationary or not
-    if stationarity_list.count("Stationary") > stationarity_list.count("Non-stationary"):
-        print(state, "data is stationary")
-    else:
-        print(state, "data is non-stationary") 
+stationarity_list = []
+for index, section in enumerate(phy_sections, start=1):
+    print("Section", index, "/", len(phy_sections))
+    for student in section:
+        # Create a DataFrame with the time series data
+        df = pd.DataFrame({'time': student["Time"], 'rr_intervals': student["RR"]})
+        # Fit a linear regression model to detrend the data
+        X = sm.add_constant(np.arange(len(df)))  # Add a constant term to the model
+        model = sm.OLS(df['rr_intervals'], X)
+        results = model.fit()
+        detrended = df['rr_intervals'] - results.fittedvalues
+        stationarity_list.append(Stationarity_test(detrended))
+# Print whether the physical data is stationary or not
+if stationarity_list.count("Stationary") > stationarity_list.count("Non-stationary"):
+    print("Phy data is stationary")
+else:
+    print("Phy data is non-stationary") # jup..
 
-Stationarity_result(phy_selections, state = "Physical") # non-stationary
-Stationarity_result(vir_selections, state = "Virtual")  # non-stationary
-
-
+###################### manually test ########################
 
 # Try looking at mean and std in first vs second half
 rr = phy_sections[0][0]["RR"]
@@ -105,8 +113,9 @@ print(np.std(second_half))   # 0.8169    # diff = 0.2035
 
 
 # Visually examine the signal
+rr_norm = (dphy_resampled[0]["RR"] - np.mean(dphy_resampled[0]["RR"]))/np.std(dphy_resampled[0]["RR"])
 fig, ax = plt.subplots(1,1)
-plt.plot(phy_sections[0][0]["Time"], rr_norm)
+plt.plot(dphy_resampled[0]["Time"], rr_norm)
 # format the x-tick labels to only show the time part
 plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
 plt.xticks(rotation=45) # rotate the x-tick labels by 45 degrees
@@ -114,3 +123,38 @@ plt.title("Visual examination of stationarity")
 plt.xlabel("Time")
 plt.ylabel("Normalized RR-intervals")
 plt.show()
+
+
+###### detredning test and plot #########
+
+import numpy as np
+import pandas as pd
+import statsmodels.api as sm
+import matplotlib.pyplot as plt
+
+print(phy_sections[0][0]["Time"])
+
+# Create a DataFrame with the time series data
+df = pd.DataFrame({'time': phy_sections[0][0]["Time"], 'rr_intervals': phy_sections[0][0]["RR"]})
+# Fit a linear regression model to detrend the data
+X = sm.add_constant(np.arange(len(df)))  # Add a constant term to the model
+model = sm.OLS(df['rr_intervals'], X)
+results = model.fit()
+detrended = df['rr_intervals'] - results.fittedvalues
+print(Stationarity_test(detrended))
+
+# Plot the original and detrended RR-intervals
+plt.figure(figsize=(10, 6))
+plt.plot(df['time'], df['rr_intervals'], label='Original')
+plt.plot(df['time'], detrended, label='Detrended')
+plt.xlabel('Time')
+plt.ylabel('RR-Intervals')
+plt.legend()
+plt.show()
+
+
+
+
+
+
+
