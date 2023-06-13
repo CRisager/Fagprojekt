@@ -40,6 +40,7 @@ if stationarity_list.count("Stationary") > stationarity_list.count("Non-stationa
     physical = "Phy data is stationary"
 else:
     physical = "Phy data is non-stationary" 
+#print(physical)
 # The physical data is non-stationary 
 
 
@@ -55,6 +56,7 @@ if stationarity_list.count("Stationary") > stationarity_list.count("Non-stationa
     physical = "Phy data is stationary"
 else:
     physical = "Phy data is non-stationary"
+#print(physical)
 # The data is still non-stationary 
 
 
@@ -70,6 +72,7 @@ if stationarity_list.count("Stationary") > stationarity_list.count("Non-stationa
     physical = "Phy data is stationary"
 else:
     physical = "Phy data is non-stationary"
+#print(physical)
 # The data is still non-stationary 
 
 
@@ -85,6 +88,7 @@ if stationarity_list.count("Stationary") > stationarity_list.count("Non-stationa
     physical = "Phy data is stationary"
 else:
     physical = "Phy data is non-stationary"
+#print(physical)
 # The data is still non-stationary 
 
     
@@ -101,7 +105,8 @@ if stationarity_list.count("Stationary") > stationarity_list.count("Non-stationa
     physical = "Phy data is stationary"
 else:
     physical = "Phy data is non-stationary"
-
+#print(physical)
+# The data is still non-stationary 
 
 
 ############### Use detrending to make stationary ###############
@@ -121,9 +126,9 @@ for index, section in enumerate(phy_sections, start=1):
 if stationarity_list.count("Stationary") > stationarity_list.count("Non-stationary"):
     print("Phy data is stationary")
 else:
-    print("Phy data is non-stationary") # jup..
-
-###################### manually test ########################
+    print("Phy data is non-stationary")
+#print(physical)
+# The data is still non-stationary 
 
 
 # Visually examine the signal
@@ -137,6 +142,8 @@ plt.title("Visual examination of stationarity")
 plt.xlabel("Time")
 plt.ylabel("Normalized RR-intervals")
 plt.show()
+# The data also looks non-stationary 
+
 
 
 
