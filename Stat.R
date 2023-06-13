@@ -3,8 +3,10 @@
 
 # The data set
 # Physical data frame
-file_path <- file.choose("/Users/andreabolvig/Desktop/4.semester/Project work/Fagprojekt_data/phy_stat_data.csv")
-physical <- read.csv("file_path")
+setwd("/Users/andreabolvig/Desktop/4.semester/Project work/Fagprojekt_data")
+
+physical <- read.table("phy_stat_data.csv", header = TRUE, sep = ",", as.is = TRUE)
+head(physical)
 
 # Virtual data frame
 virtual <-c()
