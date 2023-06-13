@@ -1,10 +1,11 @@
 #### Wilconxon test - compare physical and virtual ####
 # Paired Samples Wilcoxon Test
- 
+
 # The data set
 # Physical data frame
-physical <-c()
- 
+file_path <- file.choose("/Users/andreabolvig/Desktop/4.semester/Project work/Fagprojekt_data/phy_stat_data.csv")
+physical <- read.csv("file_path")
+
 # Virtual data frame
 virtual <-c()
  
