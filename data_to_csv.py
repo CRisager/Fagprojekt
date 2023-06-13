@@ -1,11 +1,10 @@
 from GrangerCausality import (pd, np, df_list_quiz_phy, df_list_quiz_vir)
 
-
-print(df_list_quiz_phy[0].columns)
-
+# Define the dataframes from the first section
 df_phy = df_list_quiz_phy[0]
 df_vir = df_list_quiz_vir[0]
 
+# Only keep the columns that doesn't depend on section and rename columns
 phy_csv = pd.DataFrame({"HR device":df_phy["HR_device"], "Quiz score":df_phy[" Quiz_score"],
                         "Number of friends":df_phy[" Number_of_friends"], "Row number": df_phy[" Row_number"]
                         , "State":df_phy["State"]})
@@ -23,7 +22,7 @@ def Avg_val(df_list_quiz, column):
         avg_val.append(np.mean(teacher_corr))
     return avg_val 
 
-# Add all the new columns with average over sections to the data frame
+# Add all the new columns with average over sections to the data frames
 # Physical
 phy_csv["Average BPM"] = Avg_val(df_list_quiz_phy, "Average BPM")
 phy_csv["Teacher/Student corr"] = Avg_val(df_list_quiz_phy, "Teacher/Student corr")
@@ -46,16 +45,14 @@ phy_csv_temp = phy_csv.drop('Row number', axis=1)
 
 # Create a merged csv data frame
 merged_csv = pd.concat([phy_csv_temp, vir_csv], axis=0) 
-
-print(merged_csv.columns)
                                
-# Edit the merged to only contain the students that participated physically AND virtually
+                               
 # Count the occurrences of each device number
 device_counts = merged_csv['HR device'].value_counts()
 # Get the device numbers that appear more than once
 multiple_occurrences = device_counts[device_counts > 1].index
 # Filter the dataframe to keep only the rows with device numbers that appear more than once
-df_filtered = merged_csv[merged_csv['HR device'].isin(multiple_occurrences)]
+merged_csv = merged_csv[merged_csv['HR device'].isin(multiple_occurrences)]
 
 
 # Export the dataframes as csv files
