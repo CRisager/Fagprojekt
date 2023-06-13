@@ -48,7 +48,7 @@ max_lag = (1+5)*10 # (1 sec error + 5 sec react time) * sfreq on 10 Hz
 phys_MO_student_teacher = best_model_order(Student, Teacher, max_lag)
 phys_MO_teacher_student = best_model_order(Teacher, Student, max_lag)
 
-print(phys_MO_student_teacher, "and", phys_MO_teacher_student) # 22 and 19
+#print(phys_MO_student_teacher, "and", phys_MO_teacher_student) # 22 and 19
 
 model_order = 20
 

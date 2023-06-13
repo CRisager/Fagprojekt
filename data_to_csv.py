@@ -46,10 +46,19 @@ phy_csv_temp = phy_csv.drop('Row number', axis=1)
 
 # Create a merged csv data frame
 merged_csv = pd.concat([phy_csv_temp, vir_csv], axis=0) 
+
+print(merged_csv.columns)
                                
+# Edit the merged to only contain the students that participated physically AND virtually
+# Count the occurrences of each device number
+device_counts = merged_csv['HR device'].value_counts()
+# Get the device numbers that appear more than once
+multiple_occurrences = device_counts[device_counts > 1].index
+# Filter the dataframe to keep only the rows with device numbers that appear more than once
+df_filtered = merged_csv[merged_csv['HR device'].isin(multiple_occurrences)]
+
+
 # Export the dataframes as csv files
 phy_csv.to_csv('phy_stat_data.csv', index=False)
 vir_csv.to_csv('vir_stat_data.csv', index=False)
 merged_csv.to_csv('merged_stat_data.csv', index=False)
-
-
