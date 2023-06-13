@@ -37,7 +37,7 @@ def best_model_order(person1, person2, max_lag):
         model_order = all_AIC.index(sort_AIC[0]) # Set the the model order from this result
     return model_order
 
-print("Determining best model order ...")
+print("Determining best model order for Granger Causality ...")
 
 ### physical
 # Choose two test people for determining the max order (assumes the same for everybody)
@@ -50,7 +50,9 @@ phys_MO_teacher_student = best_model_order(Teacher, Student, max_lag)
 
 print(phys_MO_student_teacher, "and", phys_MO_teacher_student) # 22 and 19
 
+model_order = 20
 
+"""
 ### virtual
 # Choose two test people for determining the max order (assumes the same for everybody)
 Student = vir_sections[0][0] # First student in the first section
@@ -61,9 +63,10 @@ vir_MO_student_teacher = best_model_order(Student, Teacher, max_lag)
 vir_MO_teacher_student = best_model_order(Teacher, Student, max_lag)
 
 print(vir_MO_student_teacher, "and", vir_MO_teacher_student) # ville tage ca 46 min at køre bare den ene
+"""
 
  ####################### Calculate Granger causality ###########################################
- 
+
  
 # Function for calculating granger causality between two people
 def Granger(person1, person2, model_order):
@@ -85,13 +88,12 @@ def Granger(person1, person2, model_order):
 
 # Function for calculate Granger causality for all students in all sections
 def GC_for_all(section, df_quiz_list, i, max_lag):
-    print("\n\n\nDelete the [0], this is just for test!\n\n\n")
     # Create lists for the GC columns within each section
     gc_teacher_to_student_column = []
     gc_student_to_teacher_column = []
     # Loop over students, calculate GC, add to column lists
     for student_index, student in enumerate(section[:-1], start=1): # loop skips the teacher
-        print("Student", student_index, "/", len(section[:-1])) 
+        print(student_index, "/", len(section[:-1])) 
         teacher = section[-1]
         gc_teacher_to_student_column.append(Granger(student, teacher, max_lag)) # student to teacher
         gc_student_to_teacher_column.append(Granger(teacher, student, max_lag)) # teacher to student
@@ -102,32 +104,27 @@ def GC_for_all(section, df_quiz_list, i, max_lag):
     df["GC student->teacher"] = gc_student_to_teacher_column
 
 
-start_time = time.time()
-
-
 # Call the function in order to calculate the correlations for physical and virtual
 print("Calculating Granger causality:")
 
-max_lag_phy = (1+5)*10 # (1 sec error + 5 sec react time) * sfreq on 10 Hz
+#max_lag_phy = (1+5)*10 # (1 sec error + 5 sec react time) * sfreq on 10 Hz
 for i in range(7): # Phsycial
     print("Section: ", i+1, "/ 7")
-    GC_for_all(phy_sections[i], df_list_quiz_phy, i, max_lag_phy)
-max_lag_vir = (60+5)*10 # (60 sec stream delay + 5 sec react time) * sfreq on 10 Hz
+    GC_for_all(phy_sections[i], df_list_quiz_phy, i, model_order)
+#max_lag_vir = (60+5)*10 # (60 sec stream delay + 5 sec react time) * sfreq on 10 Hz
 for i in range(6): # Virtual
     print("Section: ", i+1, "/ 6")
-    GC_for_all(vir_sections[i], df_list_quiz_vir, i, max_lag_vir) 
+    GC_for_all(vir_sections[i], df_list_quiz_vir, i, model_order) 
 
 
-end_time = time.time()
-print("GC takes", (end_time - start_time)/60, "min")
 
-
-print(df_list_quiz_phy[0].head())
+#print(df_list_quiz_phy[0].head())
 
 
 
 ##################################################################################
 ###################################### test ############################################
+"""
 import warnings
 import time
 
@@ -189,3 +186,5 @@ print(model_order)
 end_time = time.time()
 print(end_time-start_time)  # max_lag = 51 -> 44 s
                             # max_lag = 650 -> 
+                            
+"""

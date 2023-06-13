@@ -191,117 +191,201 @@ Corr_over_time_vir(section_num = 6, column = "Avg. student corr")
 ############# Plot: Permutation ##################################
 
 # permutation 
+        
+
+
+
+############ Plot: correlation distribution (avg over sections) #######################
+
+# function for calculating average across sections
+def Avg_corr(df_list_quiz, column):
+    avg_corr_val = []
+    for student_index in range(len(df_list_quiz[0])):
+        teacher_corr = []
+        for section in df_list_quiz:
+            teacher_corr.append(section[column][student_index])
+        avg_corr_val.append(np.mean(teacher_corr))
+    return avg_corr_val
+
+
+def Distr_of_avg_corr():
+
+    x_plot_phy = np.arange(0,32)
+    x_plot_vir = np.arange(0,17)
+
+    def Distr_over_section_avg():
+        # Calculate average teacher/student corr
+        phy_teacher_corr = Avg_corr(df_list_quiz_phy, column = "Teacher/Student corr")
+        vir_teacher_corr = Avg_corr(df_list_quiz_vir, column = "Teacher/Student corr")
+        # Plot
+        plt.axhline(y=0, linestyle='dotted', color='gray')  # Add a dotted line at y=0
+        plt.scatter(x_plot_phy, phy_teacher_corr, color = "royalblue",
+                        alpha=0.8, label = "Physical")
+        plt.scatter(x_plot_vir, vir_teacher_corr, color = "firebrick",
+                        alpha=0.8, label = "Virtual")
+        plt.title("Teacher/Student correlations")
+        plt.xlabel("Student")
+        plt.ylabel("Avg correlation over sections")
+        plt.legend()
+        plt.show()
+
+        # Calculate average Avg. student corr
+        phy_student_corr = Avg_corr(df_list_quiz_phy, column = "Avg. student corr")
+        vir_student_corr = Avg_corr(df_list_quiz_vir, column = "Avg. student corr")
+        # Plot
+        plt.axhline(y=0, linestyle='dotted', color='gray')  # Add a dotted line at y=0
+        plt.scatter(x_plot_phy, phy_student_corr, color = "royalblue",
+                        alpha=0.8, label = "Physical")
+        plt.scatter(x_plot_vir, vir_student_corr, color = "firebrick",
+                        alpha=0.8, label = "Virtual")
+        plt.title("Avg. Student correlations")
+        plt.xlabel("Student")
+        plt.ylabel("Correlation")
+        plt.legend()
+        plt.show()
+        return x_plot_phy, x_plot_vir
+    Distr_over_section_avg()
+
+
+    # The datapoints are very clearly seperated so this will be examined further
+    phy_list = df_list_quiz_phy.copy()
+    vir_list = df_list_quiz_vir.copy()
+
+    #### Avg. student corr ####
+    def Avg_student_examination(phy_list, vir_list, x_plot_phy, x_plot_vir):
+        # Avg. student corr with max delay for phy and vir = 1 sec
+        print("Re-calculating correlations...")
+        for section in phy_sections:
+            Correlations(section, phy_list, 3, min_phy = -1, min_vir = -1)
+        for section in vir_sections:
+            Correlations(section, vir_list, 3, min_phy = -1, min_vir = -1) 
+        # Average over sections
+        phy_student_corr1 = Avg_corr(phy_list, column = "Avg. student corr")
+        vir_student_corr1 = Avg_corr(vir_list, column = "Avg. student corr")
+        #plot
+        plt.axhline(y=0, linestyle='dotted', color='gray')  # Add a dotted line at y=0
+        plt.scatter(x_plot_phy, phy_student_corr1, color = "royalblue",
+                        alpha=0.8, label = "Physical")
+        plt.scatter(x_plot_vir, vir_student_corr1, color = "firebrick",
+                        alpha=0.8, label = "Virtual")
+        plt.title("Avg. Student correlations (max 1 sec delay for all)")
+        plt.xlabel("Student")
+        plt.ylabel("Avg correlation over sections")
+        plt.legend()
+        plt.show()
+
+
+        # Avg. student corr with max delay for phy and vir = 60 sec
+        print("Re-calculating correlations...")
+        for section in phy_sections:
+            Correlations(section, phy_list, 3, min_phy = -60, min_vir = -60)
+        for section in vir_sections:
+            Correlations(section, vir_list, 3, min_phy = -60, min_vir = -60) 
+        # Average over sections
+        phy_student_corr60 = Avg_corr(phy_list, column = "Avg. student corr")
+        vir_student_corr60 = Avg_corr(vir_list, column = "Avg. student corr")
+        #plot
+        plt.axhline(y=0, linestyle='dotted', color='gray')  # Add a dotted line at y=0
+        plt.scatter(x_plot_phy, phy_student_corr60, color = "royalblue",
+                        alpha=0.8, label = "Physical")
+        plt.scatter(x_plot_vir, vir_student_corr60, color = "firebrick",
+                        alpha=0.8, label = "Virtual")
+        plt.title("Avg. Student correlations (max 60 sec delay for all)")
+        plt.xlabel("Student")
+        plt.ylabel("Avg correlation over sections")
+        plt.legend()
+        plt.show()
+    Avg_student_examination(phy_list, vir_list, x_plot_phy, x_plot_vir)
+
+
+    #### Avg. teacher corr #### 
+    def Avg_teacher_examination(phy_list, vir_list, x_plot_phy, x_plot_vir):
+        # Avg. teacher corr with max delay for phy and vir = 1 sec
+        print("Re-calculating correlations...")
+        for section in phy_sections:
+            Correlations(section, phy_list, 3, min_phy = -1, min_vir = -1)
+        for section in vir_sections:
+            Correlations(section, vir_list, 3, min_phy = -1, min_vir = -1) 
+        # Average over sections
+        phy_student_corr1 = Avg_corr(phy_list, column = "Teacher/Student corr")
+        vir_student_corr1 = Avg_corr(vir_list, column = "Teacher/Student corr")
+        #plot
+        plt.axhline(y=0, linestyle='dotted', color='gray')  # Add a dotted line at y=0
+        plt.scatter(x_plot_phy, phy_student_corr1, color = "royalblue",
+                        alpha=0.8, label = "Physical")
+        plt.scatter(x_plot_vir, vir_student_corr1, color = "firebrick",
+                        alpha=0.8, label = "Virtual")
+        plt.title("Teacher/Student correlations (max 1 sec delay for all)")
+        plt.xlabel("Student")
+        plt.ylabel("Avg correlation over sections")
+        plt.legend()
+        plt.show()
+
+
+        # Avg. teacher corr with max delay for phy and vir = 60 sec
+        print("Re-calculating correlations...")
+        for section in phy_sections:
+            Correlations(section, phy_list, 3, min_phy = -60, min_vir = -60)
+        for section in vir_sections:
+            Correlations(section, vir_list, 3, min_phy = -60, min_vir = -60) 
+        # Average over sections
+        phy_student_corr60 = Avg_corr(phy_list, column = "Teacher/Student corr")
+        vir_student_corr60 = Avg_corr(vir_list, column = "Teacher/Student corr")
+        #plot
+        plt.axhline(y=0, linestyle='dotted', color='gray')  # Add a dotted line at y=0
+        plt.scatter(x_plot_phy, phy_student_corr60, color = "royalblue",
+                        alpha=0.8, label = "Physical")
+        plt.scatter(x_plot_vir, vir_student_corr60, color = "firebrick",
+                        alpha=0.8, label = "Virtual")
+        plt.title("Teacher/Student correlations (max 60 sec delay for all)")
+        plt.xlabel("Student")
+        plt.ylabel("Avg correlation over sections")
+        plt.legend()
+        plt.show()
+    Avg_teacher_examination(phy_list, vir_list, x_plot_phy, x_plot_vir)
+Distr_of_avg_corr()
+
+
+
 
 
 ############# Plot: Variabale relationships ##################################
-
-
 
 
 ###############################################################################
 ############################## NOT DONE #######################################
 ###############################################################################
 
-print(df_list_quiz_phy[0].columns)
-print(df_list_quiz_vir[0].columns)
+# Extract test scores
+phy_test_scores = df_list_quiz_phy[0][" Quiz_score"]
+vir_test_scores = df_list_quiz_vir[0][" Quiz_score"]
 
-test_scores_val = []
-avg_teacher_corr_val= []
 
-for student in df_list_quiz_phy[0]:
-    test_scores_val.append(student["Quiz_score"])
-
-for student_index in range(len(df_list_quiz_phy[0])):
-    teacher_corr = []
-    for section in df_list_quiz_phy:
-        teacher_corr.append(section["Teacher/Student corr"][student_index])
-        print(section["Teacher/Student corr"][student_index])
-    avg_teacher_corr_val.append(np.mean(teacher_corr))
-
-plt.plot(avg_teacher_corr_val, test_scores_val)
+# Calculate average teacher/student corr
+phy_teacher_corr = Avg_corr(df_list_quiz_phy, column = "Teacher/Student corr")
+vir_teacher_corr = Avg_corr(df_list_quiz_vir, column = "Teacher/Student corr")
+# plot
+plt.scatter(phy_teacher_corr, phy_test_scores, color = "royalblue",
+                alpha=0.8, label = "Physical")
+plt.scatter(vir_teacher_corr, vir_test_scores, color = "firebrick",
+                alpha=0.8, label = "Virtual")
+plt.title("Quiz scores vs teacher/student corr")
+plt.xlabel("Avg. teacher/student correlation")
+plt.ylabel("Quiz scores")
+plt.legend()
 plt.show()
-        
 
-
-
-############### Plot: correlation distribution ##############################
-
-def Corr_distribution():
-    # Teacher/student corr
-    x_plot_phy = np.arange(0,len(df_list_quiz_phy[3]["Teacher/Student corr"]))
-    y_plot_phy = df_list_quiz_phy[3]["Teacher/Student corr"]
-    x_plot_vir = np.arange(0,len(df_list_quiz_vir[3]["Teacher/Student corr"]))
-    y_plot_vir = df_list_quiz_vir[3]["Teacher/Student corr"]
-
-    plt.axhline(y=0, linestyle='dotted', color='gray')  # Add a dotted line at y=0
-    plt.scatter(x_plot_phy, y_plot_phy, color = "royalblue",
-                    alpha=0.8, label = "Physical")
-    plt.scatter(x_plot_vir, y_plot_vir, color = "firebrick",
-                    alpha=0.8, label = "Virtual")
-    plt.title("Teacher/Student correlations")
-    plt.xlabel("Student")
-    plt.ylabel("Correlation")
-    plt.legend()
-    plt.show()
-
-    # Avg. student corr
-    x_plot_phy = np.arange(0,len(df_list_quiz_phy[3]["Avg. student corr"]))
-    y_plot_phy = df_list_quiz_phy[3]["Avg. student corr"]
-    x_plot_vir = np.arange(0,len(df_list_quiz_vir[3]["Avg. student corr"]))
-    y_plot_vir = df_list_quiz_vir[3]["Avg. student corr"]
-
-    plt.axhline(y=0, linestyle='dotted', color='gray')  # Add a dotted line at y=0
-    plt.scatter(x_plot_phy, y_plot_phy, color = "royalblue",
-                    alpha=0.8, label = "Physical")
-    plt.scatter(x_plot_vir, y_plot_vir, color = "firebrick",
-                    alpha=0.8, label = "Virtual")
-    plt.title("Avg. Student correlations")
-    plt.xlabel("Student")
-    plt.ylabel("Correlation")
-    plt.legend()
-    plt.show()
-
-    # The datapoints are very clearly seperated so this will be examined further
-
-    # Avg. student corr with max delay for phy and vir = 1 sec
-    Correlations(phy_sections[3], df_list_quiz_phy, 3, min_phy = -1, min_vir = -1)
-    Correlations(vir_sections[3], df_list_quiz_vir, 3, min_phy = -1, min_vir = -1) 
-
-    x_plot_phy = np.arange(0,len(df_list_quiz_phy[3]["Avg. student corr"]))
-    y_plot_phy = df_list_quiz_phy[3]["Avg. student corr"]
-    x_plot_vir = np.arange(0,len(df_list_quiz_vir[3]["Avg. student corr"]))
-    y_plot_vir = df_list_quiz_vir[3]["Avg. student corr"]
-
-    plt.axhline(y=0, linestyle='dotted', color='gray')  # Add a dotted line at y=0
-    plt.scatter(x_plot_phy, y_plot_phy, color = "royalblue",
-                    alpha=0.8, label = "Physical")
-    plt.scatter(x_plot_vir, y_plot_vir, color = "firebrick",
-                    alpha=0.8, label = "Virtual")
-    plt.title("Avg. Student correlations (max 1 sec delay for all)")
-    plt.xlabel("Student")
-    plt.ylabel("Correlation")
-    plt.legend()
-    plt.show()
-
-
-    # Avg. student corr with max delay for phy and vir = 60 sec
-    Correlations(phy_sections[3], df_list_quiz_phy, 3, min_phy = -60, min_vir = -60)
-    Correlations(vir_sections[3], df_list_quiz_vir, 3, min_phy = -60, min_vir = -60) 
-
-    x_plot_phy = np.arange(0,len(df_list_quiz_phy[3]["Avg. student corr"]))
-    y_plot_phy = df_list_quiz_phy[3]["Avg. student corr"]
-    x_plot_vir = np.arange(0,len(df_list_quiz_vir[3]["Avg. student corr"]))
-    y_plot_vir = df_list_quiz_vir[3]["Avg. student corr"]
-
-    plt.axhline(y=0, linestyle='dotted', color='gray')  # Add a dotted line at y=0
-    plt.scatter(x_plot_phy, y_plot_phy, color = "royalblue",
-                    alpha=0.8, label = "Physical")
-    plt.scatter(x_plot_vir, y_plot_vir, color = "firebrick",
-                    alpha=0.8, label = "Virtual")
-    plt.title("Avg. Student correlations (max 60 sec delay for all)")
-    plt.xlabel("Student")
-    plt.ylabel("Correlation")
-    plt.legend()
-    plt.show()
-Corr_distribution()
+# Calculate average Avg. student corr
+phy_student_corr = Avg_corr(df_list_quiz_phy, column = "Avg. student corr")
+vir_student_corr = Avg_corr(df_list_quiz_vir, column = "Avg. student corr")
+# Plot
+plt.scatter(phy_student_corr, phy_test_scores, color = "royalblue",
+                alpha=0.8, label = "Physical")
+plt.scatter(vir_student_corr, vir_test_scores, color = "firebrick",
+                alpha=0.8, label = "Virtual")
+plt.title("Quiz scores vs teacher/student corr")
+plt.xlabel("Avg. student correlation")
+plt.ylabel("Quiz scores")
+plt.legend()
+plt.show()
 
