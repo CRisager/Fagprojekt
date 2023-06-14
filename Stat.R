@@ -1,6 +1,6 @@
 #### Set working directory ####
-#setwd("C:/Users/cheli/OneDrive/Skrivebord/Fagprojekt/Fagprojekt_data")
-setwd("/Users/andreabolvig/Desktop/4.semester/Project work/Fagprojekt_data")
+setwd("C:/Users/cheli/OneDrive/Skrivebord/Fagprojekt/Fagprojekt_data")
+#setwd("/Users/andreabolvig/Desktop/4.semester/Project work/Fagprojekt_data")
 #setwd("/Users/jesperberglund/Downloads/HR_data")
 
 
@@ -18,16 +18,16 @@ merged <- read.table("merged_stat_data.csv", header = TRUE, sep = ",", as.is = T
 # Calculate the midpoint index
 midpoint <- nrow(merged) %/% 2
 # Split the dataframe into two parts
-merged_phy <- df[1:midpoint, ]
-merged_vir <- df[(midpoint + 1):nrow(df), ]
-head(merged_phy)
-  
+merged_phy <- merged[1:midpoint, ]
+merged_vir <- merged[(midpoint + 1):nrow(merged), ]
+
 
 
   
 ###### Paired Samples Wilcoxon Test ######
 TeacherStudentCorr = wilcox.test(merged_phy$TeacherStudent_corr, merged_vir$TeacherStudent_corr, paired = TRUE)
 AvgStudentCorr = wilcox.test(merged_phy$Avg_student_corr, merged_vir$Avg_student_corr, paired = TRUE)
+AvgAbsStudentCorr = wilcox.test(merged_phy$Avg_abs_student_corr, merged_vir$Avg_abs_student_corr, paired = TRUE)
 
 #GC_TeacherStudent = wilcox.test(merged_phy$GC_teacher_to_student, merged_vir$GC_teacher_to_student, paired = TRUE)
 #GC_StudentTeacher = wilcox.test(merged_phy$GC_student_to_teacher, merged_vir$GC_student_to_teacher, paired = TRUE)
@@ -35,6 +35,8 @@ AvgStudentCorr = wilcox.test(merged_phy$Avg_student_corr, merged_vir$Avg_student
 # Printing the results
 print(paste("The teacher/student corr p-value is: ", TeacherStudentCorr))
 print(paste("The avg. student corr p-value is: ", AvgStudentCorr))
+print(paste("The avg. abs student corr p-value is: ", AvgAbsStudentCorr))
+
 #print(paste("The GC teacher->student p-value is: ", GC_TeacherStudent))
 #print(paste("The GC student->teacher p-value is: ", GC_StudentTeacher))
 
@@ -125,3 +127,5 @@ Residual standard error: 4.292 on 25 degrees of freedom
 Multiple R-squared:  0.1264,	Adjusted R-squared:  -0.1532 
 F-statistic: 0.4521 on 8 and 25 DF,  p-value: 0.8775
 """
+
+# Estimating model parameters (merged)

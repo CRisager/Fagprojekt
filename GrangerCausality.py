@@ -1,6 +1,6 @@
 from Correlation_calculation import (pd, sns, plt, datetime, np, mdates,
                                      phy_sections, vir_sections, 
-                                     df_list_quiz_phy, df_list_quiz_vir)
+                                     df_list_quiz_phy, df_list_quiz_vir, final_stream_delay)
 import warnings
 from statsmodels.tsa.api import VAR
 from statsmodels.tsa.stattools import grangercausalitytests
@@ -36,9 +36,9 @@ def best_model_order(person1, person2, max_lag):
         model_order = all_AIC.index(sort_AIC[0]) # Set the the model order from this result
     return model_order
 
-print("Determining best model order for Granger Causality ...")
 
 ### physical
+print("Determining best phy model order for Granger Causality ...")
 # Choose two test people for determining the max order (assumes the same for everybody)
 Student = phy_sections[0][0] # First student in the first section
 Teacher = phy_sections[0][-1] # The teacher in the first section
@@ -47,24 +47,28 @@ max_lag = (1+5)*10 # (1 sec error + 5 sec react time) * sfreq on 10 Hz
 phys_MO_student_teacher = best_model_order(Student, Teacher, max_lag) # 22
 phys_MO_teacher_student = best_model_order(Teacher, Student, max_lag) # 19
 # Since they in theory should be the same, we'll just use 22
+phy_model_order = 22
 
-model_order = 22
 
-"""
 ### virtual
+print("Determining best vir model order for Granger Causality ...")
 # Choose two test people for determining the max order (assumes the same for everybody)
 Student = vir_sections[0][0] # First student in the first section
 Teacher = vir_sections[0][-1] # The teacher in the first section
-max_lag = (60+5)*10 # (60 sec stream delay + 5 sec react time) * sfreq on 10 Hz
+# The max_lag for vir is (60+5)*10 # (60 sec stream delay + 5 sec react time) * sfreq on 10 Hz
+# but this would take forever to run, so we shift the signal according to the calculated stream delay
+# and then use the remainding lag as max_lag (5 sec react time * sfreq on 10 Hz)
+max_lag = 5*10
+# Shift one of the signals:
+Teacher = np.roll(Teacher,final_stream_delay)
 # Determine the best model orders (MO) for student->teacher and teacher->student
-vir_MO_student_teacher = best_model_order(Student, Teacher, max_lag)
-vir_MO_teacher_student = best_model_order(Teacher, Student, max_lag)
+vir_MO_student_teacher = best_model_order(Student, Teacher, max_lag) # 17
+vir_MO_teacher_student = best_model_order(Teacher, Student, max_lag) # 19
+# Since they in theory should be the same, we'll just use 17
+vir_model_order = 17
 
-print(vir_MO_student_teacher, "and", vir_MO_teacher_student) # ville tage ca 46 min at køre bare den ene
-"""
 
  ####################### Calculate Granger causality ###########################################
-
  
 # Function for calculating granger causality between two people
 def Granger(person1, person2, model_order):
@@ -108,11 +112,11 @@ print("Calculating Granger causality:")
 #max_lag_phy = (1+5)*10 # (1 sec error + 5 sec react time) * sfreq on 10 Hz
 for i in range(7): # Phsycial
     print("Section: ", i+1, "/ 7")
-    GC_for_all(phy_sections[i], df_list_quiz_phy, i, model_order)
+    GC_for_all(phy_sections[i], df_list_quiz_phy, i, phy_model_order)
 #max_lag_vir = (60+5)*10 # (60 sec stream delay + 5 sec react time) * sfreq on 10 Hz
 for i in range(6): # Virtual
     print("Section: ", i+1, "/ 6")
-    GC_for_all(vir_sections[i], df_list_quiz_vir, i, model_order) 
+    GC_for_all(vir_sections[i], df_list_quiz_vir, i, vir_model_order) 
 
 
 

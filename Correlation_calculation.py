@@ -41,12 +41,19 @@ def MaxCorr(signal1, signal2, min_shift, max_shift, absolute):
     delays = np.linspace(-(len(signal1_norm)-1),len(signal2_norm)-1,len(cross_corr)) # list of delays
     delays /= 10 # Go from samples to seconds. 10 Hz = 10 samples in 1 second
     # Create a list of correlations within the max shift of (1 sec or 1 min depending on phy/vir)
-    if absolute == False:
-        max_shift_corr = [cross_corr[i] for i in range(len(delays)) if delays[i] >= min_shift and delays[i] <= max_shift]
-    else:
-        max_shift_corr = [abs(cross_corr[i]) for i in range(len(delays)) if delays[i] >= min_shift and delays[i] <= max_shift]
+    max_shift_corr = [cross_corr[i] for i in range(len(delays)) if delays[i] >= min_shift and delays[i] <= max_shift]
     max_corr = max(max_shift_corr) # Find maximum correlation within this 
-    return max_corr
+
+    if absolute == True:
+        for num in max_shift_corr:
+            num = abs(num)
+        max_corr = max(max_shift_corr) # Find maximum correlation within this 
+        best_delay = None # Ignore delays for abs corr
+    else:
+        # Find the delay for the max corr
+        best_delay = delays[np.where(cross_corr == max_corr)[0][0]]
+    
+    return max_corr, best_delay 
 
 def Correlations(total_list, df_quiz_list, i, min_phy, min_vir):
     # Define the teachers RR-intervals
@@ -57,6 +64,9 @@ def Correlations(total_list, df_quiz_list, i, min_phy, min_vir):
     Teacher_corr_column = []
     Student_corr_column = []
     Abs_student_corr_column = []
+    
+    # Create a list for best delays in order to determine average stream delay
+    stream_delays = []
 
     # Calculate the correlations for all participands
     for student in total_list[:-1]:
@@ -64,10 +74,11 @@ def Correlations(total_list, df_quiz_list, i, min_phy, min_vir):
         # Calculate teacher/student correlation
         if df_quiz_list == df_list_quiz_phy:
             # calculate the correlation with max shift on 1 sec
-            Teacher_corr_column.append(MaxCorr(Student, Teacher, min_phy, abs(min_phy), absolute = False))
+            Teacher_corr_column.append(MaxCorr(Student, Teacher, min_phy, abs(min_phy), absolute = False)[0])
         elif df_quiz_list == df_list_quiz_vir:
             # max shift on 60 seconds (1 min)
-            Teacher_corr_column.append(MaxCorr(Student, Teacher, min_vir, abs(min_vir), absolute = False))
+            Teacher_corr_column.append(MaxCorr(Student, Teacher, min_vir, abs(min_vir), absolute = False)[0])
+            stream_delays.append(MaxCorr(Student, Teacher, min_vir, abs(min_vir), absolute = False)[1])
         
         # Calculate average student correlation
         corr_list = []
@@ -75,11 +86,11 @@ def Correlations(total_list, df_quiz_list, i, min_phy, min_vir):
         for student in total_list[:-1]:
             Student2 = student["RR"]
             if df_quiz_list == df_list_quiz_phy:
-                corr = MaxCorr(Student, Student2, min_phy, abs(min_phy), absolute = False) # max 1 sec
-                abs_corr = MaxCorr(Student, Student2, min_phy, abs(min_phy), absolute = True) # max 1 sec
+                corr = MaxCorr(Student, Student2, min_phy, abs(min_phy), absolute = False)[0] # max 1 sec
+                abs_corr = MaxCorr(Student, Student2, min_phy, abs(min_phy), absolute = True)[0] # max 1 sec
             elif df_quiz_list == df_list_quiz_vir:
-                corr = MaxCorr(Student, Student2, min_vir, abs(min_vir), absolute = False) # max 1 min
-                abs_corr = MaxCorr(Student, Student2, min_vir, abs(min_vir), absolute = True) # max 1 sec
+                corr = MaxCorr(Student, Student2, min_vir, abs(min_vir), absolute = False)[0] # max 1 min
+                abs_corr = MaxCorr(Student, Student2, min_vir, abs(min_vir), absolute = True)[0] # max 1 sec
             corr_list.append(corr)
             abs_corr_list.append(abs_corr)
         # Remove the correlation from the given student to himself
@@ -94,6 +105,15 @@ def Correlations(total_list, df_quiz_list, i, min_phy, min_vir):
     df["Teacher/Student corr"] = Teacher_corr_column 
     df["Avg. student corr"] = Student_corr_column
     df["Avg. abs student corr"] = Abs_student_corr_column
+    
+    if df_quiz_list == df_list_quiz_phy:
+        stream_delay = None
+    else:
+        stream_delay = np.mean(stream_delays)
+    return stream_delay
+
+# Create a new list for stream delays within each section
+stream_delays = []
 
 # Call the function in order to calculate the correlations for physical and virtual
 print("Calculating correlations:")
@@ -102,28 +122,9 @@ for i in range(7):
     Correlations(phy_sections[i], df_list_quiz_phy, i, min_phy = -1, min_vir = -60)
 for i in range(6):
     print("Section: ", i+1, "/ 6")
-    Correlations(vir_sections[i], df_list_quiz_vir, i, min_phy = -1, min_vir = -60) 
+    stream_delays.append(Correlations(vir_sections[i], df_list_quiz_vir, i, min_phy = -1, min_vir = -60))
 
-####################### check results #######################################
-"""
-# Average                                                    ## Now:##    ## Before:##
-print(np.mean(df_list_quiz_phy[3]["Teacher/Student corr"]))  # 0.0332       # 0.1573
-print(np.mean(df_list_quiz_phy[3]["Avg. student corr"]))     # 0.0232       # 0.1965
-
-print(np.mean(df_list_quiz_vir[3]["Teacher/Student corr"]))  # 0.1196       # 0.1849 
-print(np.mean(df_list_quiz_vir[3]["Avg. student corr"]))     # 0.1330       # 0.1838
-
-# Max
-print(np.max(df_list_quiz_phy[3]["Teacher/Student corr"]))   # 0.1379       # 0.2485
-print(np.max(df_list_quiz_phy[3]["Avg. student corr"]))      # 0.0543       # 0.2269
-
-print(np.max(df_list_quiz_vir[3]["Teacher/Student corr"]))   # 0.3163       # 0.3163 
-print(np.max(df_list_quiz_vir[3]["Avg. student corr"]))      # 0.1528       # 0.2136
-
-# Lists
-print(df_list_quiz_phy[3]["Teacher/Student corr"])
-print(df_list_quiz_phy[3]["Avg. student corr"])
-
-print(df_list_quiz_vir[3]["Teacher/Student corr"])
-print(df_list_quiz_vir[3]["Avg. student corr"])
-"""
+# Remove None values
+stream_delays = [num for num in stream_delays if num is not None]
+# Calculate the average stream delay across all students and sections
+final_stream_delay = np.mean(stream_delays)
