@@ -35,7 +35,7 @@ def Resamling(start, end, df_list):
         # Create a list of the upsampled time stamps
         upsampled_timestamps = np.linspace(lecture_start,lecture_end,(freq_new*lecture_length)+1)
 
-        # Fit a cubid interpolation function to the measured time stamps and RR-values
+        # Fit a cubic interpolation function to the measured time stamps and RR-values
         f = scipy.interpolate.interp1d(timestamps,df["Artifact corrected RR"], kind="cubic")
         # Interpolate the signal creating new RR-intervals based on the upsampled timestamps
         RR_resampled = f(upsampled_timestamps) 
