@@ -13,20 +13,19 @@ def Stationarity_test(rr):
     stationarity = []
     # Perform the ADF test
     stationarity.append("non-stationary" if adfuller(rr_norm)[1] > 0.05 else "stationary")
-        # p-value = 7.58654334e-07 = stationary
+        # example p-value = 7.58654334e-07 = stationary
     # Perform the KPSS test
     with warnings.catch_warnings():
         warnings.filterwarnings("ignore")
         stationarity.append("non-stationary" if kpss(rr_norm)[1] < 0.05 else "stationary")
-        # p-value = aprox. 0.01 = non-stationary
+        # example p-value = aprox. 0.01 = non-stationary
     # Perform the PP test
-    stationarity.append("non-stationary" if adfuller(rr_norm, autolag='AIC', regression='ct')[1] < 0.05 else "stationary")
-        # p-value = 8.2601133e-08 = non-stationary
+    stationarity.append("non-stationary" if adfuller(rr_norm, autolag='AIC', regression='ct')[1] > 0.05 else "stationary")
+        # example p-value = 8.2601133e-08 = stationary
     
     # Return which stationarity is most common
     result = Counter(stationarity).most_common(1)[0][0]
     return result
-
 
 
 # Test stationarity for all the physical data 
@@ -35,13 +34,19 @@ for index, section in enumerate(phy_sections, start=1):
     print("Section", index, "/", len(phy_sections))
     for student in section:
         stationarity_list.append(Stationarity_test(student["RR"]))
+        print(Stationarity_test(student["RR"]))
 # Print whether the physical data is stationary or not
-if stationarity_list.count("Stationary") > stationarity_list.count("Non-stationary"):
+if stationarity_list.count("stationary") > stationarity_list.count("non-stationary"):
     physical = "Phy data is stationary"
 else:
     physical = "Phy data is non-stationary" 
-#print(physical)
-# The physical data is non-stationary 
+print(physical)
+# The data is all stationary!?
+
+
+
+
+
 
 
 ############### Use square root to make stationary ###############
@@ -56,7 +61,7 @@ if stationarity_list.count("Stationary") > stationarity_list.count("Non-stationa
     physical = "Phy data is stationary"
 else:
     physical = "Phy data is non-stationary"
-#print(physical)
+print(physical)
 # The data is still non-stationary 
 
 

@@ -41,6 +41,19 @@ def MaxCorr(signal1, signal2, min_shift, max_shift, absolute):
     delays = np.linspace(-(len(signal1_norm)-1),len(signal2_norm)-1,len(cross_corr)) # list of delays
     delays /= 10 # Go from samples to seconds. 10 Hz = 10 samples in 1 second
     # Create a list of correlations within the max shift of (1 sec or 1 min depending on phy/vir)
+    
+    if absolute == False:
+        max_shift_corr = [cross_corr[i] for i in range(len(delays)) if delays[i] >= min_shift and delays[i] <= max_shift]
+        max_corr = max(max_shift_corr) # Find maximum correlation within this 
+        best_delay = delays[np.where(cross_corr == max_corr)[0][0]]
+    else:
+        max_shift_corr = [abs(cross_corr[i]) for i in range(len(delays)) if delays[i] >= min_shift and delays[i] <= max_shift]
+        max_corr = max(max_shift_corr) # Find maximum correlation within this 
+        # Find the delay for the max corr
+        best_delay = None
+    return max_corr
+
+    """
     max_shift_corr = [cross_corr[i] for i in range(len(delays)) if delays[i] >= min_shift and delays[i] <= max_shift]
     max_corr = max(max_shift_corr) # Find maximum correlation within this 
 
@@ -52,7 +65,7 @@ def MaxCorr(signal1, signal2, min_shift, max_shift, absolute):
     else:
         # Find the delay for the max corr
         best_delay = delays[np.where(cross_corr == max_corr)[0][0]]
-    
+    """
     return max_corr, best_delay 
 
 def Correlations(total_list, df_quiz_list, i, min_phy, min_vir):
@@ -90,7 +103,7 @@ def Correlations(total_list, df_quiz_list, i, min_phy, min_vir):
                 abs_corr = MaxCorr(Student, Student2, min_phy, abs(min_phy), absolute = True)[0] # max 1 sec
             elif df_quiz_list == df_list_quiz_vir:
                 corr = MaxCorr(Student, Student2, min_vir, abs(min_vir), absolute = False)[0] # max 1 min
-                abs_corr = MaxCorr(Student, Student2, min_vir, abs(min_vir), absolute = True)[0] # max 1 sec
+                abs_corr = MaxCorr(Student, Student2, min_vir, abs(min_vir), absolute = True)[0] # max 1 min
             corr_list.append(corr)
             abs_corr_list.append(abs_corr)
         # Remove the correlation from the given student to himself
