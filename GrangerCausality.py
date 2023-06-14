@@ -1,12 +1,72 @@
-from Correlation_calculation import (pd, sns, plt, datetime, np, mdates, dphy_resampled, dvir_resampled,
-                           dphy_students, dvir_students, phy_sections, vir_sections, 
-                           df_quiz_phy, df_quiz_vir, df_list_quiz_phy, df_list_quiz_vir)
-from statsmodels.tsa.stattools import grangercausalitytests
-import statistics 
+from Correlation_calculation import (pd, sns, plt, datetime, np, mdates,
+                                     phy_sections, vir_sections, 
+                                     df_list_quiz_phy, df_list_quiz_vir)
 import warnings
-import time
+from statsmodels.tsa.api import VAR
+from statsmodels.tsa.stattools import grangercausalitytests
 
 
+
+################## find best model_order #####################################################
+# In order to do this, we will use the AIC (Akaike information criterion) value 
+# to determine model order resulting in the best fit and complexity
+
+# Function for determining the bst model order 
+def best_model_order(person1, person2, max_lag):
+    df = pd.DataFrame({'Person 1': person1["RR"], 'Person 2': person2["RR"]}).reset_index(drop=True)
+    data = df.pct_change().dropna() # calculate procental change and remove NaN values if any
+
+    all_AIC = [] # list to contain all AIC values
+    for i in range(1, max_lag+1): # Loop through possible model orders up to max lag
+        model_order = i
+        with warnings.catch_warnings():
+            warnings.filterwarnings("ignore")
+            gc_res = grangercausalitytests(data, model_order, verbose=False) # fit AR models up to model_order lag
+        # GC: log of the ratio of variance of residuals between restricted and unrestricted model
+        unrestrict_model = gc_res[model_order][1][1]
+        # Calculate the AIC
+        AIC = unrestrict_model.aic
+        all_AIC.append(AIC)
+
+    # Sort the list of all AIC values
+    sort_AIC = all_AIC.copy()
+    sort_AIC.sort()
+    # A difference of 2 or more indicates substantial evidence in favor of the model with the lower AIC
+    if sort_AIC[1]-sort_AIC[0] > 2: 
+        model_order = all_AIC.index(sort_AIC[0]) # Set the the model order from this result
+    return model_order
+
+print("Determining best model order for Granger Causality ...")
+
+### physical
+# Choose two test people for determining the max order (assumes the same for everybody)
+Student = phy_sections[0][0] # First student in the first section
+Teacher = phy_sections[0][-1] # The teacher in the first section
+max_lag = (1+5)*10 # (1 sec error + 5 sec react time) * sfreq on 10 Hz
+# Determine the best model orders (MO) for both student->teacher and teacher->student (these should be the same)
+phys_MO_student_teacher = best_model_order(Student, Teacher, max_lag) # 22
+phys_MO_teacher_student = best_model_order(Teacher, Student, max_lag) # 19
+# Since they in theory should be the same, we'll just use 22
+
+model_order = 22
+
+"""
+### virtual
+# Choose two test people for determining the max order (assumes the same for everybody)
+Student = vir_sections[0][0] # First student in the first section
+Teacher = vir_sections[0][-1] # The teacher in the first section
+max_lag = (60+5)*10 # (60 sec stream delay + 5 sec react time) * sfreq on 10 Hz
+# Determine the best model orders (MO) for student->teacher and teacher->student
+vir_MO_student_teacher = best_model_order(Student, Teacher, max_lag)
+vir_MO_teacher_student = best_model_order(Teacher, Student, max_lag)
+
+print(vir_MO_student_teacher, "and", vir_MO_teacher_student) # ville tage ca 46 min at køre bare den ene
+"""
+
+ ####################### Calculate Granger causality ###########################################
+
+ 
+# Function for calculating granger causality between two people
 def Granger(person1, person2, model_order):
     # Load data
     df = pd.DataFrame({'Person 1': person1["RR"], 'Person 2': person2["RR"]}).reset_index(drop=True)
@@ -23,177 +83,53 @@ def Granger(person1, person2, model_order):
     GC = np.log(variance_of_residuals_restrict/variance_of_residuals_unrestrict)
     return GC
 
+
+# Function for calculate Granger causality for all students in all sections
+def GC_for_all(section, df_quiz_list, i, max_lag):
+    # Create lists for the GC columns within each section
+    gc_teacher_to_student_column = []
+    gc_student_to_teacher_column = []
+    # Loop over students, calculate GC, add to column lists
+    for student_index, student in enumerate(section[:-1], start=1): # loop skips the teacher
+        print(student_index, "/", len(section[:-1])) 
+        teacher = section[-1]
+        gc_teacher_to_student_column.append(Granger(student, teacher, max_lag)) # student to teacher
+        gc_student_to_teacher_column.append(Granger(teacher, student, max_lag)) # teacher to student
+
+    # Add the columns to the dataframe
+    df = df_quiz_list[i]
+    df["GC teacher->student"] = gc_teacher_to_student_column
+    df["GC student->teacher"] = gc_student_to_teacher_column
+
+
+# Call the function in order to calculate the correlations for physical and virtual
 print("Calculating Granger causality:")
-# Calculate Granger causality for physical
-granger_list_phys_student_to_teacher = []
-granger_list_phys_teacher_to_student = []
-for section in phy_sections:
-    for student_index, student in enumerate(section[:-1], start=1):
-        print("Student", student_index, "/", len(section[:-1])) 
-        max_lag = 5*10 # 5 sec react time * sfreq on 10 Hz
-        granger_list_phys_student_to_teacher.append(Granger(student, section[-1], max_lag)) # student to teacher
-        granger_list_phys_teacher_to_student.append(Granger(section[-1], student, max_lag)) # teacher to student
-# Calculate Granger causality for virtual
-granger_list_vir_student_to_teacher = []
-granger_list_vir_teacher_to_student = []
-for section in vir_sections:
-    for student_index, student in enumerate(section[:-1], start=1):
-        print("Student", student_index, "/", len(section[:-1]))  
-        max_lag = (60+5)*10 # (60 sec stream delay + 5 sec react time) * sfreq on 10 Hz
-        granger_list_vir_student_to_teacher.append(Granger(student, section[-1], max_lag)) # student to teacher
-        granger_list_vir_teacher_to_student.append(Granger(section[-1], student, max_lag)) # teacher to student
-        
-print(granger_list_phys_student_to_teacher[:5])
+
+#max_lag_phy = (1+5)*10 # (1 sec error + 5 sec react time) * sfreq on 10 Hz
+for i in range(7): # Phsycial
+    print("Section: ", i+1, "/ 7")
+    GC_for_all(phy_sections[i], df_list_quiz_phy, i, model_order)
+#max_lag_vir = (60+5)*10 # (60 sec stream delay + 5 sec react time) * sfreq on 10 Hz
+for i in range(6): # Virtual
+    print("Section: ", i+1, "/ 6")
+    GC_for_all(vir_sections[i], df_list_quiz_vir, i, model_order) 
 
 
-#############################################################################################################
-########################################## jesper ###########################################################
 
-
-################### Just some tests ###################
-test1 = phy_sections[1][16]["RR"]
-test2= phy_sections[1][-1]["RR"]
-datatest = pd.DataFrame({"student": test1, "teacher": test2})
-
-grangercausalitytests(datatest, maxlag=1)
-
-test3 = phy_sections[1][-1]["RR"]
-test4= phy_sections[1][16]["RR"]
-datatest = pd.DataFrame({"student": test3, "teacher": test4})
-
-grangercausalitytests(datatest, maxlag=1)
-
-#######################################################
-
-# Function to perform Granger Causality from teacher to student in physical lecture
-granger_list_phys_teacher_to_student = []
-def granger_phys_teacher_to_student(data):
-    for section in data:
-        for student in section[0:-1]:
-            temp_data = pd.DataFrame({"teacher": section[-1]["RR"], "student": student["RR"]})
-            result = grangercausalitytests(temp_data, maxlag=1, verbose=False)
-            p_value = result[1][0]['ssr_ftest'][1] 
-            granger_list_phys_teacher_to_student.append(p_value)
-
-granger_phys_teacher_to_student(phy_sections)
-
-print(statistics.mean(granger_list_phys_teacher_to_student))
-print(max(granger_list_phys_teacher_to_student))
-print(min(granger_list_phys_teacher_to_student))
-print(statistics.median(granger_list_phys_teacher_to_student))
-
-# Function to perform Granger Causality from student to teacher in physical lecture
-granger_list_phys_student_to_teacher = []
-def granger_phys_student_to_teacher(data):
-    for section in data:
-        for student in section[0:-1]:
-            temp_data = pd.DataFrame({"student": student["RR"], "teacher": section[-1]["RR"]})
-            result = grangercausalitytests(temp_data, maxlag=1, verbose=False)
-            p_value = result[1][0]['ssr_ftest'][1]
-            granger_list_phys_student_to_teacher.append(p_value)
-
-granger_phys_student_to_teacher(phy_sections)
-
-print(statistics.mean(granger_list_phys_student_to_teacher))
-print(max(granger_list_phys_student_to_teacher))
-print(min(granger_list_phys_student_to_teacher))
-print(statistics.median(granger_list_phys_student_to_teacher))
-
-# Function to perform Granger Causality from teacher to student in virtual lecture
-granger_list_vir_teacher_to_student = []
-def granger_vir_teacher_to_student(data):
-    for section in data:
-        for student in section[0:-1]:
-            temp_data = pd.DataFrame({"teacher": section[-1]["RR"], "student": student["RR"]})
-            result = grangercausalitytests(temp_data, maxlag=1, verbose=False)
-            p_value = result[1][0]['ssr_ftest'][1]
-            granger_list_vir_teacher_to_student.append(p_value)
-
-granger_vir_teacher_to_student(vir_sections)
-
-print(statistics.mean(granger_list_vir_teacher_to_student))
-print(max(granger_list_vir_teacher_to_student))
-print(min(granger_list_vir_teacher_to_student))
-print(statistics.median(granger_list_vir_teacher_to_student))
-
-# Function to perform Granger Causality from student to teacher in virtual lecture
-granger_list_vir_student_to_teacher = []
-def granger_vir_student_to_teacher(data):
-    for section in data:
-        for student in section[0:-1]:
-            temp_data = pd.DataFrame({"student": student["RR"], "teacher": section[-1]["RR"]})
-            result = grangercausalitytests(temp_data, maxlag=1, verbose=False)
-            p_value = result[1][0]['ssr_ftest'][1]
-            granger_list_vir_student_to_teacher.append(p_value)
-
-granger_vir_student_to_teacher(phy_sections)
-
-print(statistics.mean(granger_list_vir_student_to_teacher))
-print(max(granger_list_vir_student_to_teacher))
-print(min(granger_list_vir_student_to_teacher))
-print(statistics.median(granger_list_vir_student_to_teacher))
-
-
-##############################################################
-####################### test teacher -> student ##############
-
-######## physical
-section = phy_sections[0] # first section
-test_list_y = []
-for student in section[0:-1]:
-    temp_data = pd.DataFrame({"teacher": section[-1]["RR"], "student": student["RR"]})
-    result = grangercausalitytests(temp_data, maxlag=1, verbose=False)
-    p_value = result[1][0]['ssr_ftest'][1]
-    test_list_y.append(p_value)
-
-test_list_x = np.arange(0,len(test_list_y))
-
-plt.scatter(test_list_x,test_list_y)
-plt.title("Granger physical distribution")
-plt.show()
-
-print("Average: ", np.mean(test_list_y)) # 0.2819
-print("Median: ", np.median(test_list_y)) # 0.2020
-
-under_05 = len([num for num in test_list_y if num < 0.05])/len(test_list_y)*100
-above_05 = len([num for num in test_list_y if num => 0.05])/len(test_list_y)*100
-print("Significant: ", under_05, "%")    # 37.5 % 
-print("Unsignificant: ", above_05, "%")  # 62.5 % 
-
-
-######## virtual
-section2 = vir_sections[0] # first section
-test_list_y2 = []
-
-for student in section2[0:-1]:
-    temp_data = pd.DataFrame({"teacher": section2[-1]["RR"], "student": student["RR"]})
-    result = grangercausalitytests(temp_data, maxlag=1, verbose=False)
-    p_value = result[1][0]['ssr_ftest'][1]
-    test_list_y2.append(p_value)
-
-test_list_x2 = np.arange(0,len(test_list_y2))
-
-print("Average: ", np.mean(test_list_y2)) # 0.1371
-print("Median: ", np.median(test_list_y2)) # 0.0046
-
-under_05_2 = len([num for num in test_list_y2 if num < 0.05])/len(test_list_y2)*100
-above_05_2 = len([num for num in test_list_y2 if num => 0.05])/len(test_list_y2)*100
-print("Significant: ", under_05_2, "%")    # 64.7 %
-print("Unsignificant: ", above_05_2, "%")  # 35.2 %
-
+#print(df_list_quiz_phy[0].head())
 
 
 
 ##################################################################################
 ###################################### test ############################################
+"""
 import warnings
 import time
-
 
 # Load data
 person1 = phy_sections[0][0]
 person2 = phy_sections[0][-1]
-model_order = 50 
+model_order = (1+5)*10 
 start_time = time.time()
 df = pd.DataFrame({'Person 1': person1["RR"], 'Person 2': person2["RR"]}).reset_index(drop=True)
 data = df.pct_change().dropna() 
@@ -201,22 +137,52 @@ with warnings.catch_warnings():
     warnings.filterwarnings("ignore")
     gc_res = grangercausalitytests(data, model_order, verbose=False) # fit AR models up to model_order lag
 # GC: log of the ratio of variance of residuals between restricted and unrestricted model
-max_gc = -float('inf')  # Initialize with negative infinity
-max_gc_lag = None
-all_gc = []
-for lag in gc_res.keys():
-    restrict_model = gc_res[lag][1][0]
-    unrestrict_model = gc_res[lag][1][1]
-    variance_of_residuals_restrict = np.var(restrict_model.resid)
-    variance_of_residuals_unrestrict = np.var(unrestrict_model.resid)
-    GC = np.log(variance_of_residuals_restrict/variance_of_residuals_unrestrict)
-    all_gc.append(GC)
-    if GC > max_gc:
-        max_gc = GC
-        max_gc_lag = lag
+restrict_model = gc_res[model_order][1][0]
+unrestrict_model = gc_res[model_order][1][1]
+variance_of_residuals_restrict = np.var(restrict_model.resid)
+variance_of_residuals_unrestrict = np.var(unrestrict_model.resid)
+GC = np.log(variance_of_residuals_restrict/variance_of_residuals_unrestrict)
+print(GC)
 
-print(all_gc)
-print(max_gc)
 end_time = time.time()
-one_calculation = end_time - start_time # 2.8891 s
+print(end_time - start_time, "s") # 4.3 s
 
+
+
+
+
+
+
+import warnings
+import time
+start_time = time.time()
+# Load data
+person1 = phy_sections[0][0]
+person2 = phy_sections[0][-1]
+df = pd.DataFrame({'Person 1': person1["RR"], 'Person 2': person2["RR"]}).reset_index(drop=True)
+data = df.pct_change().dropna() # calculate procental change and remove NaN values if any
+
+all_AIC = [] # list to contain all AIC values
+for i in range(1, ((60+5)*10)+1): # Loop through possible model orders up to max lag
+    model_order = i
+    with warnings.catch_warnings():
+        warnings.filterwarnings("ignore")
+        gc_res = grangercausalitytests(data, model_order, verbose=False) # fit AR models up to model_order lag
+    # GC: log of the ratio of variance of residuals between restricted and unrestricted model
+    unrestrict_model = gc_res[model_order][1][1]
+    # Calculate the AIC
+    AIC = unrestrict_model.aic
+    all_AIC.append(AIC)
+
+# Sort the list of all AIC values
+sort_AIC = all_AIC.copy()
+sort_AIC.sort()
+# A difference of 2 or more indicates substantial evidence in favor of the model with the lower AIC
+if sort_AIC[1]-sort_AIC[0] > 2: 
+    model_order = all_AIC.index(sort_AIC[0]) # Set the the model order from this result
+print(model_order)
+end_time = time.time()
+print(end_time-start_time)  # max_lag = 51 -> 44 s
+                            # max_lag = 650 -> 
+                            
+"""

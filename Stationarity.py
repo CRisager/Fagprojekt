@@ -1,7 +1,9 @@
-from Split_signals import (plt, np, phy_sections, vir_sections, mdates)
+from Split_signals import (pd, plt, np, phy_sections, vir_sections, mdates, dphy_resampled)
 from statsmodels.tsa.stattools import adfuller, kpss
 import warnings
 from collections import Counter
+import statsmodels.api as sm
+import math
 
 
 # Function for testing stationarity
@@ -25,88 +27,114 @@ def Stationarity_test(rr):
     result = Counter(stationarity).most_common(1)[0][0]
     return result
 
-""" 
-###### checking stationarity of all data ######
-stationarity_phy = []
-for section_index, section in enumerate(phy_sections, start=1):
-    print("Section", section_index, "/", len(phy_sections))
+
+
+# Test stationarity for all the physical data 
+stationarity_list = []
+for index, section in enumerate(phy_sections, start=1):
+    print("Section", index, "/", len(phy_sections))
     for student in section:
-        stationarity_phy.append(Stationarity_test(student["RR"]))
-stationarity_vir = []
-for section_index, section in enumerate(vir_sections, start=1):
-    print("Section", section_index, "/", len(vir_sections))
-    for student in section:
-        stationarity_vir.append(Stationarity_test(student["RR"]))
-
-if stationarity_phy.count("Stationary") > stationarity_phy.count("Non-stationary"):
-    print("Physical data is stationary")
-else:
-    print("Physical data is non-stationary")
-    
-if stationarity_vir.count("Stationary") > stationarity_vir.count("Non-stationary"):
-    print("Virtual data is stationary")
-else:
-    print("Virtual data is non-stationary")
-"""
-####
-import time
-import random
-
-# Measure the time for phy_sections
-start_time = time.time()
-Stationarity_test(phy_sections[0][0]["RR"])
-end_time = time.time()
-one_calculation = end_time - start_time # 0.5802 s
-Total_time = one_calculation*(7*32 + 6*18)/60
-# it would take approximately 3.2 minutes to run through all the data
-# That's too long, let's only look at enough data for 30 sec = 50 student segments in total
-
-# Calculate how many to choose from phy vs vir to be fair
-num_physical = int(50 * (7 * 32) / ((7 * 32) + (6 * 18)))
-num_virtual = 51 - num_physical # 51 because then it's 33 and 18 respectively, which is nice
-
-# Create a list of all student segments for phy and vir
-all_studentsegment_phy = [student for section in phy_sections for student in section]
-all_studentsegment_vir = [student for section in vir_sections for student in section]
-
-# Randomly choose student segments from each
-phy_selections = random.sample(all_studentsegment_phy, num_physical)
-vir_selections = random.sample(all_studentsegment_vir, num_virtual)
-
-# Functions for checking chosen random data and printing stationarity result
-def Stationarity_result(selections, state):
-    # Test stationarity of the randomly chosen data 
-    stationarity_list = []
-    for student_index, student in enumerate(selections, start=1):
-        print("Student", student_index, "/", len(selections))    
         stationarity_list.append(Stationarity_test(student["RR"]))
-
-    # Print whether the physical data is stationary or not
-    if stationarity_list.count("Stationary") > stationarity_list.count("Non-stationary"):
-        print(state, "data is stationary")
-    else:
-        print(state, "data is non-stationary") 
-
-Stationarity_result(phy_selections, state = "Physical") # non-stationary
-Stationarity_result(vir_selections, state = "Virtual")  # non-stationary
+# Print whether the physical data is stationary or not
+if stationarity_list.count("Stationary") > stationarity_list.count("Non-stationary"):
+    physical = "Phy data is stationary"
+else:
+    physical = "Phy data is non-stationary" 
+#print(physical)
+# The physical data is non-stationary 
 
 
+############### Use square root to make stationary ###############
+stationarity_list = []
+for index, section in enumerate(phy_sections, start=1):
+    print("Section", index, "/", len(phy_sections))
+    for student in section:
+        sqrt_rr = [math.sqrt(num) for num in student["RR"]]
+        stationarity_list.append(Stationarity_test(sqrt_rr))
+# Print whether the physical data is stationary or not
+if stationarity_list.count("Stationary") > stationarity_list.count("Non-stationary"):
+    physical = "Phy data is stationary"
+else:
+    physical = "Phy data is non-stationary"
+#print(physical)
+# The data is still non-stationary 
 
-# Try looking at mean and std in first vs second half
-rr = phy_sections[0][0]["RR"]
-rr_norm = (rr-np.mean(rr))/np.std(rr)
-first_half = rr_norm[:len(rr_norm)//2]
-second_half = rr_norm[len(rr_norm)//2:]
-print(np.mean(first_half))   # -0.3817
-print(np.mean(second_half))  # 0.3816    # diff = 0.7633
-print(np.std(first_half))    # 1.0204
-print(np.std(second_half))   # 0.8169    # diff = 0.2035
-# They change less than 1 but is that enough to assume stationarity?
+
+############### Use log to make stationary ###############
+stationarity_list = []
+for index, section in enumerate(phy_sections, start=1):
+    print("Section", index, "/", len(phy_sections))
+    for student in section:
+        sqrt_rr = [math.log(num) for num in student["RR"]]
+        stationarity_list.append(Stationarity_test(sqrt_rr))
+# Print whether the physical data is stationary or not
+if stationarity_list.count("Stationary") > stationarity_list.count("Non-stationary"):
+    physical = "Phy data is stationary"
+else:
+    physical = "Phy data is non-stationary"
+#print(physical)
+# The data is still non-stationary 
+
+
+############### Use both to make stationary ###############
+stationarity_list = []
+for index, section in enumerate(phy_sections, start=1):
+    print("Section", index, "/", len(phy_sections))
+    for student in section:
+        sqrt_rr = [math.log(math.sqrt(num)) for num in student["RR"]]
+        stationarity_list.append(Stationarity_test(sqrt_rr))
+# Print whether the physical data is stationary or not
+if stationarity_list.count("Stationary") > stationarity_list.count("Non-stationary"):
+    physical = "Phy data is stationary"
+else:
+    physical = "Phy data is non-stationary"
+#print(physical)
+# The data is still non-stationary 
+
+    
+############### Use detrending to make stationary ###############
+from scipy.signal import detrend 
+stationarity_list = []
+for index, section in enumerate(phy_sections, start=1):
+    print("Section", index, "/", len(phy_sections))
+    for student in section:
+        sqrt_rr = detrend(student["RR"])
+        stationarity_list.append(Stationarity_test(sqrt_rr))
+# Print whether the physical data is stationary or not
+if stationarity_list.count("Stationary") > stationarity_list.count("Non-stationary"):
+    physical = "Phy data is stationary"
+else:
+    physical = "Phy data is non-stationary"
+#print(physical)
+# The data is still non-stationary 
+
+
+############### Use detrending to make stationary ###############
+stationarity_list = []
+for index, section in enumerate(phy_sections, start=1):
+    print("Section", index, "/", len(phy_sections))
+    for student in section:
+        # Create a DataFrame with the time series data
+        df = pd.DataFrame({'time': student["Time"], 'rr_intervals': student["RR"]})
+        # Fit a linear regression model to detrend the data
+        X = sm.add_constant(np.arange(len(df)))  # Add a constant term to the model
+        model = sm.OLS(df['rr_intervals'], X)
+        results = model.fit()
+        detrended = df['rr_intervals'] - results.fittedvalues
+        stationarity_list.append(Stationarity_test(detrended))
+# Print whether the physical data is stationary or not
+if stationarity_list.count("Stationary") > stationarity_list.count("Non-stationary"):
+    print("Phy data is stationary")
+else:
+    print("Phy data is non-stationary")
+#print(physical)
+# The data is still non-stationary 
 
 
 # Visually examine the signal
+rr_norm = (dphy_resampled[0]["RR"] - np.mean(dphy_resampled[0]["RR"]))/np.std(dphy_resampled[0]["RR"])
 fig, ax = plt.subplots(1,1)
-plt.plot(phy_sections[0][0]["Time"], rr_norm)
+plt.plot(dphy_resampled[0]["Time"], rr_norm)
 # format the x-tick labels to only show the time part
 plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
 plt.xticks(rotation=45) # rotate the x-tick labels by 45 degrees
@@ -114,3 +142,15 @@ plt.title("Visual examination of stationarity")
 plt.xlabel("Time")
 plt.ylabel("Normalized RR-intervals")
 plt.show()
+# The data also looks non-stationary 
+
+
+
+
+
+
+
+
+
+
+
