@@ -123,8 +123,81 @@ def corr_as_function_of_delay():
 corr_as_function_of_delay()
 
 
+############# Plot: Correlation over time ##################################
 
-############ Plot: correlation distribution (avg over sections) #######################
+def Corr_over_time_phy(section_num, column):
+    #### average only
+    x_val = np.arange(1,section_num+1)
+    y_val = []
+    # Add the average teacher/student corr for each section to the y_val list
+    for section in df_list_quiz_phy:
+        y_val.append(np.mean(section[column]))
+    #### all
+    x_values = []
+    y_values = []
+    # Add the average teacher/student corr for each section to the y_val list
+    for i, section in enumerate(df_list_quiz_phy):
+        x_values.append(np.linspace(i+1-0.2,i+1+0.2,len(section[column])))
+        for i in range(len(section[column])):
+            y_values.append(section[column][i]) 
+    # plot
+    fig, ax = plt.subplots(1,1) 
+    plt.scatter(x_values, y_values, color = "royalblue", s = 20, alpha = 0.5, label = "All correlations")
+    plt.scatter(x_val, y_val, color = "royalblue", s = 45, label = "Avg. correlations")
+    plt.plot(x_val, y_val, color = "royalblue")
+    plt.axvline(x=4.5, linestyle='dotted', color='gray')  # Add a dotted line to represent the break
+    plt.text(0.48, 0.9, "Break", color="gray", transform=ax.transAxes) 
+    plt.xlabel("Section")
+    plt.ylabel("Correlations")
+    plt.title(column + "elation over time")
+    plt.legend()
+    plt.show()
+Corr_over_time_phy(section_num = 7, column = "Teacher/Student corr")
+Corr_over_time_phy(section_num = 7, column = "Avg. student corr")
+
+
+def Corr_over_time_vir(section_num, column):
+    #### average only
+    x_val = np.arange(1,section_num+1)
+    y_val = []
+    # Add the average teacher/student corr for each section to the y_val list
+    for section in df_list_quiz_vir:
+        y_val.append(np.mean(section[column]))
+    #### all
+    x_values = []
+    y_values = []
+    # Add the average teacher/student corr for each section to the y_val list
+    for i, section in enumerate(df_list_quiz_vir):
+        x_values.append(np.linspace(i+1-0.2,i+1+0.2,len(section[column])))
+        for i in range(len(section[column])):
+            y_values.append(section[column][i]) 
+    # plot
+    fig, ax = plt.subplots(1,1) 
+    plt.scatter(x_values, y_values, color = "firebrick", s = 20, alpha = 0.5, label = "All correlations")
+    plt.scatter(x_val, y_val, color = "firebrick", s = 45, label = "Avg. correlations")
+    plt.plot(x_val, y_val, color = "firebrick")
+    plt.axvline(x=4.5, linestyle='dotted', color='gray')  # Add a dotted line to represent the break
+    plt.text(0.5, 0.9, "Break", color="gray", transform=ax.transAxes) 
+    plt.xlabel("Section")
+    plt.ylabel("Correlations")
+    plt.title(column + "elation over time")
+    plt.legend()
+    plt.show()
+Corr_over_time_vir(section_num = 6, column = "Teacher/Student corr")
+Corr_over_time_vir(section_num = 6, column = "Avg. student corr")
+
+
+############# Plot: Permutation ##################################
+
+# permutation 
+
+
+############# Plot: Variabale relationships ##################################
+
+
+###############################################################################
+############################## NOT DONE #######################################
+###############################################################################
 
 # function for calculating average across sections
 def Avg_corr(df_list_quiz, column):
@@ -136,6 +209,45 @@ def Avg_corr(df_list_quiz, column):
         avg_corr_val.append(np.mean(teacher_corr))
     return avg_corr_val
 
+
+
+# Extract test scores
+phy_test_scores = df_list_quiz_phy[0][" Quiz_score"]
+vir_test_scores = df_list_quiz_vir[0][" Quiz_score"]
+
+
+# Calculate average teacher/student corr
+phy_teacher_corr = Avg_corr(df_list_quiz_phy, column = "Teacher/Student corr")
+vir_teacher_corr = Avg_corr(df_list_quiz_vir, column = "Teacher/Student corr")
+# plot
+plt.scatter(phy_teacher_corr, phy_test_scores, color = "royalblue",
+                alpha=0.8, label = "Physical")
+plt.scatter(vir_teacher_corr, vir_test_scores, color = "firebrick",
+                alpha=0.8, label = "Virtual")
+plt.title("Quiz scores vs teacher/student corr")
+plt.xlabel("Avg. teacher/student correlation")
+plt.ylabel("Quiz scores")
+plt.legend()
+plt.show()
+
+# Calculate average Avg. student corr
+phy_student_corr = Avg_corr(df_list_quiz_phy, column = "Avg. student corr")
+vir_student_corr = Avg_corr(df_list_quiz_vir, column = "Avg. student corr")
+# Plot
+plt.scatter(phy_student_corr, phy_test_scores, color = "royalblue",
+                alpha=0.8, label = "Physical")
+plt.scatter(vir_student_corr, vir_test_scores, color = "firebrick",
+                alpha=0.8, label = "Virtual")
+plt.title("Quiz scores vs teacher/student corr")
+plt.xlabel("Avg. student correlation")
+plt.ylabel("Quiz scores")
+plt.legend()
+plt.show()
+
+
+
+
+############ Plot: correlation distribution (avg over sections) #######################
 
 def Distr_of_avg_corr():
 
@@ -273,117 +385,4 @@ def Distr_of_avg_corr():
         plt.show()
     Avg_teacher_examination(phy_list, vir_list, x_plot_phy, x_plot_vir)
 Distr_of_avg_corr()
-
-
-
-############# Plot: Correlation over time ##################################
-
-def Corr_over_time_phy(section_num, column):
-    #### average only
-    x_val = np.arange(1,section_num+1)
-    y_val = []
-    # Add the average teacher/student corr for each section to the y_val list
-    for section in df_list_quiz_phy:
-        y_val.append(np.mean(section[column]))
-    #### all
-    x_values = []
-    y_values = []
-    # Add the average teacher/student corr for each section to the y_val list
-    for i, section in enumerate(df_list_quiz_phy):
-        x_values.append(np.linspace(i+1-0.2,i+1+0.2,len(section[column])))
-        for i in range(len(section[column])):
-            y_values.append(section[column][i]) 
-    # plot
-    fig, ax = plt.subplots(1,1) 
-    plt.scatter(x_values, y_values, color = "royalblue", s = 20, alpha = 0.5, label = "All correlations")
-    plt.scatter(x_val, y_val, color = "royalblue", s = 45, label = "Avg. correlations")
-    plt.plot(x_val, y_val, color = "royalblue")
-    plt.axvline(x=4.5, linestyle='dotted', color='gray')  # Add a dotted line to represent the break
-    plt.text(0.48, 0.9, "Break", color="gray", transform=ax.transAxes) 
-    plt.xlabel("Section")
-    plt.ylabel("Correlations")
-    plt.title(column + "elation over time")
-    plt.legend()
-    plt.show()
-Corr_over_time_phy(section_num = 7, column = "Teacher/Student corr")
-Corr_over_time_phy(section_num = 7, column = "Avg. student corr")
-
-
-def Corr_over_time_vir(section_num, column):
-    #### average only
-    x_val = np.arange(1,section_num+1)
-    y_val = []
-    # Add the average teacher/student corr for each section to the y_val list
-    for section in df_list_quiz_vir:
-        y_val.append(np.mean(section[column]))
-    #### all
-    x_values = []
-    y_values = []
-    # Add the average teacher/student corr for each section to the y_val list
-    for i, section in enumerate(df_list_quiz_vir):
-        x_values.append(np.linspace(i+1-0.2,i+1+0.2,len(section[column])))
-        for i in range(len(section[column])):
-            y_values.append(section[column][i]) 
-    # plot
-    fig, ax = plt.subplots(1,1) 
-    plt.scatter(x_values, y_values, color = "firebrick", s = 20, alpha = 0.5, label = "All correlations")
-    plt.scatter(x_val, y_val, color = "firebrick", s = 45, label = "Avg. correlations")
-    plt.plot(x_val, y_val, color = "firebrick")
-    plt.axvline(x=4.5, linestyle='dotted', color='gray')  # Add a dotted line to represent the break
-    plt.text(0.5, 0.9, "Break", color="gray", transform=ax.transAxes) 
-    plt.xlabel("Section")
-    plt.ylabel("Correlations")
-    plt.title(column + "elation over time")
-    plt.legend()
-    plt.show()
-Corr_over_time_vir(section_num = 6, column = "Teacher/Student corr")
-Corr_over_time_vir(section_num = 6, column = "Avg. student corr")
-
-
-############# Plot: Permutation ##################################
-
-# permutation 
-
-
-############# Plot: Variabale relationships ##################################
-
-
-###############################################################################
-############################## NOT DONE #######################################
-###############################################################################
-
-
-
-# Extract test scores
-phy_test_scores = df_list_quiz_phy[0][" Quiz_score"]
-vir_test_scores = df_list_quiz_vir[0][" Quiz_score"]
-
-
-# Calculate average teacher/student corr
-phy_teacher_corr = Avg_corr(df_list_quiz_phy, column = "Teacher/Student corr")
-vir_teacher_corr = Avg_corr(df_list_quiz_vir, column = "Teacher/Student corr")
-# plot
-plt.scatter(phy_teacher_corr, phy_test_scores, color = "royalblue",
-                alpha=0.8, label = "Physical")
-plt.scatter(vir_teacher_corr, vir_test_scores, color = "firebrick",
-                alpha=0.8, label = "Virtual")
-plt.title("Quiz scores vs teacher/student corr")
-plt.xlabel("Avg. teacher/student correlation")
-plt.ylabel("Quiz scores")
-plt.legend()
-plt.show()
-
-# Calculate average Avg. student corr
-phy_student_corr = Avg_corr(df_list_quiz_phy, column = "Avg. student corr")
-vir_student_corr = Avg_corr(df_list_quiz_vir, column = "Avg. student corr")
-# Plot
-plt.scatter(phy_student_corr, phy_test_scores, color = "royalblue",
-                alpha=0.8, label = "Physical")
-plt.scatter(vir_student_corr, vir_test_scores, color = "firebrick",
-                alpha=0.8, label = "Virtual")
-plt.title("Quiz scores vs teacher/student corr")
-plt.xlabel("Avg. student correlation")
-plt.ylabel("Quiz scores")
-plt.legend()
-plt.show()
 

@@ -27,7 +27,6 @@ merged_vir <- merged[(midpoint + 1):nrow(merged), ]
 ###### Paired Samples Wilcoxon Test ######
 TeacherStudentCorr = wilcox.test(merged_phy$TeacherStudent_corr, merged_vir$TeacherStudent_corr, paired = TRUE)
 AvgStudentCorr = wilcox.test(merged_phy$Avg_student_corr, merged_vir$Avg_student_corr, paired = TRUE)
-AvgAbsStudentCorr = wilcox.test(merged_phy$Avg_abs_student_corr, merged_vir$Avg_abs_student_corr, paired = TRUE)
 
 #GC_TeacherStudent = wilcox.test(merged_phy$GC_teacher_to_student, merged_vir$GC_teacher_to_student, paired = TRUE)
 #GC_StudentTeacher = wilcox.test(merged_phy$GC_student_to_teacher, merged_vir$GC_student_to_teacher, paired = TRUE)
@@ -35,7 +34,6 @@ AvgAbsStudentCorr = wilcox.test(merged_phy$Avg_abs_student_corr, merged_vir$Avg_
 # Printing the results
 print(paste("The teacher/student corr p-value is: ", TeacherStudentCorr))
 print(paste("The avg. student corr p-value is: ", AvgStudentCorr))
-print(paste("The avg. abs student corr p-value is: ", AvgAbsStudentCorr))
 
 #print(paste("The GC teacher->student p-value is: ", GC_TeacherStudent))
 #print(paste("The GC student->teacher p-value is: ", GC_StudentTeacher))
@@ -47,7 +45,7 @@ print(paste("The avg. abs student corr p-value is: ", AvgAbsStudentCorr))
 
 # Physical
 phy_fit <- lm(Quiz_score ~ Number_of_friends + Row_number + Average_BPM
-+ TeacherStudent_corr + Avg_student_corr + Avg_abs_student_corr + GC_teacher_to_student
++ TeacherStudent_corr + Avg_student_corr + GC_teacher_to_student
 + GC_student_to_teacher, data = physical)
 summary(phy_fit)
 """
@@ -75,7 +73,7 @@ F-statistic: 1.281 on 7 and 24 DF,  p-value: 0.301
 
 # Virtual
 vir_fit <- lm(Quiz_score ~ Number_of_friends + Average_BPM
-+ TeacherStudent_corr + Avg_student_corr + Avg_abs_student_corr + GC_teacher_to_student
++ TeacherStudent_corr + Avg_student_corr + GC_teacher_to_student
 + GC_student_to_teacher, data = virtual)
 summary(vir_fit)
 """
@@ -103,7 +101,7 @@ F-statistic: 1.297 on 6 and 10 DF,  p-value: 0.341
 
 # Merged
 merged_fit <- lm(Quiz_score ~ Number_of_friends + Average_BPM + State
-+ TeacherStudent_corr + Avg_student_corr + Avg_abs_student_corr + GC_teacher_to_student
++ TeacherStudent_corr + Avg_student_corr + GC_teacher_to_student
 + GC_student_to_teacher, data = merged)
 summary(merged_fit)
 """

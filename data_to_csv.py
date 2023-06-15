@@ -27,7 +27,6 @@ def Avg_val(df_list_quiz, column):
 phy_csv["Average_BPM"] = Avg_val(df_list_quiz_phy, "Average BPM")
 phy_csv["TeacherStudent_corr"] = Avg_val(df_list_quiz_phy, "Teacher/Student corr")
 phy_csv["Avg_student_corr"] = Avg_val(df_list_quiz_phy, "Avg. student corr")
-phy_csv["Avg_abs_student_corr"] = Avg_val(df_list_quiz_phy, "Avg. abs student corr")
 phy_csv["GC_teacher_to_student"] = Avg_val(df_list_quiz_phy, "GC teacher->student")
 phy_csv["GC_student_to_teacher"] = Avg_val(df_list_quiz_phy, "GC student->teacher") 
 
@@ -35,7 +34,6 @@ phy_csv["GC_student_to_teacher"] = Avg_val(df_list_quiz_phy, "GC student->teache
 vir_csv["Average_BPM"] = Avg_val(df_list_quiz_vir, "Average BPM")
 vir_csv["TeacherStudent_corr"] = Avg_val(df_list_quiz_vir, "Teacher/Student corr")
 vir_csv["Avg_student_corr"] = Avg_val(df_list_quiz_vir, "Avg. student corr")
-vir_csv["Avg_abs_student_corr"] = Avg_val(df_list_quiz_vir, "Avg. abs student corr")
 vir_csv["GC_teacher_to_student"] = Avg_val(df_list_quiz_vir, "GC teacher->student")
 vir_csv["GC_student_to_teacher"] = Avg_val(df_list_quiz_vir, "GC student->teacher") 
 
