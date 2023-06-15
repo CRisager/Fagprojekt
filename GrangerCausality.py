@@ -13,7 +13,7 @@ from statsmodels.tsa.stattools import grangercausalitytests
 
 # Function for determining the bst model order 
 def best_model_order(person1, person2, max_lag):
-    df = pd.DataFrame({'Person 1': person1["RR"], 'Person 2': person2["RR"]}).reset_index(drop=True)
+    df = pd.DataFrame({'Person 1': person1, 'Person 2': person2}).reset_index(drop=True)
     data = df.pct_change().dropna() # calculate procental change and remove NaN values if any
 
     all_AIC = [] # list to contain all AIC values
@@ -40,8 +40,8 @@ def best_model_order(person1, person2, max_lag):
 ### physical
 print("Determining best phy model order for Granger Causality ...")
 # Choose two test people for determining the max order (assumes the same for everybody)
-Student = phy_sections[0][0] # First student in the first section
-Teacher = phy_sections[0][-1] # The teacher in the first section
+Student = phy_sections[0][0]["RR"] # First student in the first section
+Teacher = phy_sections[0][-1]["RR"] # The teacher in the first section
 max_lag = (1+5)*10 # (1 sec error + 5 sec react time) * sfreq on 10 Hz
 # Determine the best model orders (MO) for both student->teacher and teacher->student (these should be the same)
 phys_MO_student_teacher = best_model_order(Student, Teacher, max_lag) # 22
@@ -53,19 +53,21 @@ phy_model_order = 22
 ### virtual
 print("Determining best vir model order for Granger Causality ...")
 # Choose two test people for determining the max order (assumes the same for everybody)
-Student = vir_sections[0][0] # First student in the first section
-Teacher = vir_sections[0][-1] # The teacher in the first section
+Student = vir_sections[0][0]["RR"] # First student in the first section
+Teacher = vir_sections[0][-1]["RR"] # The teacher in the first section
 # The max_lag for vir is (60+5)*10 # (60 sec stream delay + 5 sec react time) * sfreq on 10 Hz
 # but this would take forever to run, so we shift the signal according to the calculated stream delay
-# and then use the remainding lag as max_lag (5 sec react time * sfreq on 10 Hz)
-max_lag = 5*10
+# and then use the remainding lag as max_lag 
+max_lag = 5*10 # 5 sec react time * sfreq on 10 Hz
 # Shift one of the signals:
 Teacher = np.roll(Teacher,int(final_stream_delay))
 # Determine the best model orders (MO) for student->teacher and teacher->student
-vir_MO_student_teacher = best_model_order(Student, Teacher, max_lag) # 17
-vir_MO_teacher_student = best_model_order(Teacher, Student, max_lag) # 19
-# Since they in theory should be the same, we'll just use 17
-vir_model_order = 17
+vir_MO_student_teacher = best_model_order(Student, Teacher, max_lag) # 50 
+vir_MO_teacher_student = best_model_order(Teacher, Student, max_lag) # 13
+# Since they in theory should be the same, we'll just use 13
+vir_model_order = 13
+
+
 
 
  ####################### Calculate Granger causality ###########################################
@@ -73,7 +75,7 @@ vir_model_order = 17
 # Function for calculating granger causality between two people
 def Granger(person1, person2, model_order):
     # Load data
-    df = pd.DataFrame({'Person 1': person1["RR"], 'Person 2': person2["RR"]}).reset_index(drop=True)
+    df = pd.DataFrame({'Person 1': person1, 'Person 2': person2}).reset_index(drop=True)
     data = df.pct_change().dropna() # calculate procental change and remove NaN values if any
     with warnings.catch_warnings():
         warnings.filterwarnings("ignore")
@@ -96,9 +98,11 @@ def GC_for_all(section, df_quiz_list, i, max_lag):
     # Loop over students, calculate GC, add to column lists
     for student_index, student in enumerate(section[:-1], start=1): # loop skips the teacher
         print(student_index, "/", len(section[:-1])) 
-        teacher = section[-1]
-        gc_teacher_to_student_column.append(Granger(student, teacher, max_lag)) # student to teacher
-        gc_student_to_teacher_column.append(Granger(teacher, student, max_lag)) # teacher to student
+        teacher = section[-1]["RR"]
+        if df_quiz_list == df_list_quiz_vir:
+            teacher = np.roll(teacher,int(final_stream_delay))
+        gc_teacher_to_student_column.append(Granger(student["RR"], teacher, max_lag)) # student to teacher
+        gc_student_to_teacher_column.append(Granger(teacher, student["RR"], max_lag)) # teacher to student
 
     # Add the columns to the dataframe
     df = df_quiz_list[i]

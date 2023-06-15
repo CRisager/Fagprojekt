@@ -225,7 +225,7 @@ plt.scatter(phy_teacher_corr, phy_test_scores, color = "royalblue",
 plt.scatter(vir_teacher_corr, vir_test_scores, color = "firebrick",
                 alpha=0.8, label = "Virtual")
 plt.title("Quiz scores vs teacher/student corr")
-plt.xlabel("Avg. teacher/student correlation")
+plt.xlabel("Teacher/student correlation (Avg. over sections)")
 plt.ylabel("Quiz scores")
 plt.legend()
 plt.show()
@@ -239,7 +239,7 @@ plt.scatter(phy_student_corr, phy_test_scores, color = "royalblue",
 plt.scatter(vir_student_corr, vir_test_scores, color = "firebrick",
                 alpha=0.8, label = "Virtual")
 plt.title("Quiz scores vs teacher/student corr")
-plt.xlabel("Avg. student correlation")
+plt.xlabel("Avg. student correlation (Avg. over sections)")
 plt.ylabel("Quiz scores")
 plt.legend()
 plt.show()
