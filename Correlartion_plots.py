@@ -3,7 +3,7 @@ from Correlation_calculation import (sns, plt, np, mdates, dphy_resampled, dvir_
 
 
 ############## Plot: Correlation as a functions of delay/shift ################################
-
+"""
 def corr_as_function_of_delay():
     def corr_delay_entire_vs_section(Student, Teacher, signal_part):
         signal1_norm = (Student-np.mean(Student))/np.std(Student)
@@ -123,7 +123,7 @@ def High_low_corr():
     plt.show()
 High_low_corr()
 
-
+"""
 ############# Plot: Correlation over time ##################################
 
 def Corr_over_time_phy(section_num, column):

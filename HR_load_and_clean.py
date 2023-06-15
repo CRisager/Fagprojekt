@@ -13,7 +13,7 @@ import matplotlib.dates as mdates
 ### Load Data ###
 
 #path = "C:/Users/cheli/OneDrive/Skrivebord/Fagprojekt/Fagprojekt_data"
-#path = "/Users/andreabolvig/Desktop/4.semester/Project work/Fagprojekt_data"
+path = "/Users/andreabolvig/Desktop/4.semester/Project work/Fagprojekt_data"
 #path = "/Users/jesperberglund/Downloads/HR_data"
 os.chdir(path)
 
