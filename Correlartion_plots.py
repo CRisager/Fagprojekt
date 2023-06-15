@@ -195,10 +195,6 @@ Corr_over_time_vir(section_num = 6, column = "Avg. student corr")
 ############# Plot: Variabale relationships ##################################
 
 
-###############################################################################
-############################## NOT DONE #######################################
-###############################################################################
-
 # function for calculating average across sections
 def Avg_corr(df_list_quiz, column):
     avg_corr_val = []
@@ -210,40 +206,77 @@ def Avg_corr(df_list_quiz, column):
     return avg_corr_val
 
 
+def Quiz_vs_corr():
+    # Extract test scores
+    phy_test_scores = df_list_quiz_phy[0][" Quiz_score"]
+    vir_test_scores = df_list_quiz_vir[0][" Quiz_score"]
 
-# Extract test scores
-phy_test_scores = df_list_quiz_phy[0][" Quiz_score"]
-vir_test_scores = df_list_quiz_vir[0][" Quiz_score"]
 
+    # Calculate average teacher/student corr
+    phy_teacher_corr = Avg_corr(df_list_quiz_phy, column = "Teacher/Student corr")
+    vir_teacher_corr = Avg_corr(df_list_quiz_vir, column = "Teacher/Student corr")
+    # plot phy
+    plt.scatter(phy_teacher_corr, phy_test_scores, color = "royalblue",
+                    alpha=0.8)
+    plt.title("Quiz scores vs teacher/student corr")
+    plt.xlabel("Teacher/student correlation")
+    plt.ylabel("Quiz scores")
+    plt.show()
+    # plot vir
+    plt.scatter(vir_teacher_corr, vir_test_scores, color = "firebrick",
+                    alpha=0.8)
+    plt.title("Quiz scores vs teacher/student corr")
+    plt.xlabel("Teacher/student correlation")
+    plt.ylabel("Quiz scores")
+    plt.show()
 
-# Calculate average teacher/student corr
-phy_teacher_corr = Avg_corr(df_list_quiz_phy, column = "Teacher/Student corr")
-vir_teacher_corr = Avg_corr(df_list_quiz_vir, column = "Teacher/Student corr")
-# plot
-plt.scatter(phy_teacher_corr, phy_test_scores, color = "royalblue",
-                alpha=0.8, label = "Physical")
-plt.scatter(vir_teacher_corr, vir_test_scores, color = "firebrick",
-                alpha=0.8, label = "Virtual")
-plt.title("Quiz scores vs teacher/student corr")
-plt.xlabel("Teacher/student correlation (Avg. over sections)")
-plt.ylabel("Quiz scores")
-plt.legend()
-plt.show()
-
-# Calculate average Avg. student corr
-phy_student_corr = Avg_corr(df_list_quiz_phy, column = "Avg. student corr")
-vir_student_corr = Avg_corr(df_list_quiz_vir, column = "Avg. student corr")
-# Plot
-plt.scatter(phy_student_corr, phy_test_scores, color = "royalblue",
-                alpha=0.8, label = "Physical")
-plt.scatter(vir_student_corr, vir_test_scores, color = "firebrick",
-                alpha=0.8, label = "Virtual")
-plt.title("Quiz scores vs teacher/student corr")
-plt.xlabel("Avg. student correlation (Avg. over sections)")
-plt.ylabel("Quiz scores")
-plt.legend()
-plt.show()
-
+    # Calculate average Avg. student corr
+    phy_student_corr = Avg_corr(df_list_quiz_phy, column = "Avg. student corr")
+    vir_student_corr = Avg_corr(df_list_quiz_vir, column = "Avg. student corr")
+    # Plot phy
+    plt.scatter(phy_student_corr, phy_test_scores, color = "royalblue",
+                    alpha=0.8)
+    plt.title("Quiz scores vs avg. student correlation")
+    plt.xlabel("Avg. student correlation")
+    plt.ylabel("Quiz scores")
+    plt.show()
+    # Plot vir
+    plt.scatter(vir_student_corr, vir_test_scores, color = "firebrick",
+                    alpha=0.8)
+    plt.title("Quiz scores vs avg. student corr")
+    plt.xlabel("Avg. student correlation")
+    plt.ylabel("Quiz scores")
+    plt.show()
+    
+    
+    # Avg. student corr vs teacher/student corr
+    # plot phy
+    plt.scatter(phy_student_corr, phy_teacher_corr, color = "royalblue",
+                    alpha=0.8)
+    plt.title("Avg. student vs teacher/student corr")
+    plt.xlabel("Avg. student correlation")
+    plt.ylabel("Teacher/student corr")
+    plt.show()
+    # plot vir
+    plt.scatter(vir_student_corr, vir_teacher_corr, color = "firebrick",
+                    alpha=0.8)
+    plt.title("Avg. student vs teacher/student corr")
+    plt.xlabel("Avg. student correlation")
+    plt.ylabel("Teacher/student corr")
+    plt.show()
+    
+    # Teacher/student corr vs row number
+    # Extract row number
+    row_num = df_list_quiz_phy[0][" Row_number"]
+    # Plot phy
+    plt.scatter(phy_teacher_corr, row_num, color = "royalblue",
+                    alpha=0.8)
+    plt.title("Row number vs teacher/student correlation")
+    plt.xlabel("Teacher/student correlation")
+    plt.ylabel("Row number")
+    plt.show()
+    
+Quiz_vs_corr()
 
 
 
