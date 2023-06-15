@@ -60,7 +60,7 @@ Teacher = vir_sections[0][-1] # The teacher in the first section
 # and then use the remainding lag as max_lag (5 sec react time * sfreq on 10 Hz)
 max_lag = 5*10
 # Shift one of the signals:
-Teacher = np.roll(Teacher,final_stream_delay)
+Teacher = np.roll(Teacher,int(final_stream_delay))
 # Determine the best model orders (MO) for student->teacher and teacher->student
 vir_MO_student_teacher = best_model_order(Student, Teacher, max_lag) # 17
 vir_MO_teacher_student = best_model_order(Teacher, Student, max_lag) # 19
