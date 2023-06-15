@@ -21,7 +21,18 @@ midpoint <- nrow(merged) %/% 2
 merged_phy <- merged[1:midpoint, ]
 merged_vir <- merged[(midpoint + 1):nrow(merged), ]
 
+# Tjekker om data er normelfordelt ved at bruge KS test
+##  H_zero: the data is normal distributed
+ks.test(merged_phy$TeacherStudent_corr, "pnorm")
+#p-value = 0.0003665
+ks.test(merged_vir$TeacherStudent_corr, "pnorm")
+#p-value = 6.805e-05
+ks.test(merged_phy$Avg_student_corr, "pnorm")
+#p-value = 0.0001913
+ks.test(merged_vir$Avg_student_corr, "pnorm")
+#p-value = 2.813e-05
 
+## The data is not normal distributed because of the small p-value
 
   
 ###### Paired Samples Wilcoxon Test ######
@@ -51,24 +62,24 @@ summary(phy_fit)
 """
 Residuals:
     Min      1Q  Median      3Q     Max 
--7.2480 -2.0770 -0.1134  2.5783  5.9295 
+-7.2857 -2.1275 -0.1316  2.5723  5.8966 
 
 Coefficients:
                        Estimate Std. Error t value Pr(>|t|)  
-(Intercept)             -4.0394    11.7951  -0.342   0.7350  
-Number_of_friends        2.5749     1.0599   2.429   0.0230 *
-Row_number              -0.4446     0.2572  -1.729   0.0967 .
-TeacherStudent_corr     -6.4759    30.8674  -0.210   0.8356  
-Avg_student_corr         6.7358    86.7901   0.078   0.9388  
-Avg_abs_student_corr    -7.6940    89.7134  -0.086   0.9324  
-GC_teacher_to_student 3726.4238  2322.2324   1.605   0.1216  
-GC_student_to_teacher -269.1580  2004.0866  -0.134   0.8943  
+(Intercept)             -4.8278     7.2420  -0.667   0.5111  
+Number_of_friends        2.5754     1.0386   2.480   0.0202 *
+Row_number              -0.4439     0.2519  -1.762   0.0903 .
+TeacherStudent_corr     -7.2293    28.9975  -0.249   0.8052  
+Avg_student_corr         4.7971    82.1142   0.058   0.9539  
+GC_teacher_to_student 3790.3098  2155.4049   1.759   0.0909 .
+GC_student_to_teacher -266.9034  1963.7277  -0.136   0.8930  
 ---
-Signif. codes:  0 *** 0.001 ** 0.01 * 0.05 . 0.1   1
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-Residual standard error: 3.928 on 24 degrees of freedom
-Multiple R-squared:  0.2721,	Adjusted R-squared:  0.05976 
-F-statistic: 1.281 on 7 and 24 DF,  p-value: 0.301
+Residual standard error: 3.849 on 25 degrees of freedom
+Multiple R-squared:  0.2718,	Adjusted R-squared:  0.09709 
+F-statistic: 1.556 on 6 and 25 DF,  p-value: 0.2016
+
 """
 
 # Virtual
@@ -79,23 +90,20 @@ summary(vir_fit)
 """
 Residuals:
     Min      1Q  Median      3Q     Max 
--4.5681 -1.6101  0.1536  1.1388  6.2441 
+-4.1594 -2.8781 -0.1883  1.4213  7.2762 
 
 Coefficients:
-                      Estimate Std. Error t value Pr(>|t|)  
-(Intercept)             57.531     30.916   1.861   0.0924 .
-Number_of_friends       -1.410      1.989  -0.709   0.4946  
-TeacherStudent_corr    -36.384     29.820  -1.220   0.2504  
-Avg_student_corr       113.781    161.022   0.707   0.4959  
-Avg_abs_student_corr  -438.245    179.384  -2.443   0.0347 *
-GC_teacher_to_student 3465.446   4677.205   0.741   0.4758  
-GC_student_to_teacher -288.278   2457.295  -0.117   0.9089  
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+                        Estimate Std. Error t value Pr(>|t|)
+(Intercept)              -5.8953    22.4827  -0.262    0.798
+Number_of_friends         0.7857     2.1464   0.366    0.721
+TeacherStudent_corr      -6.5522    30.1175  -0.218    0.832
+Avg_student_corr          6.9485   153.0056   0.045    0.965
+GC_teacher_to_student  6856.3529  4369.1749   1.569    0.145
+GC_student_to_teacher -1777.3028  2047.2862  -0.868    0.404
 
-Residual standard error: 3.534 on 10 degrees of freedom
-Multiple R-squared:  0.4376,	Adjusted R-squared:  0.1001 
-F-statistic: 1.297 on 6 and 10 DF,  p-value: 0.341
+Residual standard error: 3.987 on 11 degrees of freedom
+Multiple R-squared:  0.2128,	Adjusted R-squared:  -0.145 
+F-statistic: 0.5946 on 5 and 11 DF,  p-value: 0.7051
 """
 
 
@@ -106,24 +114,25 @@ merged_fit <- lm(Quiz_score ~ Number_of_friends + Average_BPM + State
 summary(merged_fit)
 """
 Residuals:
-   Min     1Q Median     3Q    Max 
--9.053 -2.318 -0.472  2.161  8.461 
+    Min      1Q  Median      3Q     Max 
+-7.9991 -2.4470 -0.3816  2.4556  7.5197 
 
 Coefficients:
-                        Estimate Std. Error t value Pr(>|t|)
-(Intercept)            5.949e+00  1.353e+01   0.440    0.664
-Number_of_friends      8.390e-01  1.078e+00   0.779    0.444
-Average_BPM            4.489e-02  1.041e-01   0.431    0.670
-StateVirtual           4.251e+00  1.171e+01   0.363    0.720
-TeacherStudent_corr   -1.675e+01  2.671e+01  -0.627    0.536
-Avg_student_corr       3.786e+01  9.196e+01   0.412    0.684
-Avg_abs_student_corr  -8.228e+01  9.862e+01  -0.834    0.412
-GC_teacher_to_student  1.622e+03  2.623e+03   0.618    0.542
-GC_student_to_teacher -1.647e+03  1.786e+03  -0.922    0.365
+                        Estimate Std. Error t value Pr(>|t|)  
+(Intercept)           -8.850e+00  1.077e+01  -0.822   0.4188  
+Number_of_friends      2.035e+00  1.210e+00   1.683   0.1044  
+Average_BPM            5.531e-02  9.678e-02   0.572   0.5726  
+StateVirtual           5.288e+00  9.558e+00   0.553   0.5849  
+TeacherStudent_corr   -2.032e+01  2.491e+01  -0.816   0.4221  
+Avg_student_corr      -1.971e+00  8.298e+01  -0.024   0.9812  
+GC_teacher_to_student  5.188e+03  2.960e+03   1.753   0.0914 .
+GC_student_to_teacher -2.786e+03  1.716e+03  -1.624   0.1165  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-Residual standard error: 4.292 on 25 degrees of freedom
-Multiple R-squared:  0.1264,	Adjusted R-squared:  -0.1532 
-F-statistic: 0.4521 on 8 and 25 DF,  p-value: 0.8775
+Residual standard error: 4.092 on 26 degrees of freedom
+Multiple R-squared:  0.174,	Adjusted R-squared:  -0.04837 
+F-statistic: 0.7825 on 7 and 26 DF,  p-value: 0.6079
 """
 
 # Estimating model parameters (merged)
