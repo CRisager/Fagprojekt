@@ -22,7 +22,6 @@ os.chdir(path)
 df_quiz_phy = pd.read_csv("Quiz_scores_physical.txt")
 df_quiz_vir = pd.read_csv("Quiz_scores_virtual.txt")
 
-
 ### Loading the HR data files ###
 # Physical
 path1 = os.path.join(path, "physical")
