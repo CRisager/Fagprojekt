@@ -1,5 +1,7 @@
 import pandas
+import statistics
 from sklearn import linear_model
+from sklearn.model_selection import cross_val_predict, LeaveOneOut
 
 df = pandas.read_csv("/Users/jesperberglund/Downloads/HR_Data/merged_stat_data.csv")
 
@@ -12,7 +14,7 @@ for i in range(len(column)):
         column[i] = 0
 
 df['State'] = column
-
+"""
 fit_data = df[:-1]
 
 test_data = df.iloc[-1]
@@ -41,4 +43,23 @@ predicted = regr.predict(X_test)
 print(predicted)
 
 print("Error:", y_test - predicted)
+"""
 
+X = df[['HR_device', 'Number_of_friends', 'State', 'Average_BPM',
+       'TeacherStudent_corr', 'Avg_student_corr', 'GC_teacher_to_student',
+       'GC_student_to_teacher']]
+
+y = df['Quiz_score']
+
+regr = linear_model.LinearRegression()
+
+predicted = cross_val_predict(regr, X, y, cv = LeaveOneOut())
+
+true_scores = y.values
+errors = true_scores - predicted
+
+print(true_scores)
+print(predicted)
+print(abs(errors))
+print("Average error:", statistics.mean(abs(errors)))
+print("Standard deviation:", statistics.stdev(abs(errors)))
