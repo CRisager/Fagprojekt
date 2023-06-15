@@ -111,3 +111,4 @@ for i in range(6):
 stream_delays = [num for num in stream_delays if num is not None]
 # Calculate the average stream delay across all students and sections
 final_stream_delay = np.mean(stream_delays)
+
