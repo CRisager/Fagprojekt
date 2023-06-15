@@ -79,7 +79,7 @@ def Correlations(total_list, df_quiz_list, i, min_phy, min_vir):
                 abs_corr = MaxCorr(Student, Student2, min_phy, abs(min_phy), absolute = True) # max 1 sec
             elif df_quiz_list == df_list_quiz_vir:
                 corr = MaxCorr(Student, Student2, min_vir, abs(min_vir), absolute = False) # max 1 min
-                abs_corr = MaxCorr(Student, Student2, min_vir, abs(min_vir), absolute = True) # max 1 sec
+                abs_corr = MaxCorr(Student, Student2, min_vir, abs(min_vir), absolute = True) # max 1 min
             corr_list.append(corr)
             abs_corr_list.append(abs_corr)
         # Remove the correlation from the given student to himself
