@@ -1,6 +1,45 @@
 from Correlation_calculation import (sns, plt, np, mdates, dphy_resampled, dvir_resampled, phy_sections,
                            vir_sections, df_list_quiz_phy, df_list_quiz_vir, scipy, Correlations)
 
+############## Plot: High vs low correlation ################################
+
+def High_low_corr():
+    # Determine the index of the highest and lowest correlations
+    max_corr_index = df_list_quiz_phy[0]["Teacher/Student corr"].idxmax()
+    min_corr_index = df_list_quiz_phy[0]["Teacher/Student corr"].idxmin()
+
+    # Define teacher and max/min correlation students
+    teacher = phy_sections[0][-1]
+    min_corr_student = phy_sections[0][min_corr_index]
+    max_corr_student = phy_sections[0][max_corr_index]
+    # Normalize RR-values
+    teacher["RR"] = (teacher["RR"]-np.mean(teacher["RR"]))/np.std(teacher["RR"])
+    min_corr_student["RR"] = (min_corr_student["RR"]-np.mean(min_corr_student["RR"]))/np.std(min_corr_student["RR"])
+    max_corr_student["RR"] = (max_corr_student["RR"]-np.mean(max_corr_student["RR"]))/np.std(max_corr_student["RR"])
+
+    # Plot of a student with the lowest correlation with teacher
+    fig, ax = plt.subplots(1,1)
+    sns.lineplot(data = min_corr_student, x="Time", y="RR", color = "crimson", label="student")
+    sns.lineplot(data = teacher, x="Time", y="RR", color = "green", label="teacher")
+    plt.title("Low correlation")
+    plt.legend()
+    # format the x-tick labels to only show the time part
+    plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
+    plt.xticks(rotation=45) # rotate the x-tick labels by 45 degrees
+    plt.show()
+
+    # Plot of a student with the highest correlation with teacher
+    fig, ax = plt.subplots(1,1)
+    sns.lineplot(data = max_corr_student, x="Time", y="RR", color = "crimson", label="student")
+    sns.lineplot(data = teacher, x="Time", y="RR", color = "green", label="teacher")
+    plt.title("High correlation")
+    plt.legend()
+    # format the x-tick labels to only show the time part
+    plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
+    plt.xticks(rotation=45) # rotate the x-tick labels by 45 degrees
+    plt.show()
+High_low_corr()
+
 
 ############## Plot: Correlation as a functions of delay/shift ################################
 
@@ -84,46 +123,6 @@ def corr_as_function_of_delay():
 corr_as_function_of_delay()
 
 
-############## Plot: High vs low correlation ################################
-
-def High_low_corr():
-    # Determine the index of the highest and lowest correlations
-    max_corr_index = df_list_quiz_phy[0]["Teacher/Student corr"].idxmax()
-    min_corr_index = df_list_quiz_phy[0]["Teacher/Student corr"].idxmin()
-
-    # Define teacher and max/min correlation students
-    teacher = phy_sections[0][-1]
-    min_corr_student = phy_sections[0][min_corr_index]
-    max_corr_student = phy_sections[0][max_corr_index]
-    # Normalize RR-values
-    teacher["RR"] = (teacher["RR"]-np.mean(teacher["RR"]))/np.std(teacher["RR"])
-    min_corr_student["RR"] = (min_corr_student["RR"]-np.mean(min_corr_student["RR"]))/np.std(min_corr_student["RR"])
-    max_corr_student["RR"] = (max_corr_student["RR"]-np.mean(max_corr_student["RR"]))/np.std(max_corr_student["RR"])
-
-    # Plot of a student with the lowest correlation with teacher
-    fig, ax = plt.subplots(1,1)
-    sns.lineplot(data = min_corr_student, x="Time", y="RR", color = "crimson", label="student")
-    sns.lineplot(data = teacher, x="Time", y="RR", color = "green", label="teacher")
-    plt.title("Low correlation")
-    plt.legend()
-    # format the x-tick labels to only show the time part
-    plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
-    plt.xticks(rotation=45) # rotate the x-tick labels by 45 degrees
-    plt.show()
-
-    # Plot of a student with the highest correlation with teacher
-    fig, ax = plt.subplots(1,1)
-    sns.lineplot(data = max_corr_student, x="Time", y="RR", color = "crimson", label="student")
-    sns.lineplot(data = teacher, x="Time", y="RR", color = "green", label="teacher")
-    plt.title("High correlation")
-    plt.legend()
-    # format the x-tick labels to only show the time part
-    plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
-    plt.xticks(rotation=45) # rotate the x-tick labels by 45 degrees
-    plt.show()
-High_low_corr()
-
-
 ############# Plot: Correlation over time ##################################
 
 def Corr_over_time_phy(section_num, column):
@@ -191,11 +190,14 @@ Corr_over_time_vir(section_num = 6, column = "Avg. student corr")
 ############# Plot: Permutation ##################################
 
 # permutation 
-        
 
 
+############# Plot: Variabale relationships ##################################
 
-############ Plot: correlation distribution (avg over sections) #######################
+
+###############################################################################
+############################## NOT DONE #######################################
+###############################################################################
 
 # function for calculating average across sections
 def Avg_corr(df_list_quiz, column):
@@ -207,6 +209,45 @@ def Avg_corr(df_list_quiz, column):
         avg_corr_val.append(np.mean(teacher_corr))
     return avg_corr_val
 
+
+
+# Extract test scores
+phy_test_scores = df_list_quiz_phy[0][" Quiz_score"]
+vir_test_scores = df_list_quiz_vir[0][" Quiz_score"]
+
+
+# Calculate average teacher/student corr
+phy_teacher_corr = Avg_corr(df_list_quiz_phy, column = "Teacher/Student corr")
+vir_teacher_corr = Avg_corr(df_list_quiz_vir, column = "Teacher/Student corr")
+# plot
+plt.scatter(phy_teacher_corr, phy_test_scores, color = "royalblue",
+                alpha=0.8, label = "Physical")
+plt.scatter(vir_teacher_corr, vir_test_scores, color = "firebrick",
+                alpha=0.8, label = "Virtual")
+plt.title("Quiz scores vs teacher/student corr")
+plt.xlabel("Avg. teacher/student correlation")
+plt.ylabel("Quiz scores")
+plt.legend()
+plt.show()
+
+# Calculate average Avg. student corr
+phy_student_corr = Avg_corr(df_list_quiz_phy, column = "Avg. student corr")
+vir_student_corr = Avg_corr(df_list_quiz_vir, column = "Avg. student corr")
+# Plot
+plt.scatter(phy_student_corr, phy_test_scores, color = "royalblue",
+                alpha=0.8, label = "Physical")
+plt.scatter(vir_student_corr, vir_test_scores, color = "firebrick",
+                alpha=0.8, label = "Virtual")
+plt.title("Quiz scores vs teacher/student corr")
+plt.xlabel("Avg. student correlation")
+plt.ylabel("Quiz scores")
+plt.legend()
+plt.show()
+
+
+
+
+############ Plot: correlation distribution (avg over sections) #######################
 
 def Distr_of_avg_corr():
 
@@ -223,7 +264,7 @@ def Distr_of_avg_corr():
                         alpha=0.8, label = "Physical")
         plt.scatter(x_plot_vir, vir_teacher_corr, color = "firebrick",
                         alpha=0.8, label = "Virtual")
-        plt.title("Teacher/Student correlations")
+        plt.title("Teacher/student correlations")
         plt.xlabel("Student")
         plt.ylabel("Avg correlation over sections")
         plt.legend()
@@ -238,9 +279,9 @@ def Distr_of_avg_corr():
                         alpha=0.8, label = "Physical")
         plt.scatter(x_plot_vir, vir_student_corr, color = "firebrick",
                         alpha=0.8, label = "Virtual")
-        plt.title("Avg. Student correlations")
+        plt.title("Avg. student correlations")
         plt.xlabel("Student")
-        plt.ylabel("Correlation")
+        plt.ylabel("Avg correlation over sections")
         plt.legend()
         plt.show()
         return x_plot_phy, x_plot_vir
@@ -344,50 +385,4 @@ def Distr_of_avg_corr():
         plt.show()
     Avg_teacher_examination(phy_list, vir_list, x_plot_phy, x_plot_vir)
 Distr_of_avg_corr()
-
-
-
-
-
-############# Plot: Variabale relationships ##################################
-
-
-###############################################################################
-############################## NOT DONE #######################################
-###############################################################################
-
-
-
-# Extract test scores
-phy_test_scores = df_list_quiz_phy[0][" Quiz_score"]
-vir_test_scores = df_list_quiz_vir[0][" Quiz_score"]
-
-
-# Calculate average teacher/student corr
-phy_teacher_corr = Avg_corr(df_list_quiz_phy, column = "Teacher/Student corr")
-vir_teacher_corr = Avg_corr(df_list_quiz_vir, column = "Teacher/Student corr")
-# plot
-plt.scatter(phy_teacher_corr, phy_test_scores, color = "royalblue",
-                alpha=0.8, label = "Physical")
-plt.scatter(vir_teacher_corr, vir_test_scores, color = "firebrick",
-                alpha=0.8, label = "Virtual")
-plt.title("Quiz scores vs teacher/student corr")
-plt.xlabel("Avg. teacher/student correlation")
-plt.ylabel("Quiz scores")
-plt.legend()
-plt.show()
-
-# Calculate average Avg. student corr
-phy_student_corr = Avg_corr(df_list_quiz_phy, column = "Avg. student corr")
-vir_student_corr = Avg_corr(df_list_quiz_vir, column = "Avg. student corr")
-# Plot
-plt.scatter(phy_student_corr, phy_test_scores, color = "royalblue",
-                alpha=0.8, label = "Physical")
-plt.scatter(vir_student_corr, vir_test_scores, color = "firebrick",
-                alpha=0.8, label = "Virtual")
-plt.title("Quiz scores vs teacher/student corr")
-plt.xlabel("Avg. student correlation")
-plt.ylabel("Quiz scores")
-plt.legend()
-plt.show()
 

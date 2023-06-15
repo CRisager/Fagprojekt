@@ -1,6 +1,6 @@
 #### Set working directory ####
-#setwd("C:/Users/cheli/OneDrive/Skrivebord/Fagprojekt/Fagprojekt_data")
-setwd("/Users/andreabolvig/Desktop/4.semester/Project work/Fagprojekt_data")
+setwd("C:/Users/cheli/OneDrive/Skrivebord/Fagprojekt/Fagprojekt_data")
+#setwd("/Users/andreabolvig/Desktop/4.semester/Project work/Fagprojekt_data")
 #setwd("/Users/jesperberglund/Downloads/HR_data")
 
 
@@ -18,10 +18,9 @@ merged <- read.table("merged_stat_data.csv", header = TRUE, sep = ",", as.is = T
 # Calculate the midpoint index
 midpoint <- nrow(merged) %/% 2
 # Split the dataframe into two parts
-merged_phy <- df[1:midpoint, ]
-merged_vir <- df[(midpoint + 1):nrow(df), ]
-head(merged_phy)
-  
+merged_phy <- merged[1:midpoint, ]
+merged_vir <- merged[(midpoint + 1):nrow(merged), ]
+
 
 
   
@@ -35,6 +34,7 @@ AvgStudentCorr = wilcox.test(merged_phy$Avg_student_corr, merged_vir$Avg_student
 # Printing the results
 print(paste("The teacher/student corr p-value is: ", TeacherStudentCorr))
 print(paste("The avg. student corr p-value is: ", AvgStudentCorr))
+
 #print(paste("The GC teacher->student p-value is: ", GC_TeacherStudent))
 #print(paste("The GC student->teacher p-value is: ", GC_StudentTeacher))
 
@@ -45,7 +45,7 @@ print(paste("The avg. student corr p-value is: ", AvgStudentCorr))
 
 # Physical
 phy_fit <- lm(Quiz_score ~ Number_of_friends + Row_number + Average_BPM
-+ TeacherStudent_corr + Avg_student_corr + Avg_abs_student_corr + GC_teacher_to_student
++ TeacherStudent_corr + Avg_student_corr + GC_teacher_to_student
 + GC_student_to_teacher, data = physical)
 summary(phy_fit)
 """
@@ -73,7 +73,7 @@ F-statistic: 1.281 on 7 and 24 DF,  p-value: 0.301
 
 # Virtual
 vir_fit <- lm(Quiz_score ~ Number_of_friends + Average_BPM
-+ TeacherStudent_corr + Avg_student_corr + Avg_abs_student_corr + GC_teacher_to_student
++ TeacherStudent_corr + Avg_student_corr + GC_teacher_to_student
 + GC_student_to_teacher, data = virtual)
 summary(vir_fit)
 """
@@ -101,7 +101,7 @@ F-statistic: 1.297 on 6 and 10 DF,  p-value: 0.341
 
 # Merged
 merged_fit <- lm(Quiz_score ~ Number_of_friends + Average_BPM + State
-+ TeacherStudent_corr + Avg_student_corr + Avg_abs_student_corr + GC_teacher_to_student
++ TeacherStudent_corr + Avg_student_corr + GC_teacher_to_student
 + GC_student_to_teacher, data = merged)
 summary(merged_fit)
 """
@@ -125,3 +125,5 @@ Residual standard error: 4.292 on 25 degrees of freedom
 Multiple R-squared:  0.1264,	Adjusted R-squared:  -0.1532 
 F-statistic: 0.4521 on 8 and 25 DF,  p-value: 0.8775
 """
+
+# Estimating model parameters (merged)
