@@ -50,7 +50,6 @@ csv_files_virtual = sorted(csv_files_virtual, key=lambda x: int(x.split('.')[0])
 # Add the teacher to the end of the list
 csv_files_virtual = csv_files_virtual + [Teacher_vir]
 
-
 # Create lists for dataframes and starting times
 data_frames_physical = []
 data_frames_virtual = []
