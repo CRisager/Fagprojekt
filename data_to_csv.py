@@ -13,7 +13,7 @@ vir_csv = pd.DataFrame({"HR_device":df_vir["HR_device"], "Quiz_score":df_vir[" Q
 
 
 # function for calculating average across sections
-def Avg_val(df_list_quiz, column):
+def Avg_val(df_list_quiz, column): 
     avg_val = []
     for student_index in range(len(df_list_quiz[0])):
         teacher_corr = []
@@ -22,6 +22,7 @@ def Avg_val(df_list_quiz, column):
         avg_val.append(np.mean(teacher_corr))
     return avg_val 
 
+
 # Add all the new columns with average over sections to the data frames
 # Physical
 phy_csv["Average_BPM"] = Avg_val(df_list_quiz_phy, "Average BPM")
@@ -29,6 +30,10 @@ phy_csv["TeacherStudent_corr"] = Avg_val(df_list_quiz_phy, "Teacher/Student corr
 phy_csv["Avg_student_corr"] = Avg_val(df_list_quiz_phy, "Avg. student corr")
 phy_csv["GC_teacher_to_student"] = Avg_val(df_list_quiz_phy, "GC teacher->student")
 phy_csv["GC_student_to_teacher"] = Avg_val(df_list_quiz_phy, "GC student->teacher") 
+phy_csv["GC_ts_pvalue"] = Avg_val(df_list_quiz_phy, "GC ts pvalue") 
+phy_csv["GC_st_pvalue"] = Avg_val(df_list_quiz_phy, "GC st pvalue") 
+
+
 
 # Virtual
 vir_csv["Average_BPM"] = Avg_val(df_list_quiz_vir, "Average BPM")
@@ -36,6 +41,8 @@ vir_csv["TeacherStudent_corr"] = Avg_val(df_list_quiz_vir, "Teacher/Student corr
 vir_csv["Avg_student_corr"] = Avg_val(df_list_quiz_vir, "Avg. student corr")
 vir_csv["GC_teacher_to_student"] = Avg_val(df_list_quiz_vir, "GC teacher->student")
 vir_csv["GC_student_to_teacher"] = Avg_val(df_list_quiz_vir, "GC student->teacher") 
+vir_csv["GC_ts_pvalue"] = Avg_val(df_list_quiz_vir, "GC ts pvalue") 
+vir_csv["GC_st_pvalue"] = Avg_val(df_list_quiz_vir, "GC st pvalue") 
 
 # Create a temporary copy of phy_csv without the "row number" columns
 # as phy_csv and vir_csv then have the same columns

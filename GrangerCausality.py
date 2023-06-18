@@ -11,7 +11,7 @@ from statsmodels.tsa.stattools import grangercausalitytests
 # In order to do this, we will use the AIC (Akaike information criterion) value 
 # to determine model order resulting in the best fit and complexity
 
-# Function for determining the bst model order 
+# Function for determining the best model order 
 def best_model_order(person1, person2, max_lag):
     df = pd.DataFrame({'Person 1': person1, 'Person 2': person2}).reset_index(drop=True)
     data = df.pct_change().dropna() # calculate procental change and remove NaN values if any
@@ -68,8 +68,6 @@ vir_MO_teacher_student = best_model_order(Teacher, Student, max_lag) # 13
 vir_model_order = 13
 
 
-
-
  ####################### Calculate Granger causality ###########################################
  
 # Function for calculating granger causality between two people
@@ -80,14 +78,16 @@ def Granger(person1, person2, model_order):
     with warnings.catch_warnings():
         warnings.filterwarnings("ignore")
         # fit AR models up to model_order lag
-        gc_res = grangercausalitytests(data, model_order, verbose=False)    
+        gc_res = grangercausalitytests(data, model_order, verbose=False) 
+        gc_pvalue = grangercausalitytests(data, model_order, verbose = False)[model_order][0]["ssr_ftest"][1]
+
     # GC: log of the ratio of variance of residuals between restricted and unrestricted model
     restrict_model = gc_res[model_order][1][0]
     unrestrict_model = gc_res[model_order][1][1]
     variance_of_residuals_restrict = np.var(restrict_model.resid)
     variance_of_residuals_unrestrict = np.var(unrestrict_model.resid)
     GC = np.log(variance_of_residuals_restrict/variance_of_residuals_unrestrict)
-    return GC
+    return GC, gc_pvalue
 
 
 # Function for calculate Granger causality for all students in all sections
@@ -95,19 +95,25 @@ def GC_for_all(section, df_quiz_list, i, max_lag):
     # Create lists for the GC columns within each section
     gc_teacher_to_student_column = []
     gc_student_to_teacher_column = []
+    gc_pvalues_st_column = []
+    gc_pvalues_ts_column = []
     # Loop over students, calculate GC, add to column lists
     for student_index, student in enumerate(section[:-1], start=1): # loop skips the teacher
         print(student_index, "/", len(section[:-1])) 
         teacher = section[-1]["RR"]
         if df_quiz_list == df_list_quiz_vir:
             teacher = np.roll(teacher,int(final_stream_delay))
-        gc_teacher_to_student_column.append(Granger(student["RR"], teacher, max_lag)) # student to teacher
-        gc_student_to_teacher_column.append(Granger(teacher, student["RR"], max_lag)) # teacher to student
-    
+        gc_teacher_to_student_column.append(Granger(student["RR"], teacher, max_lag)[0]) # student to teacher
+        gc_student_to_teacher_column.append(Granger(teacher, student["RR"], max_lag)[0]) # teacher to student
+        gc_pvalues_st_column.append(Granger(student["RR"], teacher, max_lag)[1])
+        gc_pvalues_ts_column.append(Granger(teacher, student["RR"], max_lag)[1])
     # Add the columns to the dataframe
-    df = df_quiz_list[i]
+    df = df_quiz_list[i].copy()
     df["GC teacher->student"] = gc_teacher_to_student_column
     df["GC student->teacher"] = gc_student_to_teacher_column
+    df["GC ts pvalue"] = gc_pvalues_st_column
+    df["GC st pvalue"] = gc_pvalues_ts_column
+    df_quiz_list[i] = df
 
 # Call the function in order to calculate the correlations for physical and virtual
 print("Calculating Granger causality:")

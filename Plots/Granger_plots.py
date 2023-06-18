@@ -45,12 +45,14 @@ plt.show()
 
 
 
+###### both directions within each group ##########
+
 # Plot student->teacher
-plt.scatter(phy_students, phy_GC_st, color = "royalblue",
+plt.scatter(phy_students, phy_GC_st, color = "deepskyblue",
                 alpha=0.8, label = "Student to teacher")
 plt.scatter(phy_students, phy_GC_ts, color = "darkblue",
                 alpha=0.8, label = "Teacher to student")
-plt.title("Granger Causality: both directions")
+plt.title("Granger Causality: both directions phy")
 plt.xlabel("Student")
 plt.ylabel("Granger Causality values")
 plt.legend()
@@ -58,11 +60,11 @@ plt.show()
 
 
 # Plot teacher->student
-plt.scatter(vir_students, vir_GC_st, color = "royalblue",
+plt.scatter(vir_students, vir_GC_st, color = "maroon",
                 alpha=0.8, label = "Student to teacher")
-plt.scatter(vir_students, vir_GC_ts, color = "firebrick",
+plt.scatter(vir_students, vir_GC_ts, color = "coral",
                 alpha=0.8, label = "Teacher to student")
-plt.title("Granger Causality: teacher -> student")
+plt.title("Granger Causality: both directions vir")
 plt.xlabel("Student")
 plt.ylabel("Granger Causality values")
 plt.legend()
