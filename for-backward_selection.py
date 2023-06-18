@@ -1,13 +1,7 @@
-import numpy as np
-import pandas as pd
-import statsmodels.api as sm
+from HR_load_and_clean import (path, np, pd, os)
 from sklearn import linear_model
-import os
 
-# Set the path
-path = "C:/Users/cheli/OneDrive/Skrivebord/Fagprojekt/Fagprojekt_data"
-#path = "/Users/andreabolvig/Desktop/4.semester/Project work/Fagprojekt_data"
-#path = "/Users/jesperberglund/Downloads/HR_data"
+# Set directionry to path
 os.chdir(path)
 
 # Load the merged stat data 
@@ -66,14 +60,14 @@ while True:
         break  # Stop if all remaining variables are significant
 
 # Final model summary 
-print("Backward selection:")
+print("\n  Backward selection:")
 print("Final R-squared:", best_r_squared)
 print("Final Variables:", final_variables)
 print("Intercept:", model.intercept_)
 print("Coefficients:", model.coef_)
 
 # Compare R-squared for the full model and final model
-print("Full model R^2:", initial_r_squared)
+print("\nFull model R^2:", initial_r_squared)
 print("Best model R^2:", best_r_squared)
 
 """
@@ -135,24 +129,24 @@ while True:
         # Add variable to final model variables list
         selected_variable = remaining_variables[max_r_squared_idx] 
         final_variables2.append(selected_variable)
-        print(max_r_squared)
         best_r_squared2 = max_r_squared # Update best R-squared so far
     else:
+        next_best_r_squared = max_r_squared
         break  # Stop if adding more variables doesn't improve performance
-print(best_r_squared2)
+
 # Fit model based on final variables
 final_X = X[final_variables2]
 model.fit(final_X, y)
 
 # Final model summary
-print("Forward selection:")
+print("\n  Forward selection:")
 print("Final R-squared:", best_r_squared2)
 print("Final Variables:", final_variables2)
 print("Intercept:", model.intercept_)
 print("Coefficients:", model.coef_)
 
 # Compare R-squared for the full model and final model
-print("Full model R^2:", initial_r_squared)
+print("\nFull model R^2:", initial_r_squared)
 print("Best model R^2:", best_r_squared2)
 
 """ 
