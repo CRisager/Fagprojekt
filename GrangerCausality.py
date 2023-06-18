@@ -33,7 +33,7 @@ def best_model_order(person1, person2, max_lag):
     sort_AIC.sort()
     # A difference of 2 or more indicates substantial evidence in favor of the model with the lower AIC
     if sort_AIC[1]-sort_AIC[0] > 2: 
-        model_order = all_AIC.index(sort_AIC[0]) # Set the the model order from this result
+        model_order = all_AIC.index(sort_AIC[0]) # Set the model order from this result
     return model_order
 
 
