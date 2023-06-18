@@ -53,7 +53,8 @@ merged_fit <- lm(Quiz_score ~ Number_of_friends + Average_BPM + State
                  + TeacherStudent_corr + Avg_student_corr + GC_teacher_to_student
                  + GC_student_to_teacher, data = merged)
 summary(merged_fit)
-"""
+
+""" # nolint
 Residuals:
    Min     1Q Median     3Q    Max 
 -9.053 -2.318 -0.472  2.161  8.461 

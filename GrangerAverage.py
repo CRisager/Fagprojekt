@@ -13,3 +13,13 @@ print("Average GC value, physical lecture, teacher to student: ", np.mean(GC_phy
 print("Average GC value, physical lecture, student to teacher: ", np.mean(GC_phys_stt))
 print("Average GC value, virtual lecture, teacher to student: ", np.mean(GC_vir_tts))
 print("Average GC value, virtual lecture, student to teacher: ", np.mean(GC_vir_stt))
+
+GC_phys_tts_pval = phy_data["GC_ts_pvalue"]
+GC_phys_stt_pval = phy_data["GC_st_pvalue"]
+GC_vir_tts_pval = vir_data["GC_ts_pvalue"]
+GC_vir_stt_pval = vir_data["GC_st_pvalue"]
+
+print("Average p-value, physical lecture, teacher to student: ", np.mean(GC_phys_tts_pval))
+print("Average p-value, physical lecture, student to teacher: ", np.mean(GC_phys_stt_pval))
+print("Average p-value, virtual lecture, teacher to student: ", np.mean(GC_vir_tts_pval))
+print("Average p-value, virtual lecture, student to teacher: ", np.mean(GC_vir_stt_pval))
