@@ -1,3 +1,8 @@
+8296011 - jesp9435, 4 minutes ago : Merge branch 'Jesper'
+f0a6768 - jesp9435, 4 minutes ago : Git log created
+98e195b - jesp9435, 27 minutes ago : Update README.md
+1229b6c - jesp9435, 27 minutes ago : Update README.md
+0eb4587 - jesp9435, 27 minutes ago : Update README.md
 2b90ae7 - jesp9435, 2 hours ago : Merge branch 'main' into Jesper
 f2addcc - jesp9435, 2 hours ago : More
 4eac0f6 - CRisager, 2 hours ago : push push
@@ -78,7 +83,7 @@ c35d47a - andreamlb, 12 days ago : ...
 febf1b4 - jesp9435, 12 days ago : Merge branch 'main' into Jesper
 b855a2e - jesp9435, 12 days ago : Update HR_load_and_clean.cpython-310.pyc
 58473b3 - jesp9435, 12 days ago : Update README.md
-cbc5cd2 - jesp9435, 12 days ago : Create README.md
+cbc5cd2 - jesp9435, 13 days ago : Create README.md
 7df976c - CRisager, 13 days ago : tiny changes
 2e30506 - CRisager, 13 days ago : tiny changes
 f163fb2 - CRisager, 13 days ago : Merge branch 'chelina'
