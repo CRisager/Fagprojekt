@@ -42,3 +42,28 @@ plt.xlabel("Student")
 plt.ylabel("Granger Causality values")
 plt.legend()
 plt.show()
+
+
+
+# Plot student->teacher
+plt.scatter(phy_students, phy_GC_st, color = "royalblue",
+                alpha=0.8, label = "Student to teacher")
+plt.scatter(phy_students, phy_GC_ts, color = "darkblue",
+                alpha=0.8, label = "Teacher to student")
+plt.title("Granger Causality: both directions")
+plt.xlabel("Student")
+plt.ylabel("Granger Causality values")
+plt.legend()
+plt.show()
+
+
+# Plot teacher->student
+plt.scatter(vir_students, vir_GC_st, color = "royalblue",
+                alpha=0.8, label = "Student to teacher")
+plt.scatter(vir_students, vir_GC_ts, color = "firebrick",
+                alpha=0.8, label = "Teacher to student")
+plt.title("Granger Causality: teacher -> student")
+plt.xlabel("Student")
+plt.ylabel("Granger Causality values")
+plt.legend()
+plt.show()
