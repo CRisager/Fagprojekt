@@ -44,6 +44,12 @@ print(paste("The GC teacher->student phy vs vir p-value is: ", GC_TS_PhyVsVir)) 
 print(paste("The phy GC student->teacher vs other way p-value is: ", GC_ST_vs_TS_phy))  # 0.00933837890625  < 0.05
 print(paste("The vir GC student->teacher vs other way p-value is: ", GC_ST_vs_TS_vir))  # 0.430679321289063 > 0.05
 
+print(paste("The Avg. GC teacher->student p-value for phy is: ", mean(physical$GC_ts_pvalue))) # 0.4807 > 0.05
+print(paste("The Avg. GC teacher->student p-value for vir is: ", mean(virtual$GC_ts_pvalue)))  # 0.4606 > 0.05
+print(paste("The Avg. GC student->teacher p-value for phy is: ", mean(physical$GC_st_pvalue))) # 0.4911 > 0.05
+print(paste("The Avg. GC student->teacher p-value for vir is: ", mean(virtual$GC_st_pvalue)))  # 0.5903 > 0.05
+
+
 
 
 
