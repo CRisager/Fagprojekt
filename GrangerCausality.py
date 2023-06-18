@@ -103,12 +103,11 @@ def GC_for_all(section, df_quiz_list, i, max_lag):
             teacher = np.roll(teacher,int(final_stream_delay))
         gc_teacher_to_student_column.append(Granger(student["RR"], teacher, max_lag)) # student to teacher
         gc_student_to_teacher_column.append(Granger(teacher, student["RR"], max_lag)) # teacher to student
-
+    
     # Add the columns to the dataframe
     df = df_quiz_list[i]
     df["GC teacher->student"] = gc_teacher_to_student_column
     df["GC student->teacher"] = gc_student_to_teacher_column
-
 
 # Call the function in order to calculate the correlations for physical and virtual
 print("Calculating Granger causality:")
