@@ -192,12 +192,8 @@ Corr_over_time_vir(section_num = 6, column = "Avg. student corr")
 # permutation 
 
 
-############# Plot: Variabale relationships ##################################
 
-
-###############################################################################
-############################## NOT DONE #######################################
-###############################################################################
+############ Plot: correlation distribution (avg over sections) #######################
 
 # function for calculating average across sections
 def Avg_corr(df_list_quiz, column):
@@ -209,45 +205,6 @@ def Avg_corr(df_list_quiz, column):
         avg_corr_val.append(np.mean(teacher_corr))
     return avg_corr_val
 
-
-
-# Extract test scores
-phy_test_scores = df_list_quiz_phy[0][" Quiz_score"]
-vir_test_scores = df_list_quiz_vir[0][" Quiz_score"]
-
-
-# Calculate average teacher/student corr
-phy_teacher_corr = Avg_corr(df_list_quiz_phy, column = "Teacher/Student corr")
-vir_teacher_corr = Avg_corr(df_list_quiz_vir, column = "Teacher/Student corr")
-# plot
-plt.scatter(phy_teacher_corr, phy_test_scores, color = "royalblue",
-                alpha=0.8, label = "Physical")
-plt.scatter(vir_teacher_corr, vir_test_scores, color = "firebrick",
-                alpha=0.8, label = "Virtual")
-plt.title("Quiz scores vs teacher/student corr")
-plt.xlabel("Teacher/student correlation (Avg. over sections)")
-plt.ylabel("Quiz scores")
-plt.legend()
-plt.show()
-
-# Calculate average Avg. student corr
-phy_student_corr = Avg_corr(df_list_quiz_phy, column = "Avg. student corr")
-vir_student_corr = Avg_corr(df_list_quiz_vir, column = "Avg. student corr")
-# Plot
-plt.scatter(phy_student_corr, phy_test_scores, color = "royalblue",
-                alpha=0.8, label = "Physical")
-plt.scatter(vir_student_corr, vir_test_scores, color = "firebrick",
-                alpha=0.8, label = "Virtual")
-plt.title("Quiz scores vs teacher/student corr")
-plt.xlabel("Avg. student correlation (Avg. over sections)")
-plt.ylabel("Quiz scores")
-plt.legend()
-plt.show()
-
-
-
-
-############ Plot: correlation distribution (avg over sections) #######################
 
 def Distr_of_avg_corr():
 

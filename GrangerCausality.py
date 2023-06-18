@@ -46,7 +46,7 @@ max_lag = (1+5)*10 # (1 sec error + 5 sec react time) * sfreq on 10 Hz
 # Determine the best model orders (MO) for both student->teacher and teacher->student (these should be the same)
 phys_MO_student_teacher = best_model_order(Student, Teacher, max_lag) # 22
 phys_MO_teacher_student = best_model_order(Teacher, Student, max_lag) # 19
-# Since they in theory should be the same, we'll just use 22
+# Since they in theory should be the same, we'll just use 19
 phy_model_order = 22
 
 
