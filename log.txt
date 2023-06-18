@@ -1,0 +1,195 @@
+2b90ae7 - jesp9435, 2 hours ago : Merge branch 'main' into Jesper
+f2addcc - jesp9435, 2 hours ago : More
+4eac0f6 - CRisager, 2 hours ago : push push
+6302b9a - CRisager, 4 hours ago : Merge branch 'main' into chelina
+637f6b1 - CRisager, 4 hours ago : plot
+1655d64 - jesp9435, 4 hours ago : Merge branch 'main' into Jesper
+9a1c11f - jesp9435, 4 hours ago : New script
+1e990f5 - CRisager, 4 hours ago : more plots
+5b1cf44 - jesp9435, 6 hours ago : Update LinearModel.py
+c60006f - jesp9435, 6 hours ago : Merge branch 'main' into Jesper
+9db1141 - jesp9435, 6 hours ago : Update GrangerCausality.py
+cc6bb8e - CRisager, 6 hours ago : Merge branch 'main' of https://github.com/CRisager/Fagprojekt
+1d9ec28 - CRisager, 6 hours ago : Merge branch 'chelina'
+7230051 - jesp9435, 6 hours ago : Small updates
+8653eae - CRisager, 6 hours ago : plots
+5346d3e - CRisager, 3 days ago : a lot
+44c6e6b - jesp9435, 3 days ago : Merge branch 'Jesper'
+c0c05d6 - jesp9435, 3 days ago : Update LinearModel.py
+3d8ec50 - jesp9435, 3 days ago : Update HR_load_and_clean.py
+320d415 - jesp9435, 3 days ago : New script for linear model
+ea943e2 - jesp9435, 3 days ago : Merge branch 'Jesper'
+4fc9e2b - jesp9435, 3 days ago : Update HR_load_and_clean.py
+733203a - CRisager, 3 days ago : Granger debugging
+bb877b1 - jesp9435, 3 days ago : Update README.md
+a7776c7 - jesp9435, 3 days ago : Merge branch 'main' into Jesper
+12819b9 - jesp9435, 3 days ago : Update Correlation_calculation.py
+91086e5 - CRisager, 3 days ago : Remove abs corr and fix corr plots
+02fad8f - CRisager, 4 days ago : A lot
+ec3c70a - CRisager, 4 days ago : Everything
+a42c8e5 - jesp9435, 5 days ago : Merge branch 'main' into Jesper
+7133eae - jesp9435, 5 days ago : Update Resampling.py
+e58e0de - CRisager, 5 days ago : Merge branch 'main' into chelina
+d93a41a - CRisager, 5 days ago : read me update
+0ee4ab5 - CRisager, 5 days ago : Merge branch 'main' into chelina
+b1812c0 - andreamlb, 5 days ago : stat
+d4d93f8 - CRisager, 5 days ago : update
+f1812ec - andreamlb, 5 days ago : Update Stat.R
+5483b7f - andreamlb, 5 days ago : Merge branch 'main' into andrea
+0501f0d - CRisager, 5 days ago : Merge branch 'chelina'
+92b3fa9 - CRisager, 5 days ago : Csv fix and stationarity update
+312aac1 - andreamlb, 5 days ago : Merge branch 'main' into andrea
+e3ee03c - CRisager, 5 days ago : Merge branch 'chelina'
+58cebd3 - CRisager, 5 days ago : Fix csv export
+c0a98a4 - andreamlb, 5 days ago : ...
+25f70f4 - CRisager, 5 days ago : csv update
+086aca7 - andreamlb, 5 days ago : Merge branch 'main' into andrea
+90a7325 - CRisager, 5 days ago : Merge branch 'chelina'
+fe91d19 - CRisager, 5 days ago : A lot
+895db43 - andreamlb, 6 days ago : R
+d078015 - CRisager, 6 days ago : updates and tests
+c46924c - jesp9435, 6 days ago : Merge branch 'main' into Jesper
+4d27846 - CRisager, 7 days ago : Updates
+666eb8d - andreamlb, 7 days ago : Merge branch 'main' into andrea
+478818a - andreamlb, 7 days ago : Freq
+7d76fef - CRisager, 7 days ago : a little all over
+9cf1688 - CRisager, 8 days ago : Granger done maybe
+91f65e1 - CRisager, 9 days ago : Update GrangerCausality.py
+6e51208 - CRisager, 9 days ago : Merge branch 'chelina'
+6790394 - CRisager, 9 days ago : granger causlity
+8f6dd4a - jesp9435, 10 days ago : jj
+4354fb6 - CRisager, 10 days ago : tiny changes
+ff2f0a7 - CRisager, 10 days ago : Merge branch 'chelina'
+f4dcc11 - CRisager, 10 days ago : Stationarity update and optimization
+66d64d1 - CRisager, 10 days ago : stationarity
+3394960 - CRisager, 10 days ago : Added average BPM
+26c843f - CRisager, 10 days ago : freq
+bcec6d4 - CRisager, 10 days ago : tiny changes
+6213d46 - CRisager, 10 days ago : splitsignals and stationarity
+b7c53a0 - CRisager, 11 days ago : Split signals update
+0a506e9 - andreamlb, 11 days ago : Merge branch 'andrea'
+21008cb - andreamlb, 11 days ago : band pass
+06a9950 - andreamlb, 11 days ago : ...freq maybe
+81ecbf3 - CRisager, 11 days ago : Correlation update
+7c8f2ce - andreamlb, 12 days ago : Merge branch 'andrea'
+c35d47a - andreamlb, 12 days ago : ...
+8dd3e2f - CRisager, 12 days ago : testing granger
+89c9f04 - jesp9435, 12 days ago : Small changes
+febf1b4 - jesp9435, 12 days ago : Merge branch 'main' into Jesper
+b855a2e - jesp9435, 12 days ago : Update HR_load_and_clean.cpython-310.pyc
+58473b3 - jesp9435, 12 days ago : Update README.md
+cbc5cd2 - jesp9435, 12 days ago : Create README.md
+7df976c - CRisager, 13 days ago : tiny changes
+2e30506 - CRisager, 13 days ago : tiny changes
+f163fb2 - CRisager, 13 days ago : Merge branch 'chelina'
+5e69441 - CRisager, 13 days ago : correlation done maybe
+1dc9935 - CRisager, 13 days ago : Co-authored-by: andreamadelena <andreamadelena@users.noreply.github.com> Co-authored-by: jesp9435 <jesp9435@users.noreply.github.com>
+0b51956 - andreamlb, 13 days ago : Merge branch 'andrea'
+9e37f57 - andreamlb, 13 days ago : frequency
+39649e0 - jesp9435, 13 days ago : Merge branch 'Jesper'
+dbb1fef - jesp9435, 13 days ago : Update GrangerCausality.py
+422c5fd - jesp9435, 13 days ago : Update GrangerCausality.py
+0a5a8c2 - CRisager, 13 days ago : Merge branch 'main' into chelina
+ebfc7db - CRisager, 13 days ago : Update
+1f9b6e4 - CRisager, 13 days ago : Correlation update
+cb7c9a6 - andreamlb, 13 days ago : ja
+4be0ea1 - andreamlb, 13 days ago : new script freq
+a1c636a - jesp9435, 2 weeks ago : Granger Causality begin script
+302e1a1 - CRisager, 3 weeks ago : Correlation struggles
+311707f - jesp9435, 3 weeks ago : Merge branch 'chelina' into Jesper
+1d73759 - jesp9435, 3 weeks ago : Granger
+75defaa - andreamlb, 3 weeks ago : Merge branch 'main' into andrea
+9ad182e - CRisager, 3 weeks ago : Correlation is done
+abe8134 - CRisager, 3 weeks ago : Correlation begun
+a50f4b7 - CRisager, 3 weeks ago : Update imports
+e8e08e3 - CRisager, 3 weeks ago : Update imports
+7067921 - andreamlb, 3 weeks ago : Merge branch 'main' into andrea
+d968b9b - andreamlb, 3 weeks ago : ...
+7a30fcb - CRisager, 3 weeks ago : Merge branch 'chelina'
+ee24118 - jesp9435, 3 weeks ago : Update Split_signals.py
+22491f8 - jesp9435, 3 weeks ago : More code
+e56f8da - CRisager, 3 weeks ago : Plot update
+7741efe - CRisager, 3 weeks ago : plot update
+d6f41dd - jesp9435, 3 weeks ago : New splitting signal script
+0510cc5 - jesp9435, 7 weeks ago : Small Changes
+33335ba - andreamlb, 7 weeks ago : Update HR_load_and_clean.py
+56c3c33 - andreamlb, 7 weeks ago : Merge branch 'main' into andrea
+e229c75 - CRisager, 7 weeks ago : Merge branch 'main' into Jesper
+da0c08b - CRisager, 7 weeks ago : idk
+c501403 - andreamlb, 7 weeks ago : print
+7200a93 - CRisager, 7 weeks ago : Debugging
+5f01016 - andreamlb, 7 weeks ago : tiny change
+a0ea953 - CRisager, 7 weeks ago : Merge branch 'main' into andrea
+bf4d6a8 - CRisager, 7 weeks ago : Merge branch 'main' into Jesper
+9349ca6 - CRisager, 7 weeks ago : Tiny changes
+871e018 - jesp9435, 7 weeks ago : Change
+82a84ca - andreamlb, 7 weeks ago : Update HR_load_and_clean.py
+74f34bb - andreamlb, 7 weeks ago : Update HR_load_and_clean.cpython-311.pyc
+5d86e38 - CRisager, 7 weeks ago : Update HR_load_and_clean.py
+ab8b9c6 - jesp9435, 7 weeks ago : Merge branch 'main' into Jesper
+d2f8ac8 - CRisager, 7 weeks ago : Update HR_load_and_clean.py
+877e932 - jesp9435, 7 weeks ago : Merge branch 'main' into Jesper
+ae73441 - jesp9435, 7 weeks ago : 1
+c864d84 - CRisager, 7 weeks ago : Tiny changes
+5f9c97d - CRisager, 7 weeks ago : excluding the teacher
+8cc4444 - jesp9435, 7 weeks ago : Merge branch 'main' into Jesper
+55deea0 - CRisager, 7 weeks ago : import teacher as well
+eaa1846 - CRisager, 7 weeks ago : Debugging loading
+16841d7 - jesp9435, 7 weeks ago : Merge branch 'main' into Jesper
+68bfa1e - CRisager, 7 weeks ago : Plots are updated and done
+e53ca23 - CRisager, 7 weeks ago : It works! And plot is updated
+f68563a - CRisager, 7 weeks ago : More debugging
+c926a5c - CRisager, 7 weeks ago : Debugging
+729d868 - CRisager, 7 weeks ago : Debugging
+3543a30 - CRisager, 7 weeks ago : Debugging
+330ea72 - CRisager, 7 weeks ago : Tiny changes
+ff5d181 - CRisager, 7 weeks ago : Tiny changes
+949f43d - CRisager, 7 weeks ago : Code optimization
+48b9605 - CRisager, 7 weeks ago : Tiny changes
+f252b80 - CRisager, 7 weeks ago : Import update
+eb0731d - CRisager, 7 weeks ago : Resample debugging
+2aad71c - CRisager, 7 weeks ago : Upsample fisnished-ish
+f2dae8c - CRisager, 8 weeks ago : Resampling resampling...
+81d6cc8 - CRisager, 8 weeks ago : Resampling struggle
+5a884f4 - CRisager, 9 weeks ago : A try with resampling
+7e189eb - CRisager, 9 weeks ago : Tiny changes
+2818044 - CRisager, 9 weeks ago : Code organization
+9335aa8 - CRisager, 9 weeks ago : Normalization
+f6d9a50 - CRisager, 9 weeks ago : Add lecture time cutting
+3211cc1 - CRisager, 9 weeks ago : add Artifact detection plot
+1678de4 - CRisager, 9 weeks ago : Tiny changes
+8f71a35 - jesp9435, 9 weeks ago : Update HR_data.py
+cc0c1eb - CRisager, 9 weeks ago : Update HR_data.py
+29d9f8d - jesp9435, 9 weeks ago : Update HR_data.py
+9519ee0 - jesp9435, 9 weeks ago : Merge branch 'main' into Jesper
+30205d7 - CRisager, 9 weeks ago : Merge branch 'main' into chelina
+826e4cc - CRisager, 9 weeks ago : Delete Test.py
+f44b2ae - CRisager, 9 weeks ago : Delete HR_data.py
+c7feb5f - jesp9435, 9 weeks ago : Update HR_data.py
+9b97374 - jesp9435, 9 weeks ago : Update HR_data.py
+0c1ba61 - jesp9435, 10 weeks ago : Update HR_data.py
+26a9cc8 - jesp9435, 3 months ago : Update HR_data.py
+0c7a8a9 - jesp9435, 3 months ago : Update HR_data.py
+7bce847 - jesp9435, 3 months ago : Update HR_data.py
+36461ab - jesp9435, 3 months ago : Merge branch 'main' of https://github.com/CRisager/Fagprojekt
+a386c54 - jesp9435, 3 months ago : Update HR_data.py
+077b92d - andreamlb, 3 months ago : Merge pull request #7 from CRisager/andrea
+516bb70 - andreamlb, 3 months ago : Merge pull request #6 from CRisager/main
+9eb9062 - andreamlb, 3 months ago : Merge branch 'andrea' into main
+1577c7c - CRisager, 3 months ago : Merge pull request #5 from CRisager/main
+5524ca1 - jesp9435, 3 months ago : Create HR_data.py
+9a59dc9 - CRisager, 3 months ago : Update Test.py
+3809853 - jesp9435, 3 months ago : test
+a269bfd - jesp9435, 3 months ago : Initial Data Analysis
+f5a3cca - CRisager, 4 months ago : Merge branch 'Jesper'
+d75b6b1 - CRisager, 4 months ago : Merge branch 'chelina'
+cac87e2 - CRisager, 4 months ago : Update Test.py
+572cd3c - jesp9435, 4 months ago : Update Test.py
+457d82b - CRisager, 4 months ago : Update Test.py
+7187111 - andreamlb, 4 months ago : Update Test.py
+ff5d873 - CRisager, 4 months ago : Update Test.py
+9d437c7 - andreamlb, 4 months ago : Update Test.py
+c2f86bd - CRisager, 4 months ago : Merge pull request #1 from CRisager/chelina
+18145e6 - CRisager, 4 months ago : Update Test.py
+2339132 - CRisager, 4 months ago : Create Test.py
+e3a2f45 - CRisager, 4 months ago : Initial commit
