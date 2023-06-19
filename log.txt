@@ -1,8 +1,9 @@
-d4fad90 - jesp9435, 83 seconds ago : Merge branch 'main' of https://github.com/CRisager/Fagprojekt
-4c61010 - jesp9435, 2 minutes ago : Final changes
-40ac5ae - CRisager, 2 minutes ago : Merge branch 'chelina'
-b97ddcc - CRisager, 2 minutes ago : last corrections
-c480423 - jesp9435, 17 hours ago : Rename of plot
+04591f0 - jesp9435, 3 minutes ago : Final changes
+d4fad90 - jesp9435, 18 minutes ago : Merge branch 'main' of https://github.com/CRisager/Fagprojekt
+4c61010 - jesp9435, 19 minutes ago : Final changes
+40ac5ae - CRisager, 19 minutes ago : Merge branch 'chelina'
+b97ddcc - CRisager, 19 minutes ago : last corrections
+c480423 - jesp9435, 18 hours ago : Rename of plot
 8296011 - jesp9435, 18 hours ago : Merge branch 'Jesper'
 f0a6768 - jesp9435, 18 hours ago : Git log created
 98e195b - jesp9435, 18 hours ago : Update README.md
@@ -11,9 +12,9 @@ f0a6768 - jesp9435, 18 hours ago : Git log created
 2b90ae7 - jesp9435, 20 hours ago : Merge branch 'main' into Jesper
 f2addcc - jesp9435, 20 hours ago : More
 4eac0f6 - CRisager, 20 hours ago : push push
-6302b9a - CRisager, 21 hours ago : Merge branch 'main' into chelina
-637f6b1 - CRisager, 21 hours ago : plot
-1655d64 - jesp9435, 21 hours ago : Merge branch 'main' into Jesper
+6302b9a - CRisager, 22 hours ago : Merge branch 'main' into chelina
+637f6b1 - CRisager, 22 hours ago : plot
+1655d64 - jesp9435, 22 hours ago : Merge branch 'main' into Jesper
 9a1c11f - jesp9435, 22 hours ago : New script
 1e990f5 - CRisager, 22 hours ago : more plots
 5b1cf44 - jesp9435, 24 hours ago : Update LinearModel.py
