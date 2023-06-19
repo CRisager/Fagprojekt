@@ -1,8 +1,12 @@
 import pandas
 import numpy as np
+from HR_load_and_clean import path
+import os
 
-phy_data = pandas.read_csv("/Users/jesperberglund/Downloads/HR_Data/phy_stat_data.csv")
-vir_data = pandas.read_csv("/Users/jesperberglund/Downloads/HR_Data/vir_stat_data.csv")
+os.chdir(path)
+
+phy_data = pandas.read_csv("phy_stat_data.csv")
+vir_data = pandas.read_csv("vir_stat_data.csv")
 
 GC_phys_tts = phy_data["GC_teacher_to_student"]
 GC_phys_stt = phy_data["GC_student_to_teacher"]

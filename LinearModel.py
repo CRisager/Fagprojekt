@@ -2,8 +2,12 @@ import pandas
 import statistics
 from sklearn import linear_model
 from sklearn.model_selection import cross_val_predict, LeaveOneOut
+from HR_load_and_clean import path
+import os
 
-df = pandas.read_csv("/Users/jesperberglund/Downloads/HR_Data/merged_stat_data.csv")
+os.chdir(path)
+
+df = pandas.read_csv("merged_stat_data.csv")
 
 column = df['State'].copy()
 
