@@ -187,12 +187,6 @@ Corr_over_time_vir(section_num = 6, column = "Teacher/Student corr")
 Corr_over_time_vir(section_num = 6, column = "Avg. student corr")
 
 
-############# Plot: Permutation ##################################
-
-# permutation 
-
-
-
 ############ Plot: correlation distribution (avg over sections) #######################
 
 # function for calculating average across sections
