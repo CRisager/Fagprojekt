@@ -6,9 +6,10 @@ The heart rate data was obtained using FirstBeat Pro devices and is imported and
 
 **How to run the files**
 
-Firstly, go to HR_load_and_clean.py and input the directory for the data. 
-If you want to generate the plots from the data description, run Data_descr_plots.py 
-If you want to generate the plots from the data analysis, run Correlation_plots.py 
+Firstly, go to HR_load_and_clean.py and input the directory for the data.
+All plots and code for this can be found in the "plots" folder.
+ - If you want to generate the plots from the data description, run Data_descr_plots.py 
+ - If you want to generate the plots from the data analysis, run Correlation_plots.py, Granger_plots.py and Variable_relations.py 
 In order to look into our stationarity testing, go to Stationity.py
 Before being able to generate the statics, run data_to_csv.py in order to export the calculated data.
 Then in order to generate the statics, run Stat.R
