@@ -1,11 +1,12 @@
-8296011 - jesp9435, 4 minutes ago : Merge branch 'Jesper'
-f0a6768 - jesp9435, 4 minutes ago : Git log created
-98e195b - jesp9435, 27 minutes ago : Update README.md
-1229b6c - jesp9435, 27 minutes ago : Update README.md
-0eb4587 - jesp9435, 27 minutes ago : Update README.md
-2b90ae7 - jesp9435, 2 hours ago : Merge branch 'main' into Jesper
-f2addcc - jesp9435, 2 hours ago : More
-4eac0f6 - CRisager, 2 hours ago : push push
+c480423 - jesp9435, 22 seconds ago : Rename of plot
+8296011 - jesp9435, 17 minutes ago : Merge branch 'Jesper'
+f0a6768 - jesp9435, 17 minutes ago : Git log created
+98e195b - jesp9435, 40 minutes ago : Update README.md
+1229b6c - jesp9435, 40 minutes ago : Update README.md
+0eb4587 - jesp9435, 40 minutes ago : Update README.md
+2b90ae7 - jesp9435, 3 hours ago : Merge branch 'main' into Jesper
+f2addcc - jesp9435, 3 hours ago : More
+4eac0f6 - CRisager, 3 hours ago : push push
 6302b9a - CRisager, 4 hours ago : Merge branch 'main' into chelina
 637f6b1 - CRisager, 4 hours ago : plot
 1655d64 - jesp9435, 4 hours ago : Merge branch 'main' into Jesper
@@ -29,7 +30,7 @@ ea943e2 - jesp9435, 3 days ago : Merge branch 'Jesper'
 bb877b1 - jesp9435, 3 days ago : Update README.md
 a7776c7 - jesp9435, 3 days ago : Merge branch 'main' into Jesper
 12819b9 - jesp9435, 3 days ago : Update Correlation_calculation.py
-91086e5 - CRisager, 3 days ago : Remove abs corr and fix corr plots
+91086e5 - CRisager, 4 days ago : Remove abs corr and fix corr plots
 02fad8f - CRisager, 4 days ago : A lot
 ec3c70a - CRisager, 4 days ago : Everything
 a42c8e5 - jesp9435, 5 days ago : Merge branch 'main' into Jesper
@@ -80,9 +81,9 @@ b7c53a0 - CRisager, 11 days ago : Split signals update
 c35d47a - andreamlb, 12 days ago : ...
 8dd3e2f - CRisager, 12 days ago : testing granger
 89c9f04 - jesp9435, 12 days ago : Small changes
-febf1b4 - jesp9435, 12 days ago : Merge branch 'main' into Jesper
-b855a2e - jesp9435, 12 days ago : Update HR_load_and_clean.cpython-310.pyc
-58473b3 - jesp9435, 12 days ago : Update README.md
+febf1b4 - jesp9435, 13 days ago : Merge branch 'main' into Jesper
+b855a2e - jesp9435, 13 days ago : Update HR_load_and_clean.cpython-310.pyc
+58473b3 - jesp9435, 13 days ago : Update README.md
 cbc5cd2 - jesp9435, 13 days ago : Create README.md
 7df976c - CRisager, 13 days ago : tiny changes
 2e30506 - CRisager, 13 days ago : tiny changes
@@ -98,7 +99,7 @@ dbb1fef - jesp9435, 13 days ago : Update GrangerCausality.py
 ebfc7db - CRisager, 13 days ago : Update
 1f9b6e4 - CRisager, 13 days ago : Correlation update
 cb7c9a6 - andreamlb, 13 days ago : ja
-4be0ea1 - andreamlb, 13 days ago : new script freq
+4be0ea1 - andreamlb, 2 weeks ago : new script freq
 a1c636a - jesp9435, 2 weeks ago : Granger Causality begin script
 302e1a1 - CRisager, 3 weeks ago : Correlation struggles
 311707f - jesp9435, 3 weeks ago : Merge branch 'chelina' into Jesper
