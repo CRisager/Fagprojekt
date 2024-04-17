@@ -1,8 +1,11 @@
-04591f0 - jesp9435, 3 minutes ago : Final changes
-d4fad90 - jesp9435, 18 minutes ago : Merge branch 'main' of https://github.com/CRisager/Fagprojekt
-4c61010 - jesp9435, 19 minutes ago : Final changes
-40ac5ae - CRisager, 19 minutes ago : Merge branch 'chelina'
-b97ddcc - CRisager, 19 minutes ago : last corrections
+6fabafc - jesp9435, 24 seconds ago : Merge branch 'main' of https://github.com/CRisager/Fagprojekt
+ff3d78b - jesp9435, 31 seconds ago : logs
+addbf0b - jesp9435, 3 minutes ago : Update README.md
+04591f0 - jesp9435, 4 minutes ago : Final changes
+d4fad90 - jesp9435, 19 minutes ago : Merge branch 'main' of https://github.com/CRisager/Fagprojekt
+4c61010 - jesp9435, 20 minutes ago : Final changes
+40ac5ae - CRisager, 20 minutes ago : Merge branch 'chelina'
+b97ddcc - CRisager, 20 minutes ago : last corrections
 c480423 - jesp9435, 18 hours ago : Rename of plot
 8296011 - jesp9435, 18 hours ago : Merge branch 'Jesper'
 f0a6768 - jesp9435, 18 hours ago : Git log created

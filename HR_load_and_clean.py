@@ -13,7 +13,7 @@ import matplotlib.dates as mdates
 ### Load Data ###
 
 
-path = "Enter path to folder containing data..."
+path = "/Users/jesperberglund/Downloads/HR_Data"
 
 os.chdir(path)
 
